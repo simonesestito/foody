@@ -6,7 +6,7 @@ read -p "DB host [127.0.0.1]: " host
 user="${user:-root}"
 host="${host:-127.0.0.1}"
 
-mysql -u root -h 127.0.0.1 -p -e "show variables; show status" | awk '  
+mysql -u "$user" -h "$host" -p -e "show variables; show status" | awk '  
 {
 VAR[$1]=$2  
 }

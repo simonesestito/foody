@@ -3,9 +3,15 @@ Final project for "Databases" course of Sapienza University of Rome, Spring 2022
 
 # 🚀 [Open the live site](https://foody.simonesestito.com)
 
+# 📚 [Database Documentation (Italian)](https://drive.google.com/drive/folders/135rB56D_wniunaJxY9SCFpWHcEuFZqNz?usp=sharing)
+
 ## Build
 
 This project uses Docker Compose to perform tests. You need to install nothing but Docker on your system and you're ready to go.
+
+## Documentation
+
+The project documentation, specifically about the database structure, it's available in Italian at https://drive.google.com/drive/folders/135rB56D_wniunaJxY9SCFpWHcEuFZqNz
 
 ## Technologies involved
 

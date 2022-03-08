@@ -1,0 +1,22 @@
+version: "3.9"
+
+services:
+    db:
+        image: yobasystems/alpine-mariadb
+        volumes:
+            - db-data:/var/lib/mysql
+            - ./db/mariadb-app-settings.cnf:/etc/my.cnf.d/mariadb-app-settings.cnf
+        deploy:
+            restart_policy:
+                condition: on-failure
+                delay: 2s
+        environment:
+            MYSQL_ROOT_PASSWORD: pwd
+            MYSQL_DATABASE: test
+            MYSQL_USER: user
+            MYSQL_PASSWORD: pwd
+        ports:
+            - 3306:3306
+
+volumes:
+    db-data:

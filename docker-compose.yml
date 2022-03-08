@@ -1,6 +1,13 @@
 version: "3.9"
 
 services:
+    app:
+        build: .
+        ports:
+          - "${PORT:-8080}:8080"
+        depends_on:
+            - db
+        
     db:
         image: yobasystems/alpine-mariadb
         volumes:
@@ -15,8 +22,6 @@ services:
             MYSQL_DATABASE: test
             MYSQL_USER: user
             MYSQL_PASSWORD: pwd
-        ports:
-            - 3306:3306
 
 volumes:
     db-data:

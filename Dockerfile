@@ -19,6 +19,10 @@ ENV NODE_ENV production
 ENV PORT 8080
 WORKDIR /app
 
+# Switch to a non-root user
+RUN useradd foody
+USER foody
+
 COPY --from=build /app/dist ./dist
 COPY ./package.json ./
 COPY ./package-lock.json ./

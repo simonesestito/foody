@@ -1,0 +1,7 @@
+dist/
+node_modules/
+db/
+docker-compose.yml
+Dockerfile
+LICENSE
+README.md

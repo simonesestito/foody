@@ -10,6 +10,7 @@
     "build": "tsc",
     "prestart": "npm run build",
     "start": "node .",
+    "deploy": "docker build . -t simonesestito/foody:latest",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

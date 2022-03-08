@@ -19,14 +19,15 @@ ENV NODE_ENV production
 ENV PORT 8080
 WORKDIR /app
 
-# Switch to a non-root user
-RUN useradd foody
-USER foody
-
 COPY --from=build /app/dist ./dist
 COPY ./package.json ./
 COPY ./package-lock.json ./
 # TODO: Add other runtime necessary files here
+
+# Switch to a non-root user
+RUN adduser -D foody
+RUN chown -R foody:foody /app
+USER foody
 
 RUN npm install --only=prod
 EXPOSE 8080

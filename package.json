@@ -10,10 +10,7 @@
     "build": "tsc",
     "prestart": "npm run build",
     "start": "node .",
-    "dev": "nodemon",
-    "predeploy": "docker build . -t simonesestito/foody:latest",
-    "deploy": "docker push simonesestito/foody:latest",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon"
   },
   "repository": {
     "type": "git",

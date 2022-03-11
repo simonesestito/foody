@@ -18,6 +18,7 @@
             "error",
             "single"
         ],
-        "no-loops/no-loops": 2
+        "no-loops/no-loops": 2,
+        "semi": 2
     }
 }

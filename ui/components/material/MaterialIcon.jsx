@@ -1,0 +1,1 @@
+<button class="material-icons mdc-top-app-bar__action-item mdc-icon-button">{props.name}</button>

@@ -1,7 +1,6 @@
 {
     "watch": ["src", "ui"],
-    "ext": "ts,jsx,css,json",
+    "ext": "ts,jsx,json",
     "ignore": ["src/**/*.spec.ts"],
-    "exec": "ts-node ./src/index.ts",
-    "delay": 1000
+    "exec": "ts-node ./src/index.ts"
   }

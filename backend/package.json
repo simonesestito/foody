@@ -3,8 +3,9 @@
   "version": "1.0.0",
   "description": "Final project for \"Databases\" course of Sapienza University of Rome, Spring 2022",
   "main": "dist/index.js",
+  "private": "true",
   "scripts": {
-    "clean": "shx rm -rf dist/",
+    "clean": "shx rm -rf ../dist",
     "lint": "eslint . --ext .ts --fix",
     "prebuild": "npm run lint",
     "build": "tsc",

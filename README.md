@@ -9,6 +9,8 @@ Final project for "Databases" course of Sapienza University of Rome, Spring 2022
 
 This project uses Docker Compose to perform tests. You need to install nothing but Docker on your system and you're ready to go.
 
+You can also first build the Flutter app on your own with ```flutter build web```, then start the Node app with ```npm start```. A running MariaDB database is needed, so you'll need to configure it using env variables. Of course, Docker is easier because it's preconfigured.
+
 ## Documentation
 
 The project documentation, specifically about the database structure, it's available in Italian at https://drive.google.com/drive/folders/135rB56D_wniunaJxY9SCFpWHcEuFZqNz

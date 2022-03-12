@@ -2,14 +2,14 @@ version: "3.9"
 
 services:
     app:
-        build: .
+        image: "simonesestito/foody:latest"
         ports:
           - "${PORT:-8080}:8080"
         depends_on:
             - db
         
     db:
-        image: yobasystems/alpine-mariadb
+        image: "yobasystems/alpine-mariadb:10.6.4"
         volumes:
             - db-data:/var/lib/mysql
             - ./db/mariadb-app-settings.cnf:/etc/my.cnf.d/mariadb-app-settings.cnf:ro

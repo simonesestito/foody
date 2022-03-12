@@ -1,7 +1,7 @@
 FROM node:17.5.0 AS build
 WORKDIR /app
 # It skips files ignored in .dockerignore
-COPY ./ ./
+COPY ./backend/ ./
 
 RUN npm install && npm run build
 

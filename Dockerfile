@@ -1,7 +1,24 @@
-FROM node:17.5.0 AS build
+FROM ubuntu:22.04 AS build-flutter
+
+# Install Flutter
+RUN apt-get update -y \
+    && apt-get install git curl wget file unzip zip xz-utils tar -y \
+    && wget https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_2.10.3-stable.tar.xz -O /flutter-sdk.zip \
+    && cd /opt \
+    && tar xf /flutter-sdk.zip \
+    && /opt/flutter/bin/flutter precache --no-ios --no-linux --no-windows --no-fuchsia --no-android --no-macos
+
+# Compile Flutter app for Web
+WORKDIR /app
+COPY ./webapp ./
+RUN /opt/flutter/bin/flutter build web
+
+# ----------------------------
+
+FROM node:17.5.0 AS build-backend
 WORKDIR /app
 # It skips files ignored in .dockerignore
-COPY ./backend/ ./
+COPY ./backend ./
 
 RUN npm install && npm run build
 
@@ -18,9 +35,10 @@ ENV NODE_ENV production
 ENV PORT 8080
 WORKDIR /app
 
-COPY --from=build /app/dist ./dist
-COPY ./package.json ./
-COPY ./package-lock.json ./
+COPY --from=build-backend /app/dist ./dist
+COPY --from=build-flutter /app/build/web ./webapp/build/web
+COPY ./backend/package.json ./
+COPY ./backend/package-lock.json ./
 # TODO: Add other runtime necessary files here
 
 # Switch to a non-root user

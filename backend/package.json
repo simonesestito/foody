@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "private": "true",
   "scripts": {
-    "clean": "shx rm -rf ../dist",
+    "clean": "shx rm -rf ./dist",
     "lint": "eslint . --ext .ts --fix",
     "prebuild": "npm run lint",
     "build": "tsc",

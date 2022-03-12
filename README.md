@@ -29,7 +29,7 @@ It's been designed to be an easy app to deploy and try out, so it's just a singl
 
 Since it also requires a database, you can run the ```docker-compose.yml``` configuration file to run this app in Docker Compose and it'll work out of the box.
 
-You can edit the project, and rebuild it using the associated Dockerfile, which bundles the Flutter Web app and the Typescript rest API all in a single Docker image.
+You can edit the project, and rebuild it using the associated ```Dockerfile```, which bundles the Flutter Web app and the Typescript rest API all in a single Docker image.
 
 ## License
 

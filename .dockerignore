@@ -2,7 +2,7 @@ dist/
 node_modules/
 db/
 docker-compose.yml
-docker-compose.override.yml
+docker-compose.debug.yml
 Dockerfile
 LICENSE
 README.md

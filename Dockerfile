@@ -34,12 +34,14 @@ LABEL mantainer="simone@simonesestito.com"
 
 ENV NODE_ENV production
 ENV PORT 8080
-WORKDIR /app
 
-COPY --from=build-backend /app/dist ./dist
+WORKDIR /app
 COPY --from=build-flutter /app/build/web ./webapp/build/web
-COPY ./backend/package.json ./
-COPY ./backend/package-lock.json ./
+
+WORKDIR /app/backend
+COPY --from=build-backend /app/dist ./dist
+COPY ./backend/package.json .
+COPY ./backend/package-lock.json .
 # TODO: Add other runtime necessary files here
 
 # Switch to a non-root user

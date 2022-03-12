@@ -3,8 +3,7 @@ WORKDIR /app
 # It skips files ignored in .dockerignore
 COPY ./ ./
 
-RUN npm install && \
-    npm run build -- --sourceMap false
+RUN npm install && npm run build
 
 # ----------------------------
 

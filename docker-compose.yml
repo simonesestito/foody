@@ -7,6 +7,10 @@ services:
           - "${PORT:-8080}:8080"
         depends_on:
             - db
+        deploy:
+            restart_policy:
+                condition: on-failure
+                delay: 1s
         
     db:
         image: "yobasystems/alpine-mariadb:10.6.4"

@@ -1,5 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:foody_app/appbar.dart';
+import 'package:foody_app/widgets/logo.dart';
 
 void main() {
   runApp(const FoodyApp());
@@ -12,6 +13,7 @@ class FoodyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Foody App',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         brightness: Brightness.light,
         colorSchemeSeed: const Color(0xff70df4e),
@@ -32,16 +34,38 @@ class AppLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const Appbar(),
-      body: const Center(child: Text("Ciao")),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Non toccare, terrun!")),
-        ),
-        label: const Text("Test"),
-        icon: const Icon(Icons.add),
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            pinned: true,
+            forceElevated: true,
+            expandedHeight: 180,
+            flexibleSpace: const FlexibleSpaceBar(
+              title: Logo(),
+              expandedTitleScale: 2.3,
+            ),
+            actions: [
+              IconButton(
+                onPressed: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("TODO")),
+                  );
+                },
+                icon: const Icon(Icons.account_circle),
+                tooltip: "Account",
+              ),
+            ],
+          ),
+          SliverList(
+            delegate: SliverChildListDelegate.fixed(
+              List.generate(
+                200,
+                (_) => ListTile(title: Text("Ciao")),
+              ),
+            ),
+          ),
+        ],
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 }

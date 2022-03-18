@@ -2,6 +2,8 @@
 set -e
 
 PROJECT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+cd "$PROJECT_DIR"
+git push
 docker build -t simonesestito/foody:latest "$PROJECT_DIR"
 docker push simonesestito/foody:latest
 ssh foody ./projects-manager update foody

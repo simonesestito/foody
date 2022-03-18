@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:foody_app/data/model/user.dart';
 import 'package:foody_app/globals.dart';
 import 'package:foody_app/routes/login.dart';
+import 'package:foody_app/routes/logout.dart';
 import 'package:foody_app/state/login_status.dart';
 import 'package:provider/provider.dart';
 
@@ -65,7 +66,7 @@ class AccountLogo extends StatelessWidget {
         ),
       ),
       const PopupMenuItem(
-        // TODO: Value LogoutRoute.routeName,
+        value: LogoutRoute.routeName,
         child: ListTile(
           mouseCursor: SystemMouseCursors.click,
           title: Text('Logout'),

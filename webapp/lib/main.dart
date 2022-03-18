@@ -4,6 +4,7 @@ import 'package:foody_app/routes/admin/index.dart';
 import 'package:foody_app/routes/customer/index.dart';
 import 'package:foody_app/routes/home.dart';
 import 'package:foody_app/routes/login.dart';
+import 'package:foody_app/routes/logout.dart';
 import 'package:foody_app/routes/manager/index.dart';
 import 'package:foody_app/routes/rider/index.dart';
 import 'package:foody_app/routes/signup.dart';
@@ -69,6 +70,7 @@ class FoodyApp extends StatelessWidget {
         routes: {
           Home.routeName: (_) => const Home(),
           LoginRoute.routeName: (_) => const LoginRoute(),
+          LogoutRoute.routeName: (_) => const LogoutRoute(),
           SignUpRoute.routeName: (_) => const SignUpRoute(),
           ...adminRoutes,
           ...customerRoutes,

@@ -7,11 +7,14 @@ class Logo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Image.asset(
-      'assets/images/logo.png',
-      color: logoColor,
-      height: 28,
-      colorBlendMode: BlendMode.srcATop,
+    return GestureDetector(
+      onTap: () => Navigator.of(context).pushNamed('/'),
+      child: Image.asset(
+        'assets/images/logo.png',
+        color: logoColor,
+        height: 28,
+        colorBlendMode: BlendMode.srcATop,
+      ),
     );
   }
 }

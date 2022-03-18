@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:foody_app/globals.dart';
 import 'package:foody_app/routes/admin/index.dart';
-import 'package:foody_app/routes/base_route.dart';
 import 'package:foody_app/routes/customer/index.dart';
+import 'package:foody_app/routes/home.dart';
+import 'package:foody_app/routes/login.dart';
 import 'package:foody_app/routes/manager/index.dart';
 import 'package:foody_app/routes/rider/index.dart';
+import 'package:foody_app/routes/signup.dart';
 import 'package:foody_app/state/login_status.dart';
-import 'package:foody_app/widgets/snackbar.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -17,6 +19,28 @@ class FoodyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const dividerTheme = DividerThemeData(
+      thickness: 0.07,
+      indent: Globals.largeMargin,
+      endIndent: Globals.largeMargin,
+      space: Globals.largeMargin,
+    );
+
+    final buttonStyle = ButtonStyle(
+      padding: MaterialStateProperty.all(const EdgeInsets.symmetric(
+        vertical: Globals.standardMargin,
+        horizontal: Globals.standardMargin,
+      )),
+      minimumSize: MaterialStateProperty.all(const Size(64, 44)),
+      textStyle: MaterialStateProperty.all(const TextStyle(
+        letterSpacing: 0.65,
+        fontWeight: FontWeight.w500,
+      )),
+    );
+
+    final elevatedButtonTheme = ElevatedButtonThemeData(style: buttonStyle);
+    final outlinedButtonTheme = OutlinedButtonThemeData(style: buttonStyle);
+
     return MultiProvider(
       providers: [
         ChangeNotifierProvider.value(value: LoginStatus()),
@@ -29,15 +53,23 @@ class FoodyApp extends StatelessWidget {
         theme: ThemeData(
           brightness: Brightness.light,
           colorSchemeSeed: const Color(0xff70df4e),
+          dividerTheme: dividerTheme,
+          elevatedButtonTheme: elevatedButtonTheme,
+          outlinedButtonTheme: outlinedButtonTheme,
         ),
         darkTheme: ThemeData(
           brightness: Brightness.dark,
           colorSchemeSeed: const Color(0xff70df4e),
+          dividerTheme: dividerTheme,
+          elevatedButtonTheme: elevatedButtonTheme,
+          outlinedButtonTheme: outlinedButtonTheme,
         ),
         themeMode: ThemeMode.system,
         initialRoute: Home.routeName,
         routes: {
           Home.routeName: (_) => const Home(),
+          LoginRoute.routeName: (_) => const LoginRoute(),
+          SignUpRoute.routeName: (_) => const SignUpRoute(),
           ...adminRoutes,
           ...customerRoutes,
           ...managerRoutes,
@@ -45,39 +77,5 @@ class FoodyApp extends StatelessWidget {
         },
       ),
     );
-  }
-}
-
-class Home extends BaseRoute {
-  static const routeName = '/';
-
-  const Home({Key? key}) : super(key: key);
-
-  @override
-  List<Widget> buildChildren(BuildContext context) {
-    return [
-      SliverToBoxAdapter(
-          child: Container(
-        padding: const EdgeInsets.all(8),
-        child: OutlinedButton(
-          child: const Text('Test'),
-          onPressed: () {
-            ScaffoldMessenger.of(context).showSnackBar(AppSnackbar(
-              context: context,
-              content: 'Test n.2',
-              action: SnackBarAction(label: 'NO', onPressed: () {}),
-            ));
-          },
-        ),
-      )),
-      SliverList(
-        delegate: SliverChildListDelegate.fixed(
-          List.generate(
-            200,
-            (_) => const ListTile(title: Text('Ciao')),
-          ),
-        ),
-      ),
-    ];
   }
 }

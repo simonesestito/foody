@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class User {
   // TODO
   final String name = 'Mario';
@@ -43,6 +45,19 @@ extension UserRoleExtension on UserRole {
         return 'Admin piattaforma';
       case UserRole.rider:
         return 'Rider consegne';
+    }
+  }
+
+  IconData get icon {
+    switch (this) {
+      case UserRole.customer:
+        return Icons.shopping_basket;
+      case UserRole.manager:
+        return Icons.storefront;
+      case UserRole.admin:
+        return Icons.admin_panel_settings;
+      case UserRole.rider:
+        return Icons.delivery_dining;
     }
   }
 }

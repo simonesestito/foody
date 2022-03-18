@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:foody_app/data/user.dart';
+import 'package:foody_app/data/model/user.dart';
+import 'package:foody_app/globals.dart';
 import 'package:foody_app/routes/login.dart';
 import 'package:foody_app/state/login_status.dart';
 import 'package:provider/provider.dart';
@@ -13,7 +14,7 @@ class AccountLogo extends StatelessWidget {
   Widget build(BuildContext context) {
     if (context.watch<LoginStatus>().isLoading) {
       return Padding(
-        padding: const EdgeInsets.all(12.0),
+        padding: const EdgeInsets.all(Globals.standardMargin),
         child: AspectRatio(
           aspectRatio: 1,
           child: CircularProgressIndicator(
@@ -45,6 +46,7 @@ class AccountLogo extends StatelessWidget {
         const PopupMenuItem(
           value: LoginRoute.routeName,
           child: ListTile(
+            mouseCursor: SystemMouseCursors.click,
             title: Text('Login'),
             leading: Icon(Icons.login),
           ),
@@ -65,6 +67,7 @@ class AccountLogo extends StatelessWidget {
       const PopupMenuItem(
         // TODO: Value LogoutRoute.routeName,
         child: ListTile(
+          mouseCursor: SystemMouseCursors.click,
           title: Text('Logout'),
           leading: Icon(Icons.logout),
         ),
@@ -86,7 +89,11 @@ class AccountLogo extends StatelessWidget {
       for (final role in user.allowedRoles) {
         menu.add(PopupMenuItem(
           value: role.routePrefix,
-          child: Text(role.displayName),
+          child: ListTile(
+            mouseCursor: SystemMouseCursors.click,
+            title: Text(role.displayName),
+            leading: Icon(role.icon),
+          ),
         ));
       }
     }

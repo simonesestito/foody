@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-import '../data/user.dart';
+import '../data/model/user.dart';
 
 class LoginStatus extends ChangeNotifier {
   bool _isLoading = false;

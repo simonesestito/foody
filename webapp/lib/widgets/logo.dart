@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class Logo extends StatelessWidget {
+  static const _logoHeight = 28.0;
   final Color logoColor;
 
   const Logo({this.logoColor = Colors.white, Key? key}) : super(key: key);
@@ -12,7 +13,7 @@ class Logo extends StatelessWidget {
       child: Image.asset(
         'assets/images/logo.png',
         color: logoColor,
-        height: 28,
+        height: _logoHeight,
         colorBlendMode: BlendMode.srcATop,
       ),
     );

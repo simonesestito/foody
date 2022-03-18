@@ -12,11 +12,13 @@ class AccountLogo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (context.watch<LoginStatus>().isLoading) {
-      return const Padding(
-        padding: EdgeInsets.all(12.0),
+      return Padding(
+        padding: const EdgeInsets.all(12.0),
         child: AspectRatio(
           aspectRatio: 1,
-          child: CircularProgressIndicator(),
+          child: CircularProgressIndicator(
+            color: Theme.of(context).primaryTextTheme.bodyText1!.color,
+          ),
         ),
       );
     }

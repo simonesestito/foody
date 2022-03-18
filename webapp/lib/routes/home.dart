@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:foody_app/globals.dart';
 import 'package:foody_app/routes/base_route.dart';
 import 'package:foody_app/routes/signup.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'login.dart';
 
@@ -47,17 +48,14 @@ class Home extends SingleChildBaseRoute {
           ]),
           const Divider(),
           OutlinedButton.icon(
-            onPressed: () {
-              // TODO: GitHub URL
-            },
+            onPressed: () => launch('https://github.com/simonesestito/foody'),
             icon: const Icon(Icons.open_in_new),
             label: const Text('Vedi i sorgenti su GitHub'),
           ),
           SizedBox.fromSize(size: const Size(0, Globals.standardMargin)),
           OutlinedButton.icon(
-            onPressed: () {
-              // TODO: Google Docs URL
-            },
+            onPressed: () => launch(
+                'https://docs.google.com/document/d/1ZwEkWuvf-ahT-VYcy9PswgyFIt3eK8YtoOjwECuWCTM/edit?usp=sharing'),
             icon: const Icon(Icons.description),
             label: const Text('Sfoglia la documentazione del database'),
           ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:foody_app/widgets/logo.dart';
+import 'package:foody_app/widgets/snackbar.dart';
 
 void main() {
   runApp(const FoodyApp());
@@ -11,7 +12,6 @@ class FoodyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Foody App',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         brightness: Brightness.light,
@@ -46,15 +46,31 @@ class AppLayout extends StatelessWidget {
             actions: [
               IconButton(
                 onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("TODO")),
-                  );
+                  ScaffoldMessenger.of(context).showSnackBar(AppSnackbar(
+                    context: context,
+                    content: "TODO",
+                    action: SnackBarAction(label: "OK", onPressed: () {}),
+                  ));
                 },
                 icon: const Icon(Icons.account_circle),
                 tooltip: "Account",
               ),
             ],
           ),
+          SliverToBoxAdapter(
+              child: Container(
+            padding: EdgeInsets.all(8),
+            child: OutlinedButton(
+              child: const Text("Test"),
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(AppSnackbar(
+                  context: context,
+                  content: "Test n.2",
+                  action: SnackBarAction(label: "NO", onPressed: () {}),
+                ));
+              },
+            ),
+          )),
           SliverList(
             delegate: SliverChildListDelegate.fixed(
               List.generate(

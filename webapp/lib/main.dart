@@ -4,10 +4,8 @@ import 'package:foody_app/routes/admin/index.dart';
 import 'package:foody_app/routes/customer/index.dart';
 import 'package:foody_app/routes/home.dart';
 import 'package:foody_app/routes/login.dart';
-import 'package:foody_app/routes/logout.dart';
 import 'package:foody_app/routes/manager/index.dart';
 import 'package:foody_app/routes/rider/index.dart';
-import 'package:foody_app/routes/signup.dart';
 import 'package:foody_app/state/login_status.dart';
 import 'package:provider/provider.dart';
 
@@ -42,6 +40,12 @@ class FoodyApp extends StatelessWidget {
     final elevatedButtonTheme = ElevatedButtonThemeData(style: buttonStyle);
     final outlinedButtonTheme = OutlinedButtonThemeData(style: buttonStyle);
 
+    const cardTheme = CardTheme(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Globals.roundedCorner),
+      ),
+    );
+
     return MultiProvider(
       providers: [
         ChangeNotifierProvider.value(value: LoginStatus()),
@@ -57,6 +61,7 @@ class FoodyApp extends StatelessWidget {
           dividerTheme: dividerTheme,
           elevatedButtonTheme: elevatedButtonTheme,
           outlinedButtonTheme: outlinedButtonTheme,
+          cardTheme: cardTheme,
         ),
         darkTheme: ThemeData(
           brightness: Brightness.dark,
@@ -64,14 +69,13 @@ class FoodyApp extends StatelessWidget {
           dividerTheme: dividerTheme,
           elevatedButtonTheme: elevatedButtonTheme,
           outlinedButtonTheme: outlinedButtonTheme,
+          cardTheme: cardTheme,
         ),
         themeMode: ThemeMode.system,
         initialRoute: Home.routeName,
         routes: {
           Home.routeName: (_) => const Home(),
           LoginRoute.routeName: (_) => const LoginRoute(),
-          LogoutRoute.routeName: (_) => const LogoutRoute(),
-          SignUpRoute.routeName: (_) => const SignUpRoute(),
           ...adminRoutes,
           ...customerRoutes,
           ...managerRoutes,

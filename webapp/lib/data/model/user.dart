@@ -8,6 +8,7 @@ class User {
   final List<UserRole> allowedRoles = [
     UserRole.admin,
     UserRole.customer,
+    UserRole.manager,
     UserRole.rider,
   ];
 

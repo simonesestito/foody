@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:foody_app/globals.dart';
 import 'package:foody_app/routes/base_route.dart';
+import 'package:foody_app/routes/login/route.dart';
 import 'package:foody_app/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-import 'login.dart';
 
 class Home extends SingleChildBaseRoute {
   static const routeName = '/';

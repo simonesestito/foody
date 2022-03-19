@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:foody_app/globals.dart';
-import 'package:foody_app/routes/login.dart';
+import 'package:foody_app/routes/login/route.dart';
 import 'package:foody_app/state/login_status.dart';
 import 'package:provider/provider.dart';
 

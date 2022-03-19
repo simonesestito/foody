@@ -3,7 +3,7 @@ import 'package:foody_app/globals.dart';
 import 'package:foody_app/routes/admin/index.dart';
 import 'package:foody_app/routes/customer/index.dart';
 import 'package:foody_app/routes/home.dart';
-import 'package:foody_app/routes/login.dart';
+import 'package:foody_app/routes/login/route.dart';
 import 'package:foody_app/routes/manager/index.dart';
 import 'package:foody_app/routes/rider/index.dart';
 import 'package:foody_app/state/login_status.dart';

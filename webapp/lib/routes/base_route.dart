@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:foody_app/widgets/account_logo.dart';
+import 'package:foody_app/widgets/footer.dart';
 import 'package:foody_app/widgets/logo.dart';
 
 /// Base route widget
@@ -22,6 +23,7 @@ abstract class BaseRoute extends StatelessWidget {
             actions: [AccountLogo()],
           ),
           ...buildChildren(context),
+          const AppFooter(),
         ],
       ),
     );

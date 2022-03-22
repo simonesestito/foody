@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:foody_app/data/api/errors/exceptions.dart';
 
-void handleApiException(Exception err, BuildContext context) {
+void handleApiError(dynamic err, BuildContext context) {
   final String errorMessage;
 
   if (err is RedirectApiException) {

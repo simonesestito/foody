@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:foody_app/data/api/errors/handler.dart';
 import 'package:foody_app/data/api/user.dart';
 import 'package:foody_app/data/model/user.dart';
 import 'package:foody_app/utils.dart';
@@ -86,14 +87,18 @@ class SignUpForm extends StatelessWidget {
     final surname = _surnameController.text;
     final phoneNumber = _telephoneController.text;
 
-    await UserApi().registerNewUser(NewUser(
-      name: name,
-      surname: surname,
-      emailAddress: email,
-      password: password,
-      phoneNumber: phoneNumber,
-    ));
+    try {
+      await UserApi().registerNewUser(NewUser(
+        name: name,
+        surname: surname,
+        emailAddress: email,
+        password: password,
+        phoneNumber: phoneNumber,
+      ));
 
-    Navigator.of(context, rootNavigator: true).pop();
+      Navigator.of(context, rootNavigator: true).pop();
+    } catch (err) {
+      handleApiError(err, context);
+    }
   }
 }

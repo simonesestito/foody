@@ -1,5 +1,6 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
+import 'package:foody_app/data/api/errors/handler.dart';
 import 'package:foody_app/data/api/user.dart';
 import 'package:foody_app/routes/login/form/login_form.dart';
 import 'package:foody_app/routes/login/form/signup_form.dart';
@@ -52,7 +53,15 @@ class LoginMailForm extends StatelessWidget {
 
     final email = _emailController.text;
     final Widget Function(BuildContext _) nextRoute;
-    if (await UserApi().emailExists(email)) {
+
+    final bool userExists;
+    try {
+      userExists = await UserApi().emailExists(email);
+    } catch (err) {
+      return handleApiError(err, context);
+    }
+
+    if (userExists) {
       nextRoute = (_) => LoginPasswordForm(email: email);
     } else {
       nextRoute = (_) => SignUpForm(email: email);

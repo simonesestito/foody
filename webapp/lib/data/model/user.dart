@@ -1,18 +1,43 @@
 import 'package:flutter/material.dart';
 
 class User {
-  // TODO
-  final String name = 'Mario';
-  final String surname = 'Rossi';
-  final String email = 'mario@rossi.it';
-  final List<UserRole> allowedRoles = [
-    UserRole.admin,
-    UserRole.customer,
-    UserRole.manager,
-    UserRole.rider,
-  ];
+  final String? id;
+  final String name;
+  final String surname;
+  final List<String> emailAddresses;
+  final List<String> phoneNumbers;
+  final List<UserRole> allowedRoles;
+
+  const User({
+    this.id,
+    required this.name,
+    required this.surname,
+    required this.emailAddresses,
+    required this.phoneNumbers,
+    required this.allowedRoles,
+  });
 
   get fullName => '$name $surname';
+
+  get email => emailAddresses.first;
+
+  get phone => phoneNumbers.first;
+}
+
+class NewUser {
+  final String name;
+  final String surname;
+  final String emailAddress;
+  final String password;
+  final String phoneNumber;
+
+  const NewUser({
+    required this.name,
+    required this.surname,
+    required this.emailAddress,
+    required this.password,
+    required this.phoneNumber,
+  });
 }
 
 enum UserRole {

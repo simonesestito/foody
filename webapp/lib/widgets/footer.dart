@@ -18,15 +18,22 @@ class _AppFooterContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Align(
       alignment: Alignment.bottomCenter,
-      child: Container(
-        color: Colors.grey[900],
+      child: SizedBox(
         width: double.infinity,
         height: height,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          mainAxisSize: MainAxisSize.min,
+        child: Stack(
           children: const [
-            Text('Copyright (C) 2022 Simone Sestito', textScaleFactor: 0.9),
+            Align(
+              alignment: Alignment.topCenter,
+              child: Divider(height: 1),
+            ),
+            Align(
+              alignment: Alignment.center,
+              child: Text(
+                'Copyright (C) 2022 Simone Sestito',
+                textScaleFactor: 0.9,
+              ),
+            ),
           ],
         ),
       ),

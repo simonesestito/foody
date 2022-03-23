@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:foody_app/globals.dart';
 import 'package:foody_app/routes/base_route.dart';
 import 'package:foody_app/routes/login/route.dart';
@@ -47,7 +46,10 @@ class Home extends SingleChildBaseRoute {
           ),
         ].withMargin());
 
-    final illustration = SvgPicture.asset('assets/svg/rider.svg', width: 400);
+    final illustration = Image.asset(
+      'assets/images/delivery_boy_landing.png',
+      width: 400,
+    );
 
     return SliverToBoxAdapter(
       child: Padding(

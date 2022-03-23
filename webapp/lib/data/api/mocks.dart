@@ -20,25 +20,28 @@ class AuthApiImpl implements AuthApi {
       );
 
   @override
-  Future<List<UserSession>> getSessions() async => [
-        UserSession(
-          token: 'aaa',
-          userAgent: 'Chrome',
-          lastIpAddress: '1.1.1.1',
-          creationDate:
-              DateTime.now().subtract(const Duration(days: 1, hours: 2)),
-          lastUsageDate: DateTime.now(),
-          isCurrent: true,
-        ),
-        UserSession(
-          token: 'bbb',
-          userAgent: 'Firefox',
-          lastIpAddress: '1.0.0.1',
-          creationDate: DateTime.now().subtract(const Duration(days: 4)),
-          lastUsageDate: DateTime.now().subtract(const Duration(days: 2)),
-          isCurrent: false,
-        ),
-      ];
+  Future<List<UserSession>> getSessions() async {
+    await Future.delayed(const Duration(seconds: 2));
+    return [
+      UserSession(
+        token: 'aaa',
+        userAgent: 'Chrome',
+        lastIpAddress: '1.1.1.1',
+        creationDate:
+            DateTime.now().subtract(const Duration(days: 1, hours: 2)),
+        lastUsageDate: DateTime.now(),
+        isCurrent: true,
+      ),
+      UserSession(
+        token: 'bbb',
+        userAgent: 'Firefox',
+        lastIpAddress: '1.0.0.1',
+        creationDate: DateTime.now().subtract(const Duration(days: 4)),
+        lastUsageDate: DateTime.now().subtract(const Duration(days: 2)),
+        isCurrent: false,
+      ),
+    ];
+  }
 
   @override
   Future<User> login(String email, String password) async {
@@ -51,7 +54,9 @@ class AuthApiImpl implements AuthApi {
   }
 
   @override
-  Future<void> logout([String? token]) async {}
+  Future<void> logout([String? token]) async {
+    await Future.delayed(const Duration(seconds: 2));
+  }
 
   @override
   Future<User> signUp(NewUser newUser) => getMe();

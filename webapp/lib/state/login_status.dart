@@ -1,8 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:foody_app/data/api/auth.dart';
+import 'package:foody_app/data/model/user.dart';
 import 'package:foody_app/di.dart';
-
-import '../data/model/user.dart';
 
 class LoginStatus extends ChangeNotifier {
   bool _isLoading = false;

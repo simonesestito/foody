@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:foody_app/data/api/auth.dart';
 import 'package:foody_app/data/api/errors/exceptions.dart';
 import 'package:foody_app/data/api/errors/handler.dart';
-import 'package:foody_app/data/api/user.dart';
+import 'package:foody_app/di.dart';
 import 'package:foody_app/utils.dart';
 import 'package:foody_app/widgets/loading_button.dart';
 
@@ -61,7 +62,7 @@ class _LoginPasswordFormState extends State<LoginPasswordForm> {
     final password = _passwordController.text;
 
     try {
-      await UserApi().login(widget.email, password);
+      await getIt.get<AuthApi>().login(widget.email, password);
       Navigator.of(context, rootNavigator: true).pop();
     } catch (err) {
       if (err is NotLoggedInException) {

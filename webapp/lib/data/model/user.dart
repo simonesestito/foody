@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:json_annotation/json_annotation.dart';
 
+part 'user.g.dart';
+
+@JsonSerializable()
 class User {
-  final String? id;
+  final int id;
   final String name;
   final String surname;
   final List<String> emailAddresses;
@@ -9,13 +13,17 @@ class User {
   final List<UserRole> allowedRoles;
 
   const User({
-    this.id,
+    required this.id,
     required this.name,
     required this.surname,
     required this.emailAddresses,
     required this.phoneNumbers,
     required this.allowedRoles,
   });
+
+  factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
+
+  Map<String, dynamic> toJson() => _$UserToJson(this);
 
   get fullName => '$name $surname';
 
@@ -24,6 +32,7 @@ class User {
   get phone => phoneNumbers.first;
 }
 
+@JsonSerializable()
 class NewUser {
   final String name;
   final String surname;
@@ -38,6 +47,11 @@ class NewUser {
     required this.password,
     required this.phoneNumber,
   });
+
+  factory NewUser.fromJson(Map<String, dynamic> json) =>
+      _$NewUserFromJson(json);
+
+  Map<String, dynamic> toJson() => _$NewUserToJson(this);
 }
 
 enum UserRole {

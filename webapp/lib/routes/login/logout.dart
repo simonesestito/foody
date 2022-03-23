@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:foody_app/data/api/user.dart';
+import 'package:foody_app/data/api/auth.dart';
 import 'package:foody_app/di.dart';
 import 'package:foody_app/globals.dart';
 import 'package:foody_app/utils.dart';
@@ -29,7 +29,7 @@ class LogoutBottomSheet extends StatelessWidget {
               ),
               LoadingButton(
                 onTap: () async {
-                  await getIt.get<UserApi>().logout();
+                  await getIt.get<AuthApi>().logout();
                   Navigator.pop(context);
                 },
                 text: const Text('ESCI'),

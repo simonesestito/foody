@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:foody_app/data/api/user.dart';
+import 'package:foody_app/di.dart';
 import 'package:foody_app/globals.dart';
 import 'package:foody_app/utils.dart';
+import 'package:foody_app/widgets/loading_button.dart';
 
 class LogoutBottomSheet extends StatelessWidget {
   const LogoutBottomSheet({Key? key}) : super(key: key);
@@ -24,11 +27,12 @@ class LogoutBottomSheet extends StatelessWidget {
                 onPressed: () => Navigator.pop(context),
                 child: const Text('ANNULLA'),
               ),
-              ElevatedButton(
-                onPressed: () {
-                  // TODO: logout vero
+              LoadingButton(
+                onTap: () async {
+                  await getIt.get<UserApi>().logout();
+                  Navigator.pop(context);
                 },
-                child: const Text('ESCI'),
+                text: const Text('ESCI'),
               ),
             ].withMargin(),
           ),

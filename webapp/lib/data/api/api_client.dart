@@ -3,8 +3,9 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:foody_app/data/api/errors/exceptions.dart';
 import 'package:http/http.dart';
+import 'package:injectable/injectable.dart';
 
-// TODO: Dependency injection
+@injectable
 class ApiClient {
   static const httpAuthority =
       kReleaseMode ? 'foody.simonesestito.com' : 'localhost:5000';

@@ -6,3 +6,4 @@ docker-compose.debug.yml
 Dockerfile
 LICENSE
 README.md
+webapp/lib/di.config.dart

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:foody_app/di.dart';
 import 'package:foody_app/globals.dart';
 import 'package:foody_app/routes/admin/index.dart';
 import 'package:foody_app/routes/customer/index.dart';
@@ -10,6 +11,7 @@ import 'package:foody_app/state/login_status.dart';
 import 'package:provider/provider.dart';
 
 void main() {
+  configureDependencies();
   runApp(const FoodyApp());
 }
 

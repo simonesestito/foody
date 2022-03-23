@@ -12,6 +12,7 @@ RUN apt-get update -y \
 WORKDIR /app
 COPY ./webapp ./
 RUN /opt/flutter/bin/flutter pub get
+RUN /opt/flutter/bin/flutter packages pub run build_runner build
 RUN /opt/flutter/bin/flutter build web
 
 # ----------------------------

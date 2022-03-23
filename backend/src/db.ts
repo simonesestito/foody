@@ -18,16 +18,14 @@ async function withConnection<T>(action: (conn: mariadb.Connection) => Promise<T
     }
 }
 
-export namespace DB {
-    export async function select(query: string) {
-        return withConnection(conn => conn.query(query));
-    }
+export async function dbSelect(query: string) {
+    return withConnection(conn => conn.query(query));
+}
 
-    export async function insert(query: string, values?: Array<any>) {
-        return withConnection(async conn => {
-            const result = await conn.query(query, values);
-            // TODO: Handle errors
-            return Number(result.insertId);
-        });
-    }
+export async function dbInsert(query: string, values?: Array<string|number>) {
+    return withConnection(async conn => {
+        const result = await conn.query(query, values);
+        // TODO: Handle errors
+        return Number(result.insertId);
+    });
 }

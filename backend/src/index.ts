@@ -4,7 +4,7 @@ dotenv.config({ override: false });
 import express, { RequestHandler } from 'express';
 import path from 'path';
 import nocache from 'nocache';
-import { DB } from './db';
+import * as DB from './db';
 
 const PORT = process.env.PORT || 8081;
 
@@ -34,12 +34,12 @@ function wrapRoute(action: RequestHandler): RequestHandler {
 }
 
 apiRouter.get('/', wrapRoute(async (_, res) => {
-    const result = await DB.select('SELECT * FROM TestUsers ORDER BY id');
+    const result = await DB.dbSelect('SELECT * FROM TestUsers ORDER BY id');
     res.send(result);
 }));
 
 apiRouter.get('/:name', wrapRoute(async (req, res) => {
-    const newId = await DB.insert('INSERT INTO TestUsers (name) VALUES (?)', [req.params.name]);
+    const newId = await DB.dbInsert('INSERT INTO TestUsers (name) VALUES (?)', [req.params.name]);
     res.send({ newId });
 }));
 

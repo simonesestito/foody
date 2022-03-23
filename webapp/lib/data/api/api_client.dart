@@ -5,7 +5,7 @@ import 'package:foody_app/data/api/errors/exceptions.dart';
 import 'package:http/http.dart';
 import 'package:injectable/injectable.dart';
 
-@injectable
+@Injectable()
 class ApiClient {
   static const httpAuthority =
       kReleaseMode ? 'foody.simonesestito.com' : 'localhost:5000';

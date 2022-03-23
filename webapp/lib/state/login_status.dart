@@ -1,11 +1,12 @@
 import 'package:flutter/foundation.dart';
+import 'package:foody_app/data/api/auth.dart';
+import 'package:foody_app/di.dart';
 
 import '../data/model/user.dart';
 
 class LoginStatus extends ChangeNotifier {
   bool _isLoading = false;
   User? _user;
-  UserRole? _role;
 
   LoginStatus() {
     _loadAuthStatus();
@@ -15,23 +16,31 @@ class LoginStatus extends ChangeNotifier {
 
   get currentUser => _user;
 
-  get currentRole => _role;
-
   bool isLoggedIn() => _user != null;
 
-  void _loadAuthStatus() async {
+  void _loadAuthStatus() => _withLoading(() async {
+        _user = await getIt.get<AuthApi>().getMe();
+      });
+
+  Future<void> login(String email, String password) => _withLoading(() async {
+        _user = await getIt.get<AuthApi>().login(email, password);
+      });
+
+  Future<void> logout() => _withLoading(() async {
+        await getIt.get<AuthApi>().logout();
+        _user = null;
+      });
+
+  Future<void> _withLoading(Future<void> Function() action) async {
     if (_isLoading) return;
     _isLoading = true;
     notifyListeners();
 
-    // TODO: Update login status
-
-    await Future.delayed(const Duration(seconds: 1));
-    // FIXME: _user = User();
-
-    _isLoading = false;
-    notifyListeners();
+    try {
+      await action();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
   }
-
-// TODO: Add login methods
 }

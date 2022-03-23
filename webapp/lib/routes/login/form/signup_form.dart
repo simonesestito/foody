@@ -4,8 +4,10 @@ import 'package:foody_app/data/api/auth.dart';
 import 'package:foody_app/data/api/errors/handler.dart';
 import 'package:foody_app/data/model/user.dart';
 import 'package:foody_app/di.dart';
+import 'package:foody_app/state/login_status.dart';
 import 'package:foody_app/utils.dart';
 import 'package:foody_app/widgets/loading_button.dart';
+import 'package:provider/provider.dart';
 
 class SignUpForm extends StatelessWidget {
   final String email;
@@ -96,6 +98,7 @@ class SignUpForm extends StatelessWidget {
             password: password,
             phoneNumber: phoneNumber,
           ));
+      await context.read<LoginStatus>().login(email, password);
 
       Navigator.of(context, rootNavigator: true).pop();
     } catch (err) {

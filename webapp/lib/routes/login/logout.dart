@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:foody_app/data/api/auth.dart';
-import 'package:foody_app/di.dart';
 import 'package:foody_app/globals.dart';
+import 'package:foody_app/state/login_status.dart';
 import 'package:foody_app/utils.dart';
 import 'package:foody_app/widgets/loading_button.dart';
+import 'package:provider/provider.dart';
 
 class LogoutBottomSheet extends StatelessWidget {
   const LogoutBottomSheet({Key? key}) : super(key: key);
@@ -29,7 +29,7 @@ class LogoutBottomSheet extends StatelessWidget {
               ),
               LoadingButton(
                 onTap: () async {
-                  await getIt.get<AuthApi>().logout();
+                  await context.read<LoginStatus>().logout();
                   Navigator.pop(context);
                 },
                 text: const Text('ESCI'),

@@ -18,11 +18,12 @@ async function withConnection<T>(action: (conn: mariadb.Connection) => Promise<T
     }
 }
 
-export async function dbSelect(query: string) {
-    return withConnection(conn => conn.query(query));
+// eslint-ignore-next-line @typescript-eslint/no-explicit-any
+export async function dbSelect(query: string, values?: Array<string|number>): Promise<any[]> {
+    return withConnection(conn => conn.query(query, values));
 }
 
-export async function dbInsert(query: string, values?: Array<string|number>) {
+export async function dbInsert(query: string, values?: Array<string|number>): Promise<number> {
     return withConnection(async conn => {
         const result = await conn.query(query, values);
         // TODO: Handle errors

@@ -8,4 +8,4 @@ docker build -t simonesestito/foody:latest "$PROJECT_DIR"
 docker push simonesestito/foody:latest
 ssh foody ./projects-manager update foody
 # FIXME: Fix env vars processing
-ssh foody mv foody/.env.bak foody/.env
+ssh foody mv foody/.env.bak foody/.env && docker compose down && docker compose up -d

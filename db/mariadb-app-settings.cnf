@@ -20,4 +20,4 @@ max_allowed_packet=16M
 thread_stack=192K  
 thread_cache_size=8
 myisam-recover-options=BACKUP  
-max_connections=10
+max_connections=15

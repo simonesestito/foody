@@ -7,6 +7,7 @@ const connectionPool = mariadb.createPool({
     password: process.env.MYSQL_PASSWORD,
     database: process.env.MYSQL_DATABASE,
     connectionLimit: Number.parseInt(process.env.MYSQL_CONNECTIONS),
+    charset: 'utf8',
 });
 
 async function withConnection<T>(action: (conn: mariadb.Connection) => Promise<T>): Promise<T> {

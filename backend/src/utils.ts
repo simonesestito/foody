@@ -1,4 +1,7 @@
-import { RequestHandler } from "express";
+import { RequestHandler } from 'express';
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable no-loops/no-loops */
 
 export function wrapRoute(action: RequestHandler): RequestHandler {
     return (async (req, res, next) => {

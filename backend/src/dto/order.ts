@@ -1,4 +1,4 @@
-import { CartProduct } from "./cart_product";
+import { CartProduct } from './cart_product';
 
 export interface Order {
     id?: number;

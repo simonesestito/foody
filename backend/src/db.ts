@@ -18,7 +18,7 @@ async function withConnection<T>(action: (conn: mariadb.Connection) => Promise<T
     }
 }
 
-// eslint-ignore-next-line @typescript-eslint/no-explicit-any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function dbSelect(query: string, values?: Array<string|number>): Promise<any[]> {
     return withConnection(conn => conn.query(query, values));
 }

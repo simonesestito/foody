@@ -1,5 +1,5 @@
-import { GpsLocation } from "./address";
-import { Order } from "./order";
+import { GpsLocation } from './address';
+import { Order } from './order';
 
 export interface RiderService {
     id?: number;

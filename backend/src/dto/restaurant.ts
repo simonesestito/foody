@@ -1,6 +1,6 @@
-import { Address } from "./address";
-import { RestaurantMenu } from "./menu";
-import { OpeningHours } from "./opening_hours";
+import { Address } from './address';
+import { RestaurantMenu } from './menu';
+import { OpeningHours } from './opening_hours';
 
 export interface Restaurant {
     id: number;

@@ -1,10 +1,10 @@
 // See https://github.com/simonesestito/foody/blob/main/webapp/lib/data/api/restaurants.dart
 
-import { dbSelect } from "../db";
-import { Address, GpsLocation } from "../dto/address";
-import { Restaurant } from "../dto/restaurant";
+import { dbSelect } from '../db';
+import { Address, GpsLocation } from '../dto/address';
+import { Restaurant } from '../dto/restaurant';
 import express from 'express';
-import { mapGroup, wrapRoute } from "../utils";
+import { mapGroup, wrapRoute } from '../utils';
 
 export const restaurantRouter = express.Router();
 

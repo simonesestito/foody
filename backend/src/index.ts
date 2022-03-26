@@ -1,7 +1,9 @@
 import dotenv from 'dotenv';
-dotenv.config({ override: false });
+// Both environment configurations
+dotenv.config({ path: '.env', override: false });
+dotenv.config({ path: '../.env', override: true, debug: true });
 
-import express, { RequestHandler } from 'express';
+import express from 'express';
 import path from 'path';
 import nocache from 'nocache';
 import { apiRouter } from './api';

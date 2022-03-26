@@ -1,10 +1,12 @@
-dist/
-node_modules/
-db/
+backend/dist
+backend/node_modules
+db
 docker-compose.yml
-docker-compose.debug.yml
 Dockerfile
 LICENSE
 README.md
 webapp/lib/di.config.dart
-/.env
+webapp/.dart_tool
+webapp/**/*.g.dart
+webapp/build
+.git

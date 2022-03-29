@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:foody_app/data/model/address.dart';
 import 'package:foody_app/globals.dart';
 import 'package:geolocator/geolocator.dart';
 
@@ -35,7 +36,12 @@ bool phoneValidator(String value) {
 ///
 /// When the location services are not enabled or permissions
 /// are denied the `Future` will return an error.
-Future<Position> getUserGpsLocation() async {
+Future<GpsLocation> getUserGpsLocation([
+  GpsLocation defaultLocation = const GpsLocation(
+    latitude: 41.9019257,
+    longitude: 12.5147147,
+  ),
+]) async {
   bool serviceEnabled;
   LocationPermission permission;
 
@@ -45,24 +51,31 @@ Future<Position> getUserGpsLocation() async {
     // Location services are not enabled don't continue
     // accessing the position and request users of the
     // App to enable the location services.
-    return Future.error('Location services are disabled.');
+    debugPrint('Location services are disabled.');
+    return defaultLocation;
   }
 
   permission = await Geolocator.checkPermission();
   if (permission == LocationPermission.denied) {
     permission = await Geolocator.requestPermission();
     if (permission == LocationPermission.denied) {
-      return Future.error('Location permissions are denied');
+      debugPrint('Location permissions are denied');
+      return defaultLocation;
     }
   }
 
   if (permission == LocationPermission.deniedForever) {
     // Permissions are denied forever, handle appropriately.
-    return Future.error(
+    debugPrint(
         'Location permissions are permanently denied, we cannot request permissions.');
+    return defaultLocation;
   }
 
   // When we reach here, permissions are granted and we can
   // continue accessing the position of the device.
-  return await Geolocator.getCurrentPosition();
+  final position = await Geolocator.getCurrentPosition();
+  return GpsLocation(
+    latitude: position.latitude,
+    longitude: position.longitude,
+  );
 }

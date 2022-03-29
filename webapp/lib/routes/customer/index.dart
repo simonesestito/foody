@@ -9,7 +9,6 @@ import 'package:foody_app/routes/customer/customer_orders.dart';
 import 'package:foody_app/utils.dart';
 import 'package:foody_app/widgets/map.dart';
 import 'package:foody_app/widgets/snackbar.dart';
-import 'package:mapbox_gl/mapbox_gl.dart';
 
 final customerRoutes = {
   CustomerRoute.routeName: (_) => const CustomerRoute(),
@@ -47,8 +46,6 @@ class _RestaurantsMap extends StatefulWidget {
 }
 
 class _RestaurantsMapState extends State<_RestaurantsMap> {
-  final _currentLocation = const GpsLocation(
-      latitude: 41.75, longitude: 12.35); // TODO: Add detect location
   final _queryController = TextEditingController();
   String? _query;
 
@@ -74,10 +71,7 @@ class _RestaurantsMapState extends State<_RestaurantsMap> {
           height: 500,
           child: FutureBuilder<List<Restaurant>>(
             key: ValueKey(_query),
-            future: getIt.get<RestaurantsApi>().getNearRestaurants(
-                  _currentLocation,
-                  _query,
-                ),
+            future: _loadNearRestaurants(),
             builder: (context, snap) {
               if (snap.hasError) return ErrorWidget(snap.error!);
               if (!snap.hasData) {
@@ -87,9 +81,7 @@ class _RestaurantsMapState extends State<_RestaurantsMap> {
               }
 
               return AppMapboxMap<Restaurant>(
-                location: getUserGpsLocation().then(
-                  (value) => LatLng(value.latitude, value.longitude),
-                ),
+                location: snap.data!.first.address.location,
                 markers: snap.data!
                     .map((e) => e.address.location.toLatLng())
                     .toList(),
@@ -112,5 +104,16 @@ class _RestaurantsMapState extends State<_RestaurantsMap> {
     setState(() {
       _query = _queryController.text;
     });
+  }
+
+  Future<List<Restaurant>> _loadNearRestaurants() async {
+    final currentLocation = await getUserGpsLocation();
+    return getIt.get<RestaurantsApi>().getNearRestaurants(
+          GpsLocation(
+            latitude: currentLocation.latitude,
+            longitude: currentLocation.longitude,
+          ),
+          _query,
+        );
   }
 }

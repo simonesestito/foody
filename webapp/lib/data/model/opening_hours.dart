@@ -20,6 +20,23 @@ class OpeningHours {
       _$OpeningHoursFromJson(json);
 
   Map<String, dynamic> toJson() => _$OpeningHoursToJson(this);
+
+  @override
+  String toString() {
+    final stringWeekday = [
+      'Lunedi',
+      'Martedi',
+      'Mercoledi',
+      'Giovedi',
+      'Venerdi',
+      'Sabato',
+      'Domenica'
+    ][weekday];
+    const converter = _TimeOfDayJsonConverter();
+    final displayOpening = converter.toJson(openingTime);
+    final displayClosing = converter.toJson(closingTime);
+    return 'Aperto il $stringWeekday dalle $displayOpening alle $displayClosing';
+  }
 }
 
 class _TimeOfDayJsonConverter implements JsonConverter<TimeOfDay, String> {
@@ -35,5 +52,9 @@ class _TimeOfDayJsonConverter implements JsonConverter<TimeOfDay, String> {
   }
 
   @override
-  String toJson(TimeOfDay object) => '${object.hour}:${object.minute}:00';
+  String toJson(TimeOfDay object) {
+    final hoursString = object.hour.toString().padLeft(2, '0');
+    final minutesString = object.minute.toString().padLeft(2, '0');
+    return '$hoursString:$minutesString';
+  }
 }

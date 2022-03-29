@@ -6,13 +6,14 @@ import 'package:foody_app/data/model/user.dart';
 import 'package:foody_app/di.dart';
 import 'package:foody_app/routes/base_route.dart';
 import 'package:foody_app/routes/customer/customer_orders.dart';
+import 'package:foody_app/routes/customer/restaurant_details.dart';
 import 'package:foody_app/utils.dart';
 import 'package:foody_app/widgets/map.dart';
-import 'package:foody_app/widgets/snackbar.dart';
 
 final customerRoutes = {
   CustomerRoute.routeName: (_) => const CustomerRoute(),
   CustomerOrdersRoute.routeName: (_) => const CustomerOrdersRoute(),
+  RestaurantDetailsRoute.routeName: (_) => const RestaurantDetailsRoute(),
 };
 
 class CustomerRoute extends BaseRoute {
@@ -87,10 +88,8 @@ class _RestaurantsMapState extends State<_RestaurantsMap> {
                     .toList(),
                 markersData: snap.data!,
                 onMarkerTap: (restaurant) {
-                  // TODO: Add tap action
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    AppSnackbar(context: context, content: restaurant.name),
-                  );
+                  Navigator.pushNamed(context, RestaurantDetailsRoute.routeName,
+                      arguments: restaurant);
                 },
               );
             },

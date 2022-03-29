@@ -27,7 +27,8 @@ class RestaurantsApiImpl implements RestaurantsApi {
 
   @override
   Future<DetailedRestaurant> getRestaurant(int id) async {
-    throw Exception('TODO');
+    final result = await apiClient.get('/restaurant/$id');
+    return DetailedRestaurant.fromJson(result);
   }
 
   @override

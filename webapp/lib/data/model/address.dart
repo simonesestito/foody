@@ -21,6 +21,9 @@ class Address {
       _$AddressFromJson(json);
 
   Map<String, dynamic> toJson() => _$AddressToJson(this);
+
+  @override
+  String toString() => '$address, ${houseNumber ?? 'snc'}, $city';
 }
 
 @JsonSerializable()

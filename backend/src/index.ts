@@ -8,7 +8,7 @@ import path from 'path';
 import nocache from 'nocache';
 import { apiRouter } from './api';
 
-const PORT = process.env.PORT || 8081;
+const PORT = process.env.PORT || 5000;
 
 const app = express();
 app.use(express.json());

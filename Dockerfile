@@ -3,7 +3,7 @@ FROM ubuntu:22.04 AS build-flutter
 # Install Flutter
 RUN apt-get update -y \
     && apt-get install git curl wget file unzip zip xz-utils tar -y \
-    && wget https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_2.10.3-stable.tar.xz -O /flutter-sdk.tar.xz \
+    && wget https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_2.10.4-stable.tar.xz -O /flutter-sdk.tar.xz \
     && cd /opt \
     && tar xfv /flutter-sdk.tar.xz \
     && /opt/flutter/bin/flutter precache --no-ios --no-linux --no-windows --no-fuchsia --no-android --no-macos

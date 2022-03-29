@@ -279,6 +279,44 @@ SELECT id, title, restaurant
 FROM Menu
 WHERE published = FALSE;
 
+CREATE VIEW ProductWithAllergens AS
+SELECT Product.*, PA.allergen FROM Product
+LEFT JOIN ProductAllergens PA on Product.id = PA.product and Product.restaurant = PA.restaurant;
+
+CREATE VIEW RestaurantDetails AS
+    SELECT Restaurant.*,
+       OpeningHours.opening_time,
+       OpeningHours.closing_time,
+       OpeningHours.weekday,
+       RestaurantPhone.phone,
+       R.average_rating
+FROM Restaurant
+         RIGHT JOIN OpeningHours ON Restaurant.id = OpeningHours.restaurant
+         LEFT JOIN RestaurantPhone on Restaurant.id = RestaurantPhone.restaurant
+         LEFT JOIN (
+    SELECT Restaurant.id, AVG(Review.mark) as average_rating
+    FROM Restaurant
+             LEFT JOIN Review on Restaurant.id = Review.restaurant
+) R ON Restaurant.id = R.id;
+
+CREATE VIEW RestaurantsWithMenus AS
+SELECT RestaurantDetails.*,
+       Menu.title AS menu_title,
+       Menu.published AS menu_published,
+       Menu.id AS menu_id,
+       MC.id AS category_id,
+       MC.title AS category_title,
+       P.id AS product_id,
+       P.name AS product_name,
+       P.description AS product_description,
+       P.price AS product_price,
+       P.allergen
+FROM RestaurantDetails
+LEFT JOIN Menu ON Menu.restaurant = RestaurantDetails.id
+LEFT JOIN MenuCategory MC ON Menu.id = MC.menu and Menu.restaurant = MC.restaurant
+LEFT JOIN MenuCategoryContent MCC on MC.id = MCC.category and MC.menu = MCC.menu
+LEFT JOIN ProductWithAllergens P on MCC.product = P.id and MCC.restaurant = P.restaurant;
+
 
 -- Triggers
 -- TODO

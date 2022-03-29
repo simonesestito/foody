@@ -62,15 +62,11 @@ class _RestaurantsMapState extends State<_RestaurantsMap> {
             filled: true,
             prefixIcon: const Icon(Icons.restaurant),
             suffixIcon: IconButton(
-              onPressed: () {
-                setState(() {
-                  _query = _queryController.text;
-                  print('QUERY: $_query');
-                });
-              },
+              onPressed: _onSubmitSearch,
               icon: const Icon(Icons.search),
             ),
           ),
+          onFieldSubmitted: _onSubmitSearch,
         ),
         SizedBox(
           height: 500,
@@ -106,5 +102,11 @@ class _RestaurantsMapState extends State<_RestaurantsMap> {
         ),
       ],
     );
+  }
+
+  void _onSubmitSearch([String? _]) {
+    setState(() {
+      _query = _queryController.text;
+    });
   }
 }

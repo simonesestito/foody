@@ -6,8 +6,10 @@ import 'package:foody_app/data/model/user.dart';
 import 'package:foody_app/di.dart';
 import 'package:foody_app/routes/base_route.dart';
 import 'package:foody_app/routes/customer/customer_orders.dart';
+import 'package:foody_app/utils.dart';
 import 'package:foody_app/widgets/map.dart';
 import 'package:foody_app/widgets/snackbar.dart';
+import 'package:mapbox_gl/mapbox_gl.dart';
 
 final customerRoutes = {
   CustomerRoute.routeName: (_) => const CustomerRoute(),
@@ -85,7 +87,9 @@ class _RestaurantsMapState extends State<_RestaurantsMap> {
               }
 
               return AppMapboxMap<Restaurant>(
-                location: _currentLocation,
+                location: getUserGpsLocation().then(
+                  (value) => LatLng(value.latitude, value.longitude),
+                ),
                 markers: snap.data!
                     .map((e) => e.address.location.toLatLng())
                     .toList(),

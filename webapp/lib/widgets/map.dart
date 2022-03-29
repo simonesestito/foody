@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:foody_app/data/model/address.dart';
 import 'package:foody_app/globals.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 
 class AppMapboxMap<T> extends StatefulWidget {
-  final GpsLocation location;
+  final Future<LatLng> location;
   final List<LatLng> markers;
   final List<T> markersData;
   final void Function(dynamic item) onMarkerTap;
@@ -29,13 +28,14 @@ class AppMapboxMap<T> extends StatefulWidget {
 class _AppMapboxMapState<T> extends State<AppMapboxMap> {
   static const markerIcon = 'marker';
   static const symbolDataKey = 'data';
+  static const _defaultLocation = LatLng(41.9019257, 12.5147147);
   late MapboxMapController _controller;
 
   @override
   Widget build(BuildContext context) {
     return MapboxMap(
       initialCameraPosition: CameraPosition(
-        target: widget.location.toLatLng(),
+        target: _defaultLocation,
         tilt: widget.tilt,
         zoom: widget.zoom,
       ),
@@ -48,8 +48,21 @@ class _AppMapboxMapState<T> extends State<AppMapboxMap> {
     );
   }
 
-  void _onMapCreated(MapboxMapController controller) {
+  void _onMapCreated(MapboxMapController controller) async {
     _controller = controller;
+
+    try {
+      final userLocation = await widget.location;
+      await _controller.animateCamera(CameraUpdate.newCameraPosition(
+        CameraPosition(
+          target: userLocation,
+          tilt: widget.tilt,
+          zoom: widget.zoom,
+        ),
+      ));
+    } catch (e) {
+      debugPrint(e.toString());
+    }
   }
 
   void _onStyleLoaded() async {
@@ -70,13 +83,6 @@ class _AppMapboxMapState<T> extends State<AppMapboxMap> {
           .toList(),
       widget.markersData.map<Map>((value) => {symbolDataKey: value}).toList(),
     );
-    _controller.animateCamera(CameraUpdate.newCameraPosition(
-      CameraPosition(
-        target: widget.markers.first,
-        tilt: widget.tilt,
-        zoom: widget.zoom,
-      ),
-    ));
   }
 
   void _onSymbolTapped(Symbol symbol) {

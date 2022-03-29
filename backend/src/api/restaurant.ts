@@ -49,11 +49,16 @@ LIMIT 50`, [query, location.latitude, location.longitude]);
                 }
             } as Address),
             phoneNumbers: row => row.phone,
+            openingHours: row => ({
+                weekday: row.weekday,
+                openingTime: row.opening_time,
+                closingTime: row.closing_time,
+            }),
         },
         (id, parts) => ({
-            id: id as number,
+            id: Number.parseInt(id.toString()),
             name: parts.restaurant[0].name,
-            address: parts.address,
+            address: parts.address[0],
             openingHours: parts.openingHours,
             averageRating: parts.restaurant[0].averageRating,
             phoneNumbers: parts.phoneNumbers,

@@ -13,12 +13,25 @@ const PORT = process.env.PORT || 8081;
 const app = express();
 app.use(express.json());
 app.use(nocache());
+app.use(privateNetworkCors);
 app.set('etag', false);
 app.use(express.static(
     path.join(__dirname, '..', '..', 'webapp', 'build', 'web'),
     { etag: false },
 ));
 
+console.log(process.env.NODE_ENV);
+
 app.use('/api', apiRouter);
+
+function privateNetworkCors(req, res, next) {
+    if (process.env.NODE_ENV === 'development') {
+        res.set({
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Private-Network': 'true'
+        });
+    }
+    next();
+}
 
 app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}/api/`));

@@ -13,7 +13,7 @@ class Restaurant {
   final Address address;
   final List<String> phoneNumbers;
   final List<OpeningHours> openingHours;
-  final double averageMark;
+  final double? averageRating;
 
   const Restaurant({
     required this.id,
@@ -21,7 +21,7 @@ class Restaurant {
     required this.address,
     required this.phoneNumbers,
     required this.openingHours,
-    required this.averageMark,
+    required this.averageRating,
   });
 
   factory Restaurant.fromJson(Map<String, dynamic> json) =>

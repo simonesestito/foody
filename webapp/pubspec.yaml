@@ -38,6 +38,7 @@ dependencies:
   injectable: ^1.5.3
   get_it: ^7.2.0
   json_annotation: ^4.4.0
+  mapbox_gl: ^0.15.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -74,6 +75,7 @@ flutter:
   assets:
     - assets/images/logo.png
     - assets/images/delivery_boy_landing.png
+    - assets/icons/marker.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

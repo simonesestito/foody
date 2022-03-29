@@ -13,10 +13,9 @@ export function wrapRoute(action: RequestHandler): RequestHandler {
                 error: e.toString(),
             });
 
+            console.error(e, e.toString());
             if (process.env.NODE_ENV === 'development')
                 throw e;
-            else
-                console.error(e);
         }
     });
 }

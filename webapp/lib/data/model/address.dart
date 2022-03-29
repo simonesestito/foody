@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:mapbox_gl/mapbox_gl.dart';
 
 part 'address.g.dart';
 
@@ -6,11 +7,13 @@ part 'address.g.dart';
 class Address {
   final String address;
   final String? houseNumber;
+  final String city;
   final GpsLocation location;
 
   const Address({
     required this.address,
     required this.houseNumber,
+    required this.city,
     required this.location,
   });
 
@@ -34,4 +37,6 @@ class GpsLocation {
       _$GpsLocationFromJson(json);
 
   Map<String, dynamic> toJson() => _$GpsLocationToJson(this);
+
+  LatLng toLatLng() => LatLng(latitude, longitude);
 }

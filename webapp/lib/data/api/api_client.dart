@@ -7,33 +7,38 @@ import 'package:injectable/injectable.dart';
 
 @Injectable()
 class ApiClient {
-  static const httpAuthority =
+  static const _httpAuthority =
       kReleaseMode ? 'foody.simonesestito.com' : 'localhost:5000';
-  static const httpBasePath = '/api';
-  final httpClient = Client();
+  static const _httpBasePath = '/api';
+  final _httpClient = Client();
 
-  Future<String> get(String uri, [Map<String, dynamic>? queryParams]) {
-    return httpClient.get(_buildUri(uri, queryParams)).then(_handleResponse);
+  Future<dynamic> get(String uri, [Map<String, dynamic>? queryParams]) {
+    return _httpClient.get(_buildUri(uri, queryParams)).then(_handleResponse);
   }
 
-  Future<String> post(String uri, dynamic body) {
+  Future<dynamic> post(String uri, dynamic body) {
     if (body is! String) {
       body = json.encode(body);
     }
 
-    return httpClient.post(_buildUri(uri), body: body, headers: {
+    return _httpClient.post(_buildUri(uri), body: body, headers: {
       'Content-Type': 'application/json',
     }).then(_handleResponse);
   }
 
   Future<void> delete(String uri) {
-    return httpClient.delete(_buildUri(uri)).then(_handleResponse);
+    return _httpClient.delete(_buildUri(uri)).then(_handleResponse);
   }
 
-  String _handleResponse(Response response) {
+  dynamic _handleResponse(Response response) {
+    if (kDebugMode) {
+      print('HTTP Response with status: ${response.statusCode}');
+      print('Body: ${response.body}');
+    }
+
     switch (response.statusCode) {
       case 200:
-        return response.body;
+        return json.decode(response.body);
       case BadFormException.errorCode:
         throw BadFormException();
       case ConflictDataException.errorCode:
@@ -54,10 +59,14 @@ class ApiClient {
   }
 
   Uri _buildUri(String uri, [Map<String, dynamic>? queryParams]) {
+    queryParams = queryParams?.map(
+      (key, value) => MapEntry(key, [value.toString()]),
+    );
+
     if (kReleaseMode) {
-      return Uri.https(httpAuthority, httpBasePath + uri, queryParams);
+      return Uri.https(_httpAuthority, _httpBasePath + uri, queryParams);
     } else {
-      return Uri.http(httpAuthority, httpBasePath + uri, queryParams);
+      return Uri.http(_httpAuthority, _httpBasePath + uri, queryParams);
     }
   }
 }

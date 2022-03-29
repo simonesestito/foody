@@ -9,7 +9,7 @@ abstract class RestaurantsApi {
     String? query,
   );
 
-  Future<DetailedRestaurant> getRestaurant(int id);
+  Future<Restaurant> getRestaurant(int id);
 
   Future<Review> sendReview(Review review);
 

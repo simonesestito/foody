@@ -17,7 +17,7 @@ class RestaurantsApiImpl implements RestaurantsApi {
     GpsLocation location,
     String? query,
   ) async {
-    final result = await apiClient.get('/restaurant', {
+    final result = await apiClient.get('/restaurant/', {
       'latitude': location.latitude,
       'longitude': location.longitude,
       'query': query ?? '',
@@ -26,9 +26,9 @@ class RestaurantsApiImpl implements RestaurantsApi {
   }
 
   @override
-  Future<DetailedRestaurant> getRestaurant(int id) async {
+  Future<Restaurant> getRestaurant(int id) async {
     final result = await apiClient.get('/restaurant/$id');
-    return DetailedRestaurant.fromJson(result);
+    return Restaurant.fromJson(result);
   }
 
   @override

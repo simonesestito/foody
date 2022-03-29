@@ -11,14 +11,10 @@ class RestaurantDetailsRoute extends SingleChildBaseRoute {
   @override
   Widget buildChild(BuildContext context) {
     final restaurant = ModalRoute.of(context)?.settings.arguments as Restaurant;
-    // FIXME: DetailedRestaurant required
 
     return SliverToBoxAdapter(
-      child: FutureBuilder<DetailedRestaurant>(
-        future: Future.value(DetailedRestaurant(
-          restaurant: restaurant,
-          menus: [],
-        )),
+      child: FutureBuilder<Restaurant>(
+        future: Future.value(restaurant),
         builder: (context, snap) {
           if (snap.hasError) {
             return ErrorWidget(snap.error!);
@@ -28,17 +24,17 @@ class RestaurantDetailsRoute extends SingleChildBaseRoute {
             final restaurant = snap.data!;
             return Column(children: [
               Text(
-                restaurant.restaurant.name,
+                restaurant.name,
                 style: Theme.of(context).textTheme.headline5,
               ),
-              Text(restaurant.restaurant.address.toString()),
-              Text('Valutazione media: ${restaurant.restaurant.averageRating}'),
-              for (final phone in restaurant.restaurant.phoneNumbers)
+              Text(restaurant.address.toString()),
+              Text('Valutazione media: ${restaurant.averageRating}'),
+              for (final phone in restaurant.phoneNumbers)
                 Text('Telefono: $phone'),
-              for (final open in restaurant.restaurant.openingHours)
+              for (final open in restaurant.openingHours)
                 Text(open.toString()),
               Text('Menu', style: Theme.of(context).textTheme.headline5),
-              const Text('TODO'),
+              const Text('TODO'), // TODO: Show menu
             ]);
           }
         },

@@ -14,6 +14,7 @@ class Restaurant {
   final List<String> phoneNumbers;
   final List<OpeningHours> openingHours;
   final double? averageRating;
+  final List<RestaurantMenu> menus;
 
   const Restaurant({
     required this.id,
@@ -22,26 +23,11 @@ class Restaurant {
     required this.phoneNumbers,
     required this.openingHours,
     required this.averageRating,
+    required this.menus,
   });
 
   factory Restaurant.fromJson(Map<String, dynamic> json) =>
       _$RestaurantFromJson(json);
 
   Map<String, dynamic> toJson() => _$RestaurantToJson(this);
-}
-
-@JsonSerializable()
-class DetailedRestaurant {
-  final Restaurant restaurant;
-  final List<RestaurantMenu> menus;
-
-  const DetailedRestaurant({
-    required this.restaurant,
-    required this.menus,
-  });
-
-  factory DetailedRestaurant.fromJson(Map<String, dynamic> json) =>
-      _$DetailedRestaurantFromJson(json);
-
-  Map<String, dynamic> toJson() => _$DetailedRestaurantToJson(this);
 }

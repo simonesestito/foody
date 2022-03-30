@@ -34,7 +34,7 @@ class ApiClient {
 
     switch (response.statusCode) {
       case 200:
-        return json.decode(response.body);
+        return response.body.isEmpty ? null : json.decode(response.body);
       case BadFormException.errorCode:
         throw BadFormException();
       case ConflictDataException.errorCode:

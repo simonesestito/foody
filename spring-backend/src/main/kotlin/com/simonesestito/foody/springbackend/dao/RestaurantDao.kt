@@ -2,10 +2,11 @@ package com.simonesestito.foody.springbackend.dao
 
 import com.simonesestito.foody.springbackend.entity.RestaurantWithMenus
 import org.springframework.data.jpa.repository.Query
+import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface RestaurantDao : org.springframework.data.repository.Repository<RestaurantWithMenus, Int> {
+interface RestaurantDao : CrudRepository<RestaurantWithMenus, Int> {
     @Query(
         """
         SELECT *

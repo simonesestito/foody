@@ -6,7 +6,7 @@ abstract class AuthApi {
 
   Future<void> logout([String? token]);
 
-  Future<User> getMe();
+  Future<User?> getMe();
 
   Future<User> signUp(NewUser newUser);
 

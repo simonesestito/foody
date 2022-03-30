@@ -136,6 +136,26 @@ CREATE TABLE IF NOT EXISTS LoginSession
     FOREIGN KEY (user) REFERENCES User (id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS UserRole
+(
+    role VARCHAR(16) PRIMARY KEY
+);
+
+INSERT INTO UserRole (role)
+VALUES ('customer'),
+       ('admin'),
+       ('rider'),
+       ('manager');
+
+CREATE TABLE IF NOT EXISTS UserRoles
+(
+    role VARCHAR(16) NOT NULL,
+    user INT         NOT NULL,
+    PRIMARY KEY (role, user),
+    FOREIGN KEY (role) REFERENCES UserRole (role) ON UPDATE CASCADE ON DELETE NO ACTION,
+    FOREIGN KEY (user) REFERENCES User (id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
 CREATE TABLE IF NOT EXISTS Review
 (
     creation   DATETIME NOT NULL,

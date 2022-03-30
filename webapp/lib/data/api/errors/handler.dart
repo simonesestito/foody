@@ -16,6 +16,7 @@ void handleApiError(dynamic err, BuildContext context) {
   } else if (err is SocketException || err is TimeoutException) {
     errorMessage = 'Connessione a Internet assente o non funzionante';
   } else if (err is ClientException) {
+    debugPrint(err.message);
     errorMessage = 'Errore nella richiesta HTTP al server';
   } else {
     errorMessage = 'Errore imprevisto: $err';

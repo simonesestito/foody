@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:foody_app/data/api/api_client.dart';
 import 'package:foody_app/data/model/user.dart';
 import 'package:foody_app/data/model/user_session.dart';
@@ -13,57 +14,50 @@ class AuthApiImpl implements AuthApi {
   AuthApiImpl(this.apiClient);
 
   @override
-  Future<bool> emailExists(String email) async => email == 'mario@rossi.it';
+  Future<bool> emailExists(String email) async {
+    final result = await apiClient.get('/auth/mail', {'email': email});
+    return result as bool;
+  }
 
   @override
-  Future<User> getMe() async => const User(
-        id: 1,
-        name: 'Mario',
-        surname: 'Rossi',
-        emailAddresses: ['mario@rossi.it'],
-        phoneNumbers: ['333123123'],
-        allowedRoles: [UserRole.customer],
-      );
+  Future<User?> getMe() async {
+    final result = await apiClient.get('/auth/me');
+    return result == null
+        ? null
+        : User.fromJson(result as Map<String, dynamic>);
+  }
 
   @override
   Future<List<UserSession>> getSessions() async {
-    await Future.delayed(const Duration(seconds: 2));
-    return [
-      UserSession(
-        token: 'aaa',
-        userAgent: 'Chrome',
-        lastIpAddress: '1.1.1.1',
-        creationDate:
-            DateTime.now().subtract(const Duration(days: 1, hours: 2)),
-        lastUsageDate: DateTime.now(),
-        isCurrent: true,
-      ),
-      UserSession(
-        token: 'bbb',
-        userAgent: 'Firefox',
-        lastIpAddress: '1.0.0.1',
-        creationDate: DateTime.now().subtract(const Duration(days: 4)),
-        lastUsageDate: DateTime.now().subtract(const Duration(days: 2)),
-        isCurrent: false,
-      ),
-    ];
+    final result = await apiClient.get('/auth/sessions') as List<dynamic>;
+    return result.map((e) => UserSession.fromJson(e)).toList();
   }
 
   @override
   Future<User> login(String email, String password) async {
-    final user = await getMe();
-    if (email == user.email && password == 'ciao') {
-      return user;
-    } else {
+    try {
+      await apiClient.post('/auth/login', {
+        'username': email,
+        'password': password,
+      });
+    } catch (e) {
+      debugPrint(e.toString());
       throw NotLoggedInException();
     }
+
+    return (await getMe())!;
   }
 
   @override
   Future<void> logout([String? token]) async {
-    await Future.delayed(const Duration(seconds: 2));
+    final Map<String, dynamic> params = token != null ? {'token': token} : {};
+    await apiClient.post('/auth/login', params);
   }
 
   @override
-  Future<User> signUp(NewUser newUser) => getMe();
+  Future<User> signUp(NewUser newUser) async {
+    await apiClient.post('/auth/signup', newUser.toJson());
+    await login(newUser.emailAddress, newUser.password);
+    return (await getMe())!;
+  }
 }

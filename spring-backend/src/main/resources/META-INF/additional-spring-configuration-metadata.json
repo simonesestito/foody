@@ -1,0 +1,8 @@
+{
+  "properties": [
+    {
+      "name": "cors.allow-all",
+      "type": "java.lang.String",
+      "description": "Description for cors.allow-all."
+  }
+] }

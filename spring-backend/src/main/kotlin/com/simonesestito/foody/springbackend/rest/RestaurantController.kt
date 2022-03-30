@@ -1,11 +1,8 @@
 package com.simonesestito.foody.springbackend.rest
 
 import com.simonesestito.foody.springbackend.dao.RestaurantDao
-import com.simonesestito.foody.springbackend.entity.Restaurant
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import com.simonesestito.foody.springbackend.rest.errors.NotFoundException
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/restaurant")
@@ -17,5 +14,8 @@ class RestaurantController(
         @RequestParam("latitude") latitude: Double,
         @RequestParam("longitude") longitude: Double,
         @RequestParam("query", defaultValue = "") query: String,
-    ) = restaurantDao.getAll() // TODO: Apply query params
+    ) = restaurantDao.getAll("%$query%", latitude, longitude)
+
+    @GetMapping("/{id}")
+    fun getById(@PathVariable("id") id: Int) = restaurantDao.getById(id) ?: throw NotFoundException()
 }

@@ -1,5 +1,6 @@
 package com.simonesestito.foody.springbackend.config
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
@@ -8,7 +9,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
-import java.util.*
 
 
 @Configuration
@@ -29,9 +29,10 @@ class WebSecurityConfig : WebSecurityConfigurerAdapter() {
     }
 
     @Bean
+    @ConditionalOnProperty(name= ["cors.allow-all"], havingValue = "true")
     fun corsConfigurationSource(): CorsConfigurationSource? {
         val configuration = CorsConfiguration().apply {
-            allowedOrigins = listOf("http://localhost")
+            allowedOriginPatterns = listOf("http://localhost:[*]")
             allowedMethods = listOf("GET", "POST", "DELETE", "PUT")
             allowCredentials = true
         }

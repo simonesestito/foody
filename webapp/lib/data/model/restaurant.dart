@@ -30,4 +30,17 @@ class Restaurant {
       _$RestaurantFromJson(json);
 
   Map<String, dynamic> toJson() => _$RestaurantToJson(this);
+
+  List<OpeningHours> get sortedOpeningHours {
+    openingHours.sort((a, b) {
+      if (a.weekday != b.weekday) {
+        return a.weekday - b.weekday;
+      }
+
+      final aTime = a.openingTime.hour * 60 + a.openingTime.minute;
+      final bTime = b.openingTime.hour * 60 + b.openingTime.minute;
+      return aTime - bTime;
+    });
+    return openingHours;
+  }
 }

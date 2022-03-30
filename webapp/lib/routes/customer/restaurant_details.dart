@@ -54,7 +54,7 @@ class RestaurantDetailsRoute extends SingleChildBaseRoute {
           title: Text('Orari di apertura'),
           leading: Icon(Icons.calendar_today),
         ),
-        for (final open in restaurant.openingHours) Text(open.toString()),
+        for (final open in restaurant.sortedOpeningHours) Text(open.toString()),
         const Divider(),
         ..._buildMenu(restaurant.menus.firstWhere((m) => m.published), context),
       ]),

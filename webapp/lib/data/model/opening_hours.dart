@@ -35,7 +35,7 @@ class OpeningHours {
     const converter = _TimeOfDayJsonConverter();
     final displayOpening = converter.toJson(openingTime);
     final displayClosing = converter.toJson(closingTime);
-    return 'Aperto il $stringWeekday dalle $displayOpening alle $displayClosing';
+    return '$stringWeekday, $displayOpening - $displayClosing';
   }
 }
 

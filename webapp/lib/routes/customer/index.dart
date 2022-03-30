@@ -9,6 +9,7 @@ import 'package:foody_app/routes/customer/customer_orders.dart';
 import 'package:foody_app/routes/customer/restaurant_details.dart';
 import 'package:foody_app/utils.dart';
 import 'package:foody_app/widgets/map.dart';
+import 'package:foody_app/widgets/snackbar.dart';
 
 final customerRoutes = {
   CustomerRoute.routeName: (_) => const CustomerRoute(),
@@ -33,9 +34,7 @@ class CustomerRoute extends BaseRoute {
                 label: const Text('Visualizza ordini')),
           ),
         ),
-        const SliverToBoxAdapter(
-          child: _RestaurantsMap(),
-        ),
+        const SliverToBoxAdapter(child: _RestaurantsMap()),
       ];
 }
 
@@ -85,6 +84,11 @@ class _RestaurantsMapState extends State<_RestaurantsMap> {
               final GpsLocation location;
               if (snap.data!.isEmpty) {
                 location = _currentLocation!;
+                Future.microtask(
+                  () => ScaffoldMessenger.of(context).showSnackBar(
+                    AppSnackbar(content: 'Nessun risultato', context: context),
+                  ),
+                );
               } else {
                 location = snap.data!.first.address.location;
               }

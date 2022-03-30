@@ -40,3 +40,38 @@ enum Allergen {
   lupin,
   molluscs,
 }
+
+extension DisplayAllergen on Allergen {
+  String get displayName {
+    switch (this) {
+      case Allergen.cereals:
+        return 'Glutine';
+      case Allergen.crustaceans:
+        return 'Crostacei';
+      case Allergen.eggs:
+        return 'Uova';
+      case Allergen.fish:
+        return 'Pesce';
+      case Allergen.peanuts:
+        return 'Arachidi';
+      case Allergen.soybeans:
+        return 'Soia';
+      case Allergen.milk:
+        return 'Latte';
+      case Allergen.nuts:
+        return 'Frutta a guscio';
+      case Allergen.celery:
+        return 'Sedano';
+      case Allergen.mustard:
+        return 'Senape';
+      case Allergen.sesame:
+        return 'Sesamo';
+      case Allergen.sulphurDioxide:
+        return 'Solfiti';
+      case Allergen.lupin:
+        return 'Lupini';
+      case Allergen.molluscs:
+        return 'Molluschi';
+    }
+  }
+}

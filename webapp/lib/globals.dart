@@ -1,4 +1,4 @@
-import 'dart:ui';
+import 'package:flutter/material.dart';
 
 class Globals {
   Globals._();
@@ -9,6 +9,10 @@ class Globals {
 
   static const mapboxAccessToken =
       'pk.eyJ1Ijoic2ltb25lLXNlc3RpdG8iLCJhIjoiY2s5b251NzQwMDJoNzNlbnhkOXRtMGRyZSJ9.JPvm9gLEdOvsFgROr36-NQ';
+
+  static const containerConstraints = BoxConstraints(
+    maxWidth: 600.0,
+  );
 
   static const minBottomSheetHeight = 180.0;
   static const maxBottomSheetWidth = 600.0;

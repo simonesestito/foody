@@ -9,5 +9,5 @@ docker push simonesestito/foody:latest
 ssh foody ./projects-manager update foody
 # FIXME: Fix env vars processing
 ssh foody mv foody/.env.bak foody/.env
-ssh foody docker compose down
-ssh foody docker compose up -d
+ssh foody docker compose --project-directory foody down
+ssh foody docker compose --project-directory foody up -d

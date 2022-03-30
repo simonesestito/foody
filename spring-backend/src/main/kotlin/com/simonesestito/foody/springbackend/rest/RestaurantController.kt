@@ -2,12 +2,15 @@ package com.simonesestito.foody.springbackend.rest
 
 import com.simonesestito.foody.springbackend.dao.RestaurantDao
 import com.simonesestito.foody.springbackend.rest.errors.NotFoundException
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.core.env.Environment
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/restaurant")
 class RestaurantController(
     private val restaurantDao: RestaurantDao,
+    private val env: Environment,
 ) {
     @GetMapping("/")
     fun getNear(

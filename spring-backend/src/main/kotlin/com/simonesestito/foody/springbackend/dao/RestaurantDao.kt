@@ -10,6 +10,7 @@ interface RestaurantDao : org.springframework.data.repository.Repository<Restaur
         """
         SELECT *
         FROM RestaurantsWithMenus
+        WHERE name LIKE ?1
         ORDER BY DISTANCE_KM(?2, ?3, address_latitude, address_longitude)
     """, nativeQuery = true
     )

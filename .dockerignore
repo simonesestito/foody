@@ -10,3 +10,5 @@ webapp/.dart_tool
 webapp/**/*.g.dart
 webapp/build
 .git
+backend/.env
+spring-backend/.env

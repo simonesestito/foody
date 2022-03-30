@@ -17,32 +17,26 @@ RUN /opt/flutter/bin/flutter build web
 
 # ----------------------------
 
-FROM node:17.5.0 AS build-backend
+FROM gradle:7.4.1-jdk17 AS build-backend
 WORKDIR /app
 # It skips files ignored in .dockerignore
-COPY ./backend ./
+COPY ./spring-backend ./
+COPY --from=build-flutter /app/build/web ./src/main/resources/static
 
-RUN npm install && npm run build
+RUN gradle build
 
 # ----------------------------
 
-FROM node:17.5.0-alpine3.15
+FROM openjdk:17-alpine3.14
 
 LABEL name="Foody Project"
 LABEL description="Final project for Databases course of Sapienza University of Rome, Spring 2022"
 LABEL url="https://github.com/simonesestito/foody"
 LABEL mantainer="simone@simonesestito.com"
 
-ENV NODE_ENV production
-ENV PORT 8080
-
 WORKDIR /app
-COPY --from=build-flutter /app/build/web ./webapp/build/web
+COPY --from=build-backend /app/build/libs/spring-backend-0.0.1-SNAPSHOT.jar ./app.jar
 
-WORKDIR /app/backend
-COPY --from=build-backend /app/dist ./dist
-COPY ./backend/package.json .
-COPY ./backend/package-lock.json .
 # TODO: Add other runtime necessary files here
 
 # Switch to a non-root user
@@ -50,6 +44,5 @@ RUN adduser -D foody
 RUN chown -R foody:foody /app
 USER foody
 
-RUN npm install --only=prod
-EXPOSE 8080
-ENTRYPOINT [ "node", "." ]
+EXPOSE 5000
+ENTRYPOINT [ "java", "-jar", "./app.jar" ]

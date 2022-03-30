@@ -48,6 +48,7 @@ class _RestaurantsMap extends StatefulWidget {
 
 class _RestaurantsMapState extends State<_RestaurantsMap> {
   final _queryController = TextEditingController();
+  GpsLocation? _currentLocation;
   String? _query;
 
   @override
@@ -81,12 +82,20 @@ class _RestaurantsMapState extends State<_RestaurantsMap> {
                 );
               }
 
+              final GpsLocation location;
+              if (snap.data!.isEmpty) {
+                location = _currentLocation!;
+              } else {
+                location = snap.data!.first.address.location;
+              }
+
               return AppMapboxMap<Restaurant>(
-                location: snap.data!.first.address.location,
+                zoomLocation: location,
                 markers: snap.data!
                     .map((e) => e.address.location.toLatLng())
                     .toList(),
                 markersData: snap.data!,
+                userLocation: _currentLocation!,
                 onMarkerTap: (restaurant) {
                   Navigator.pushNamed(context, RestaurantDetailsRoute.routeName,
                       arguments: restaurant);
@@ -106,11 +115,11 @@ class _RestaurantsMapState extends State<_RestaurantsMap> {
   }
 
   Future<List<Restaurant>> _loadNearRestaurants() async {
-    final currentLocation = await getUserGpsLocation();
+    _currentLocation = await getUserGpsLocation();
     return getIt.get<RestaurantsApi>().getNearRestaurants(
           GpsLocation(
-            latitude: currentLocation.latitude,
-            longitude: currentLocation.longitude,
+            latitude: _currentLocation!.latitude,
+            longitude: _currentLocation!.longitude,
           ),
           _query,
         );

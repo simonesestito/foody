@@ -1,11 +1,17 @@
-import 'package:foody_app/data/api/auth.dart';
-import 'package:foody_app/data/api/errors/exceptions.dart';
+import 'package:foody_app/data/api/api_client.dart';
 import 'package:foody_app/data/model/user.dart';
 import 'package:foody_app/data/model/user_session.dart';
 import 'package:injectable/injectable.dart';
 
+import '../auth.dart';
+import '../errors/exceptions.dart';
+
 @Injectable(as: AuthApi)
 class AuthApiImpl implements AuthApi {
+  final ApiClient apiClient;
+
+  AuthApiImpl(this.apiClient);
+
   @override
   Future<bool> emailExists(String email) async => email == 'mario@rossi.it';
 

@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:foody_app/data/api/cart.dart';
+import 'package:foody_app/data/api/errors/handler.dart';
+import 'package:foody_app/data/model/cart_product.dart';
 import 'package:foody_app/data/model/menu.dart';
 import 'package:foody_app/data/model/menu_product.dart';
 import 'package:foody_app/data/model/restaurant.dart';
 import 'package:foody_app/data/model/user.dart';
+import 'package:foody_app/di.dart';
 import 'package:foody_app/routes/base_route.dart';
 import 'package:foody_app/routes/customer/index.dart';
 import 'package:foody_app/widgets/bottom_sheet.dart';
+import 'package:foody_app/widgets/snackbar.dart';
 
 class RestaurantDetailsRoute extends SingleChildBaseRoute {
   static final routeName = UserRole.customer.routePrefix + '/restaurantDetails';
@@ -97,10 +102,21 @@ class RestaurantDetailsRoute extends SingleChildBaseRoute {
                   ),
                 IconButton(
                   onPressed: () {
-                    // TODO: Add to cart
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Da aggiungere -- TODO')),
-                    );
+                    getIt
+                        .get<CartApi>()
+                        .insertInCart(
+                          CartProduct(product: product, quantity: 1),
+                        )
+                        .then((value) =>
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              AppSnackbar(
+                                content: 'Aggiunto al carrello',
+                                context: context,
+                              ),
+                            ))
+                        .catchError((err) {
+                      handleApiError(err, context);
+                    });
                   },
                   icon: const Icon(Icons.add_shopping_cart),
                 ),

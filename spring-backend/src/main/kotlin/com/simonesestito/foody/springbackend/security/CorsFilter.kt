@@ -20,7 +20,8 @@ class CorsFilter : OncePerRequestFilter() {
         }
         response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
         response.setHeader("Access-Control-Max-Age", "3600")
-        response.setHeader("Access-Control-Allow-Headers", "authorization, content-type")
+        response.setHeader("Access-Control-Allow-Headers", "authorization, content-type, cookie")
+        response.setHeader("Access-Control-Allow-Credentials", "true")
         if ("OPTIONS" == request.method) {
             response.status = HttpServletResponse.SC_OK
         } else {

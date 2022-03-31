@@ -23,17 +23,17 @@ class LoginStatus extends ChangeNotifier {
 
   Future<void> login(String email, String password) => _withLoading(() async {
         _user = await getIt.get<AuthApi>().login(email, password);
-      });
+      }, skipLoadingNotification: true);
 
   Future<void> logout() => _withLoading(() async {
         await getIt.get<AuthApi>().logout();
         _user = null;
       });
 
-  Future<void> _withLoading(Future<void> Function() action) async {
+  Future<void> _withLoading(Future<void> Function() action, { bool skipLoadingNotification = false }) async {
     if (_isLoading) return;
     _isLoading = true;
-    notifyListeners();
+    if (!skipLoadingNotification) notifyListeners();
 
     try {
       await action();

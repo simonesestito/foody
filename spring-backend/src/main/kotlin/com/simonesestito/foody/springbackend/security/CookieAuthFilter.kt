@@ -25,6 +25,8 @@ class CookieAuthFilter(
             cookie.name == AUTH_COOKIE_NAME
         }?.value
 
+        println("TOKEN COOKIE >>>>>>>>>>>> $token")
+
         if (token != null) {
             val session = sessionDao.getByToken(token)
             if (session != null) {

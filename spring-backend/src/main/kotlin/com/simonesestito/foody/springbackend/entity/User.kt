@@ -16,12 +16,17 @@ data class User(
         name = "UserPhone",
         joinColumns = [JoinColumn(name = "user")],
     ) @Column(name = "phone") var phoneNumbers: Set<String>,
-    @ElementCollection(fetch = FetchType.EAGER) @CollectionTable(
-        name = "UserRoles",
-        joinColumns = [JoinColumn(name = "user")],
-    ) @Column(name = "role") var allowedRoles: Set<String>,
+    var rider: Boolean,
+    var admin: Boolean,
 ) {
-    fun getAuthorities() = allowedRoles.map { GrantedAuthorityString(it) }
+    fun getAuthorities() = getAllowedRoles().map { GrantedAuthorityString(it) }
+
+    fun getAllowedRoles() = setOfNotNull(
+        "customer",
+        if (rider) "rider" else null,
+        if (admin) "admin" else null,
+        // TODO: Manager role
+    )
 }
 
 /**

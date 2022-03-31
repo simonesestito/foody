@@ -17,6 +17,7 @@ class LoginFormFlow extends StatelessWidget {
         width: Globals.maxFormWidth,
         height: ConstrainedCardLayout.minHeight,
         child: Navigator(
+          key: const ValueKey('LoginFormFlow'),
           initialRoute: '/',
           onGenerateInitialRoutes: (_, __) {
             return [

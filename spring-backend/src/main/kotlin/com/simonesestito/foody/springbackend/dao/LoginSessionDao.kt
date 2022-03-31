@@ -20,6 +20,9 @@ interface LoginSessionDao : CrudRepository<LoginSession, String> {
 
     fun getByToken(token: String): LoginSession?
 
+    @Query("DELETE FROM LoginSession WHERE token = ?1", nativeQuery = true)
+    @Modifying
+    @Transactional
     fun deleteByToken(token: String)
 
     @Query("UPDATE LoginSession SET last_usage = NOW() WHERE token = ?1", nativeQuery = true)

@@ -8,7 +8,7 @@ abstract class AuthApi {
 
   Future<User?> getMe();
 
-  Future<User> signUp(NewUser newUser);
+  Future<void> signUp(NewUser newUser);
 
   Future<List<UserSession>> getSessions();
 

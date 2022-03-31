@@ -37,11 +37,11 @@ class _LoadingButtonState extends State<LoadingButton> {
       setState(() {
         _isLoading = true;
         widget.onTap().then(
-          (value) => setState(() {
+          (value) => safeSetState(() {
             _isLoading = false;
           }),
           onError: (err) {
-            setState(() {
+            safeSetState(() {
               _isLoading = false;
             });
             throw err;
@@ -61,6 +61,12 @@ class _LoadingButtonState extends State<LoadingButton> {
         icon: widget.icon!,
         label: widget.text,
       );
+    }
+  }
+
+  void safeSetState(void Function() action) {
+    if (mounted) {
+      setState(action);
     }
   }
 }

@@ -58,12 +58,15 @@ class EmailAuthFilter(
         sessionDao.save(session)
 
         // Send Session cookie
-        response.addCookie(Cookie(CookieAuthFilter.AUTH_COOKIE_NAME, token).apply {
-            maxAge = 365 * 24 * 60 * 60
-            isHttpOnly = true
-            secure = request.getHeader("Host")!! != "localhost:5000"
-            path = "/api"
-        })
+        if (request.getHeader("Host") == "localhost:5000") {
+            response.addHeader("Set-Cookie", "${CookieAuthFilter.AUTH_COOKIE_NAME}=$token; Max-Age: 3600")
+        } else {
+            response.addCookie(Cookie(CookieAuthFilter.AUTH_COOKIE_NAME, token).apply {
+                maxAge = 365 * 24 * 60 * 60
+                isHttpOnly = true
+                secure = true
+            })
+        }
 
         super.successfulAuthentication(request, response, chain, authResult)
     }

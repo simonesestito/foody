@@ -2,8 +2,11 @@ package com.simonesestito.foody.springbackend.rest
 
 import com.simonesestito.foody.springbackend.dao.LoginSessionDao
 import com.simonesestito.foody.springbackend.dao.UserDao
+import com.simonesestito.foody.springbackend.entity.LoginSession
 import com.simonesestito.foody.springbackend.entity.NewUserDto
 import com.simonesestito.foody.springbackend.entity.User
+import com.simonesestito.foody.springbackend.entity.UserSessionDto
+import com.simonesestito.foody.springbackend.security.CookieAuthFilter
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.web.bind.annotation.CookieValue
@@ -27,7 +30,16 @@ class AuthController(
         userDao.getUserWithEmailAddress(email) != null
 
     @GetMapping("/sessions")
-    fun getSessions(@AuthenticationPrincipal user: User) = sessionDao.getByUserId(user.id!!)
+    fun getSessions(@AuthenticationPrincipal user: User, @CookieValue(CookieAuthFilter.AUTH_COOKIE_NAME) currentToken: String) = sessionDao.getByUserId(user.id!!).map {
+        UserSessionDto(
+            it.token,
+            it.userAgent,
+            it.lastIpAddress,
+            it.creationDate,
+            it.lastUsageDate,
+            it.token == currentToken,
+        )
+    }
 
     @GetMapping("/me")
     fun getMe(@AuthenticationPrincipal user: User?) = user
@@ -40,15 +52,16 @@ class AuthController(
             surname = newUser.surname,
             emailAddresses = setOf(newUser.emailAddress),
             phoneNumbers = setOf(newUser.phoneNumber),
-            allowedRoles = setOf("customer"),
-            hashedPassword = passwordEncoder.encode(newUser.password)
+            hashedPassword = passwordEncoder.encode(newUser.password),
+            rider = false,
+            admin = false,
         )
 
         userDao.save(user)
     }
 
-    @PostMapping("/logout")
-    fun logout(@CookieValue("foody-auth-token") currentToken: String, @RequestParam("token", required = false) requestedToken: String?) {
+    @GetMapping("/logout")
+    fun logout(@CookieValue(CookieAuthFilter.AUTH_COOKIE_NAME) currentToken: String, @RequestParam("token", required = false) requestedToken: String?) {
         sessionDao.deleteByToken(requestedToken ?: currentToken)
     }
 }

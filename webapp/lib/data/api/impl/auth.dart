@@ -51,13 +51,11 @@ class AuthApiImpl implements AuthApi {
   @override
   Future<void> logout([String? token]) async {
     final Map<String, dynamic> params = token != null ? {'token': token} : {};
-    await apiClient.post('/auth/login', params);
+    await apiClient.get('/auth/logout', params);
   }
 
   @override
-  Future<User> signUp(NewUser newUser) async {
+  Future<void> signUp(NewUser newUser) async {
     await apiClient.post('/auth/signup', newUser.toJson());
-    await login(newUser.emailAddress, newUser.password);
-    return (await getMe())!;
   }
 }

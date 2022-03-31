@@ -130,7 +130,7 @@ CREATE TABLE IF NOT EXISTS LoginSession
 (
     token      VARCHAR(60) PRIMARY KEY,
     agent      VARCHAR(255) NOT NULL,
-    ip         VARCHAR(15)  NOT NULL,
+    ip         VARCHAR(39)  NOT NULL,
     creation   DATETIME     NOT NULL DEFAULT NOW(),
     last_usage DATETIME     NOT NULL DEFAULT NOW(),
     user       INT          NOT NULL,

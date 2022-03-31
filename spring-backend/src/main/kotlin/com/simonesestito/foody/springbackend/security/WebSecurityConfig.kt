@@ -1,6 +1,5 @@
 package com.simonesestito.foody.springbackend.security
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
@@ -8,6 +7,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.security.web.access.channel.ChannelProcessingFilter
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
@@ -18,36 +18,27 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 @EnableWebSecurity
 class WebSecurityConfig(
     private val cookieAuthFilter: CookieAuthFilter,
-    private val authFilter: EmailAuthFilter,
+    private val emailAuthFilter: EmailAuthFilter,
+    private val corsFilter: CorsFilter,
 ) : WebSecurityConfigurerAdapter() {
     override fun configure(http: HttpSecurity) {
-        http.addFilterAt(cookieAuthFilter, UsernamePasswordAuthenticationFilter::class.java)
-            .addFilterAt(authFilter, UsernamePasswordAuthenticationFilter::class.java).sessionManagement {
+        http.addFilterBefore(cookieAuthFilter, UsernamePasswordAuthenticationFilter::class.java)
+            .addFilterBefore(emailAuthFilter, UsernamePasswordAuthenticationFilter::class.java)
+            .addFilterBefore(corsFilter, ChannelProcessingFilter::class.java)
+            .sessionManagement {
                 it.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            }.csrf { it.disable() }.cors {
-                // It uses corsConfigurationSource bean
+            }.csrf {
+                it.disable()
             }.authorizeRequests {
                 it.antMatchers(
                     "/api/auth/login", "/api/auth/signup", "/api/auth/mail"
                 ).permitAll()
+                it.anyRequest().permitAll()
             }.formLogin {
                 it.disable()
             }.logout {
                 it.permitAll()
             }
-    }
-
-    @Bean
-    @ConditionalOnProperty(name = ["cors.allow-all"], havingValue = "true")
-    fun corsConfigurationSource(): CorsConfigurationSource {
-        val configuration = CorsConfiguration().apply {
-            allowedOriginPatterns = listOf("http://localhost:[*]")
-            allowedMethods = listOf("GET", "POST", "DELETE", "PUT")
-            allowCredentials = true
-        }
-        return UrlBasedCorsConfigurationSource().apply {
-            registerCorsConfiguration("/**", configuration)
-        }
     }
 
     @Bean

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.simonesestito.foody.springbackend.dao.LoginSessionDao
 import com.simonesestito.foody.springbackend.entity.LoginSession
 import com.simonesestito.foody.springbackend.entity.User
+import org.slf4j.LoggerFactory
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter
@@ -23,10 +24,12 @@ class EmailAuthFilter(
     private val sessionDao: LoginSessionDao,
 ) : AbstractAuthenticationProcessingFilter(LOGIN_REQUEST_MATCHER, authManager) {
     companion object {
-        val LOGIN_REQUEST_MATCHER = AntPathRequestMatcher("/api/auth/login", "POST")
+        private val LOGIN_REQUEST_MATCHER = AntPathRequestMatcher("/api/auth/login", "POST")
         const val USERNAME_BODY_KEY = "username"
         const val PASSWORD_BODY_KEY = "password"
     }
+
+    private val log = LoggerFactory.getLogger(EmailAuthFilter::class.java)
 
     override fun attemptAuthentication(
         request: HttpServletRequest, response: HttpServletResponse
@@ -39,27 +42,26 @@ class EmailAuthFilter(
         return try {
             authenticationManager.authenticate(token)
         } catch (e: Exception) {
-            println(e)
+            log.error("Authentication attempt failed", e)
             throw e
         }
     }
 
     override fun successfulAuthentication(
-        request: HttpServletRequest?, response: HttpServletResponse?, chain: FilterChain?, authResult: Authentication?
+        request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain?, authResult: Authentication?
     ) {
-        println(authResult)
         val user = authResult?.principal as User
         val token = generateSafeToken()
         val session = LoginSession(
-            token, request?.getHeader("User-Agent") ?: "", request?.ipAddress() ?: "", Date(), Date(), user,
+            token, request.getHeader("User-Agent") ?: "", request.ipAddress() ?: "", Date(), Date(), user,
         )
         sessionDao.save(session)
 
         // Send Session cookie
-        response!!.addCookie(Cookie(CookieAuthFilter.AUTH_COOKIE_NAME, token).apply {
-            maxAge = 3600
+        response.addCookie(Cookie(CookieAuthFilter.AUTH_COOKIE_NAME, token).apply {
+            maxAge = 365 * 24 * 60 * 60
             isHttpOnly = true
-            secure = request!!.getHeader("Host")!! != "localhost:5000"
+            secure = request.getHeader("Host")!! != "localhost:5000"
             path = "/api"
         })
 

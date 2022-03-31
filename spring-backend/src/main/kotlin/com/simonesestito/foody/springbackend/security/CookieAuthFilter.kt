@@ -1,6 +1,7 @@
 package com.simonesestito.foody.springbackend.security
 
 import com.simonesestito.foody.springbackend.dao.LoginSessionDao
+import org.springframework.core.annotation.Order
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken
 import org.springframework.stereotype.Component

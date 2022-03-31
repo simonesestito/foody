@@ -12,7 +12,8 @@ interface LoginSessionDao : CrudRepository<LoginSession, String> {
     @Query(
         """
         SELECT *
-        FROM LoginSession 
+        FROM LoginSession
+        JOIN User U on U.id = LoginSession.user
         WHERE user = ?1
     """, nativeQuery = true
     )

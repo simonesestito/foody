@@ -33,6 +33,7 @@ class WebSecurityConfig(
                 it.antMatchers(
                     "/api/auth/login", "/api/auth/signup", "/api/auth/mail"
                 ).permitAll()
+                it.antMatchers("/api/**").authenticated()
                 it.anyRequest().permitAll()
             }.formLogin {
                 it.disable()

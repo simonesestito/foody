@@ -12,12 +12,15 @@ class CartApiImpl implements CartApi {
 
   @override
   Future<List<CartProduct>> getCart() async {
-    final result = await apiClient.get('/customer/cart') as List<dynamic>;
+    final result = await apiClient.get('/customer/cart/') as List<dynamic>;
     return result.map((json) => CartProduct.fromJson(json)).toList();
   }
 
   @override
   Future<void> insertInCart(CartProduct cartProduct) async {
-    await apiClient.post('/customer/cart', cartProduct.toJson());
+    await apiClient.post('/customer/cart/', {
+      'product': cartProduct.product.id,
+      'quantity': cartProduct.quantity,
+    });
   }
 }

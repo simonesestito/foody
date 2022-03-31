@@ -101,22 +101,21 @@ class RestaurantDetailsRoute extends SingleChildBaseRoute {
                     icon: const Icon(Icons.info_outline),
                   ),
                 IconButton(
-                  onPressed: () {
-                    getIt
-                        .get<CartApi>()
-                        .insertInCart(
-                          CartProduct(product: product, quantity: 1),
-                        )
-                        .then((value) =>
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              AppSnackbar(
-                                content: 'Aggiunto al carrello',
-                                context: context,
-                              ),
-                            ))
-                        .catchError((err) {
+                  onPressed: () async {
+                    try {
+                      await getIt.get<CartApi>().insertInCart(CartProduct(
+                            product: product,
+                            quantity: 1,
+                          ));
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        AppSnackbar(
+                          content: 'Aggiunto al carrello',
+                          context: context,
+                        ),
+                      );
+                    } catch (err) {
                       handleApiError(err, context);
-                    });
+                    }
                   },
                   icon: const Icon(Icons.add_shopping_cart),
                 ),

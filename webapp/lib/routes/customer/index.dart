@@ -5,6 +5,7 @@ import 'package:foody_app/data/model/restaurant.dart';
 import 'package:foody_app/data/model/user.dart';
 import 'package:foody_app/di.dart';
 import 'package:foody_app/routes/base_route.dart';
+import 'package:foody_app/routes/customer/cart.dart';
 import 'package:foody_app/routes/customer/customer_orders.dart';
 import 'package:foody_app/routes/customer/restaurant_details.dart';
 import 'package:foody_app/utils.dart';
@@ -15,6 +16,7 @@ final customerRoutes = {
   CustomerRoute.routeName: (_) => const CustomerRoute(),
   CustomerOrdersRoute.routeName: (_) => const CustomerOrdersRoute(),
   RestaurantDetailsRoute.routeName: (_) => const RestaurantDetailsRoute(),
+  CartRoute.routeName: (_) => const CartRoute(),
 };
 
 class CustomerRoute extends BaseRoute {
@@ -32,6 +34,16 @@ class CustomerRoute extends BaseRoute {
                 },
                 icon: const Icon(Icons.receipt_long),
                 label: const Text('Visualizza ordini')),
+          ),
+        ),
+        SliverToBoxAdapter(
+          child: Align(
+            child: OutlinedButton.icon(
+                onPressed: () {
+                  Navigator.pushNamed(context, CartRoute.routeName);
+                },
+                icon: const Icon(Icons.shopping_cart),
+                label: const Text('Visualizza carrello')),
           ),
         ),
         const SliverToBoxAdapter(child: _RestaurantsMap()),

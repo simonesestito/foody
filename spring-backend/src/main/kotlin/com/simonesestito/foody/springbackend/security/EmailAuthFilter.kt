@@ -55,16 +55,18 @@ class EmailAuthFilter(
         val session = LoginSession(
             token, request.getHeader("User-Agent") ?: "", request.ipAddress() ?: "", Date(), Date(), user,
         )
+        println("SAVING Token $token")
         sessionDao.save(session)
 
         // Send Session cookie
         if (request.getHeader("Host") == "localhost:5000") {
-            response.addHeader("Set-Cookie", "${CookieAuthFilter.AUTH_COOKIE_NAME}=$token; Max-Age: 3600")
+            response.addHeader("Set-Cookie", "${CookieAuthFilter.AUTH_COOKIE_NAME}=$token; Max-Age: 3600; Path=/api")
         } else {
             response.addCookie(Cookie(CookieAuthFilter.AUTH_COOKIE_NAME, token).apply {
                 maxAge = 365 * 24 * 60 * 60
                 isHttpOnly = true
                 secure = true
+                path = "/api"
             })
         }
 

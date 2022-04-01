@@ -51,8 +51,8 @@ CREATE TABLE IF NOT EXISTS Product
     name        VARCHAR(255) NOT NULL,
     description VARCHAR(255),
     price       FLOAT(10, 2) NOT NULL CHECK (price > 0),
-    restaurant  INT          NOT NULL,
-    FOREIGN KEY (restaurant) REFERENCES Restaurant (id) ON UPDATE CASCADE ON DELETE NO ACTION
+    restaurant  INT,
+    FOREIGN KEY (restaurant) REFERENCES Restaurant (id) ON UPDATE CASCADE ON DELETE SET NULL
 );
 
 CREATE TABLE IF NOT EXISTS MenuCategoryContent
@@ -208,7 +208,7 @@ VALUES (100),
 CREATE TABLE IF NOT EXISTS RestaurantOrder
 (
     id                   INT PRIMARY KEY AUTO_INCREMENT,
-    status               INT                   DEFAULT 100,
+    status               INT          NOT NULL DEFAULT 100,
     creation             DATETIME     NOT NULL DEFAULT NOW(),
     notes                VARCHAR(255),
     address_street       VARCHAR(255) NOT NULL,
@@ -218,7 +218,7 @@ CREATE TABLE IF NOT EXISTS RestaurantOrder
     address_longitude    FLOAT(10, 6) NOT NULL,
     user                 INT,
     rider_service        INT,
-    FOREIGN KEY (status) REFERENCES OrderStatus (id) ON UPDATE CASCADE ON DELETE SET NULL,
+    FOREIGN KEY (status) REFERENCES OrderStatus (id) ON UPDATE CASCADE ON DELETE NO ACTION,
     FOREIGN KEY (user) REFERENCES User (id) ON UPDATE CASCADE ON DELETE SET NULL,
     FOREIGN KEY (rider_service) REFERENCES RiderService (id) ON UPDATE CASCADE ON DELETE SET NULL
 );
@@ -229,8 +229,8 @@ CREATE TABLE IF NOT EXISTS OrderContent
     restaurant       INT NOT NULL,
     restaurant_order INT,
     quantity         INT NOT NULL CHECK (quantity > 0 AND quantity < 10),
-    FOREIGN KEY (product) REFERENCES Product (id) ON UPDATE CASCADE ON DELETE NO ACTION,
-    FOREIGN KEY (restaurant_order) REFERENCES RestaurantOrder (id) ON UPDATE CASCADE ON DELETE NO ACTION,
+    FOREIGN KEY (product) REFERENCES Product (id) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (restaurant_order) REFERENCES RestaurantOrder (id) ON UPDATE CASCADE ON DELETE CASCADE,
     PRIMARY KEY (product, restaurant, restaurant_order)
 );
 

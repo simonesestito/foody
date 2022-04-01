@@ -23,4 +23,9 @@ class CartApiImpl implements CartApi {
       'quantity': cartProduct.quantity,
     });
   }
+
+  @override
+  Future<void> removeFromCart(CartProduct cartProduct) async {
+    await apiClient.delete('/customer/cart/${cartProduct.product.id}');
+  }
 }

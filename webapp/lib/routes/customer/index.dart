@@ -16,7 +16,7 @@ final customerRoutes = {
   CustomerRoute.routeName: (_) => const CustomerRoute(),
   CustomerOrdersRoute.routeName: (_) => const CustomerOrdersRoute(),
   RestaurantDetailsRoute.routeName: (_) => const RestaurantDetailsRoute(),
-  CartRoute.routeName: (_) => const CartRoute(),
+  CartRoute.routeName: (_) => CartRoute(),
 };
 
 class CustomerRoute extends BaseRoute {

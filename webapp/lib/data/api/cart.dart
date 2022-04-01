@@ -4,4 +4,6 @@ abstract class CartApi {
   Future<List<CartProduct>> getCart();
 
   Future<void> insertInCart(CartProduct cartProduct);
+
+  Future<void> removeFromCart(CartProduct cartProduct);
 }

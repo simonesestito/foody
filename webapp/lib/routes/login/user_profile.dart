@@ -135,9 +135,15 @@ class _UserSessionsState extends State<_UserSessions> {
       for (final session in _sessions)
         ListTile(
           leading: session.isCurrent
-              ? const Icon(Icons.admin_panel_settings)
+              ? const Tooltip(
+                  child: Icon(Icons.admin_panel_settings),
+                  message: 'Sessione corrente',
+                )
               : const Icon(Icons.key),
-          title: Text(session.userAgent + ' - ' + session.lastIpAddress),
+          title: Tooltip(
+            child: Text(session.lastIpAddress),
+            message: session.userAgent,
+          ),
           subtitle: Text(
             'Creato: ${session.creationDate}\nUltimo utilizzo: ${session.lastUsageDate}',
           ),

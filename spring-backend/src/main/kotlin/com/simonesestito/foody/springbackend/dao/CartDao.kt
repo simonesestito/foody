@@ -25,4 +25,12 @@ interface CartDao : CrudRepository<Cart, Int> {
     @Modifying
     @Transactional
     fun insertProduct(user: Int, product: Int, quantity: Int)
+
+    @Query("""
+        DELETE FROM Cart
+        WHERE user = ?1 AND product = ?2
+    """, nativeQuery = true)
+    @Modifying
+    @Transactional
+    fun deleteProduct(user: Int, product: Int)
 }

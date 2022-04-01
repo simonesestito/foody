@@ -120,7 +120,7 @@ CREATE TABLE IF NOT EXISTS Cart
 (
     user     INT NOT NULL,
     product  INT NOT NULL,
-    quantity INT NOT NULL CHECK ( quantity > 0 ),
+    quantity INT NOT NULL CHECK ( quantity > 0 AND quantity <= 10 ),
     FOREIGN KEY (user) REFERENCES User (id) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (product) REFERENCES Product (id) ON UPDATE CASCADE ON DELETE CASCADE,
     PRIMARY KEY (user, product)

@@ -5,6 +5,7 @@ import com.simonesestito.foody.springbackend.dao.LoginSessionDao
 import com.simonesestito.foody.springbackend.entity.LoginSession
 import com.simonesestito.foody.springbackend.entity.User
 import org.slf4j.LoggerFactory
+import org.springframework.http.HttpStatus
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter
@@ -70,6 +71,11 @@ class EmailAuthFilter(
             })
         }
 
+        response.status = HttpStatus.OK.value()
+
+        // Remove auth success handler, which performs redirect
+        setAuthenticationSuccessHandler { _, _, _ -> }
+
         super.successfulAuthentication(request, response, chain, authResult)
     }
 
@@ -79,5 +85,6 @@ class EmailAuthFilter(
         return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes)
     }
 
-    private fun HttpServletRequest.ipAddress() = getHeader("X-Forwarded-For") ?: remoteAddr
+    private fun HttpServletRequest.ipAddress() =
+        getHeader("X-Forwarded-For")?.split(", ")?.firstOrNull() ?: remoteAddr
 }

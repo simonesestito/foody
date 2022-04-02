@@ -5,6 +5,8 @@ import 'package:foody_app/data/model/cart_product.dart';
 import 'package:foody_app/data/model/user.dart';
 import 'package:foody_app/di.dart';
 import 'package:foody_app/routes/base_route.dart';
+import 'package:foody_app/routes/customer/order_confirm.dart';
+import 'package:foody_app/widgets/snackbar.dart';
 
 class ProductAndController {
   final CartProduct product;
@@ -58,7 +60,38 @@ class _ProductsListState extends State<_ProductsList> {
                   ))
               .toList();
 
+          final sum = snap.data!
+              .map((e) => e.product.price * e.quantity)
+              .reduce((value, element) => value + element);
+
           return Column(children: [
+            Text(
+              'Totale: €' + sum.toStringAsFixed(2),
+              style: Theme.of(context).textTheme.headline5,
+            ),
+            OutlinedButton.icon(
+              onPressed: () {
+                if (snap.data?.isEmpty != false) {
+                  ScaffoldMessenger.of(context).showSnackBar(AppSnackbar(
+                    context: context,
+                    content: 'Il carrello è vuoto',
+                  ));
+                } else if (snap.data!
+                        .map((e) => e.product.restaurant)
+                        .toSet()
+                        .length >
+                    1) {
+                  ScaffoldMessenger.of(context).showSnackBar(AppSnackbar(
+                    context: context,
+                    content: 'Ci sono prodotti di ristoranti diversi',
+                  ));
+                } else {
+                  Navigator.pushNamed(context, OrderConfirm.routeName);
+                }
+              },
+              icon: const Icon(Icons.check),
+              label: const Text('Conferma ordine'),
+            ),
             for (final e in _productsWithController)
               ListTile(
                 title: Text(

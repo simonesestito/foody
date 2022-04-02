@@ -1,15 +1,16 @@
+import 'package:foody_app/data/model/address.dart';
 import 'package:foody_app/data/model/order.dart';
 
 abstract class CustomerOrdersApi {
-  Future<List<Order>> getOrders();
+  Future<List<Order>> getMyOrders();
 
-  Future<Order> getOrder(int orderId);
+  Future<Order> getOrder(int id);
 
-  Future<Order> postOrder(Order order);
+  Future<void> postOrder(Address shippingAddress);
 
   Future<void> deleteOrder(Order order);
 
   Future<List<Order>> getRestaurantOrders(int restaurantId);
 
-  Future<Order> updateOrderState(int orderId, OrderState state);
+  Future<void> updateOrderState(int orderId, OrderState state);
 }

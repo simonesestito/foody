@@ -9,6 +9,7 @@ class MenuProduct {
   final String? description;
   final double price;
   final List<Allergen> allergens;
+  final int restaurant;
 
   const MenuProduct({
     this.id,
@@ -16,6 +17,7 @@ class MenuProduct {
     required this.description,
     required this.price,
     required this.allergens,
+    required this.restaurant,
   });
 
   factory MenuProduct.fromJson(Map<String, dynamic> json) =>

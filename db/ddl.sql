@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS Restaurant
     name                 VARCHAR(255) NOT NULL,
     published            BOOLEAN      NOT NULL DEFAULT TRUE,
     address_street       VARCHAR(255) NOT NULL,
-    address_house_number VARCHAR(10),
+    address_house_number VARCHAR(10) CHECK (address_house_number IS NULL OR address_house_number RLIKE '/^[1-9]\d*(?:[ -\/]?(?:[a-zA-Z]+|[1-9]\d*))?$'),
     address_city         VARCHAR(64)  NOT NULL,
     address_latitude     FLOAT(10, 6) NOT NULL,
     address_longitude    FLOAT(10, 6) NOT NULL
@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS Restaurant
 
 CREATE TABLE IF NOT EXISTS RestaurantPhone
 (
-    phone      VARCHAR(14) NOT NULL,
+    phone      VARCHAR(14) NOT NULL CHECK (phone RLIKE '(^[+][0-9]+\ )?([0-9]{3}\-[0-9]{3}\-[0-9]{4})(\ x[0-9]+$)?'),
     restaurant INT         NOT NULL,
     FOREIGN KEY (restaurant) REFERENCES Restaurant (id) ON UPDATE CASCADE ON DELETE CASCADE,
     PRIMARY KEY (phone, restaurant)
@@ -105,14 +105,14 @@ CREATE TABLE IF NOT EXISTS User
 CREATE TABLE IF NOT EXISTS UserEmail
 (
     user  INT NOT NULL,
-    email VARCHAR(255) PRIMARY KEY,
+    email VARCHAR(255) PRIMARY KEY CHECK (email RLIKE '^[a-zA-Z0-9][a-zA-Z0-9._-]*@[a-zA-Z0-9][a-zA-Z0-9._-]*\\.[a-zA-Z]{2,4}$'),
     FOREIGN KEY (user) REFERENCES User (id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS UserPhone
 (
     user  INT NOT NULL,
-    phone VARCHAR(14) PRIMARY KEY,
+    phone VARCHAR(14) PRIMARY KEY CHECK (phone RLIKE '(^[+][0-9]+\ )?([0-9]{3}\-[0-9]{3}\-[0-9]{4})(\ x[0-9]+$)?'),
     FOREIGN KEY (user) REFERENCES User (id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
@@ -212,7 +212,7 @@ CREATE TABLE IF NOT EXISTS RestaurantOrder
     creation             DATETIME     NOT NULL DEFAULT NOW(),
     notes                VARCHAR(255),
     address_street       VARCHAR(255) NOT NULL,
-    address_house_number VARCHAR(10),
+    address_house_number VARCHAR(10) CHECK (address_house_number IS NULL OR address_house_number RLIKE '/^[1-9]\d*(?:[ -\/]?(?:[a-zA-Z]+|[1-9]\d*))?$'),
     address_city         VARCHAR(64)  NOT NULL,
     address_latitude     FLOAT(10, 6) NOT NULL,
     address_longitude    FLOAT(10, 6) NOT NULL,

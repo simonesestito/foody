@@ -226,12 +226,11 @@ CREATE TABLE IF NOT EXISTS RestaurantOrder
 CREATE TABLE IF NOT EXISTS OrderContent
 (
     product          INT NOT NULL,
-    restaurant       INT NOT NULL,
     restaurant_order INT,
     quantity         INT NOT NULL CHECK (quantity > 0 AND quantity < 10),
     FOREIGN KEY (product) REFERENCES Product (id) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (restaurant_order) REFERENCES RestaurantOrder (id) ON UPDATE CASCADE ON DELETE CASCADE,
-    PRIMARY KEY (product, restaurant, restaurant_order)
+    PRIMARY KEY (product, restaurant_order)
 );
 
 -- Views

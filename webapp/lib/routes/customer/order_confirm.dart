@@ -137,7 +137,8 @@ class OrderConfirm extends SingleChildBaseRoute {
             title: Text(
                 'Confermi l\'indirizzo e la posizione sulla mappa?\n$address'),
             content: Image.network(
-                'https://api.mapbox.com/styles/v1/mapbox/${Theme.of(context).brightness == Brightness.dark ? 'dark-v10' : 'streets-v11'}/static/${address.location.latitude},${address.location.longitude},16.5/600x300?access_token=pk.eyJ1Ijoic2ltb25lLXNlc3RpdG8iLCJhIjoiY2s5b251NzQwMDJoNzNlbnhkOXRtMGRyZSJ9.JPvm9gLEdOvsFgROr36-NQ'),
+              'https://api.mapbox.com/styles/v1/mapbox/${Theme.of(context).brightness == Brightness.dark ? 'dark-v10' : 'streets-v11'}/static/pin-s+555555(${address.location.latitude},${address.location.longitude})/${address.location.latitude},${address.location.longitude},16.5/600x300?access_token=pk.eyJ1Ijoic2ltb25lLXNlc3RpdG8iLCJhIjoiY2s5b251NzQwMDJoNzNlbnhkOXRtMGRyZSJ9.JPvm9gLEdOvsFgROr36-NQ',
+            ),
             actions: [
               LoadingButton(
                 onTap: () => _onAddressConfirm(context, address),

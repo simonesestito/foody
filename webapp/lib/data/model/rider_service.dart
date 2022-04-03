@@ -11,7 +11,6 @@ class RiderService {
   final GpsLocation lastLocation;
   final DateTime start;
   final DateTime? end;
-  final List<Order> orders;
 
   const RiderService({
     this.id,
@@ -19,7 +18,6 @@ class RiderService {
     required this.lastLocation,
     required this.start,
     this.end,
-    required this.orders,
   });
 
   get isActive => end == null;

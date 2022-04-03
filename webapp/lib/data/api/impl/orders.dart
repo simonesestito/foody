@@ -25,7 +25,7 @@ class CustomerOrdersApiImpl implements CustomerOrdersApi {
 
   @override
   Future<List<Order>> getMyOrders() async {
-    final result = await apiClient.get('/customer/orders') as List<dynamic>;
+    final result = await apiClient.get('/customer/orders/') as List<dynamic>;
     return result.map((e) => Order.fromJson(e)).toList();
   }
 
@@ -38,7 +38,7 @@ class CustomerOrdersApiImpl implements CustomerOrdersApi {
 
   @override
   Future<void> postOrder(Address shippingAddress) async {
-    await apiClient.post('/customer/orders', shippingAddress.toJson());
+    await apiClient.post('/customer/orders/', shippingAddress.toJson());
   }
 
   @override

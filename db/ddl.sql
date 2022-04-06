@@ -273,8 +273,149 @@ FROM RestaurantDetails
 
 
 -- Triggers
--- TODO
+CREATE TRIGGER IF NOT EXISTS orario_apertura_sovrapposto_insert
+    BEFORE INSERT
+    ON OpeningHours
+    FOR EACH ROW
+BEGIN
+    -- Check sulla sovrapposizione di orari
+    IF EXISTS(SELECT *
+              FROM OpeningHours
+              WHERE restaurant = NEW.restaurant
+                AND weekday = NEW.weekday
+                AND (opening_time BETWEEN NEW.opening_time AND NEW.closing_time OR
+                     closing_time BETWEEN NEW.opening_time AND NEW.closing_time)) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Conflitto nel nuovo orario, si presenta sovrapposizione';
+    END IF;
+END;
 
+CREATE TRIGGER IF NOT EXISTS orario_apertura_sovrapposto_update
+    BEFORE UPDATE
+    ON OpeningHours
+    FOR EACH ROW
+BEGIN
+    -- Check sulla sovrapposizione di orari
+    IF EXISTS(SELECT *
+              FROM OpeningHours
+              WHERE restaurant = NEW.restaurant
+                AND weekday = NEW.weekday
+                AND opening_time <> OLD.opening_time
+                AND (opening_time BETWEEN NEW.opening_time AND NEW.closing_time OR
+                     closing_time BETWEEN NEW.opening_time AND NEW.closing_time)) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Conflitto nel nuovo orario, si presenta sovrapposizione';
+    END IF;
+END;
+
+CREATE TRIGGER IF NOT EXISTS ordinazione_singolo_ristorante_insert
+    BEFORE INSERT
+    ON OrderContent
+    FOR EACH ROW
+BEGIN
+    IF (SELECT COUNT(DISTINCT Product.restaurant)
+        FROM OrderContent,
+             Product
+        WHERE OrderContent.product = Product.id) > 1 THEN
+           SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Un ordine non deve contenere prodotti di ristoranti diversi';
+    END IF;
+END;
+
+CREATE TRIGGER IF NOT EXISTS contenuto_categoria_stesso_ristorante
+    BEFORE INSERT
+    ON MenuCategoryContent
+    FOR EACH ROW
+BEGIN
+    IF EXISTS(SELECT *
+              FROM MenuCategoryContent
+                       JOIN MenuCategory MC on MenuCategoryContent.category = MC.id
+                       JOIN Menu M on MC.menu = M.id
+              WHERE M.restaurant <> (SELECT Product.restaurant FROM Product WHERE Product.id = NEW.product)) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT =
+                'Una categoria deve contenere prodotti dello stesso ristorante del menù';
+    END IF;
+END;
+
+CREATE TRIGGER IF NOT EXISTS recensione_da_cliente
+    BEFORE INSERT
+    ON Review
+    FOR EACH ROW
+BEGIN
+    IF NOT EXISTS(SELECT *
+                  FROM RestaurantOrder
+                           JOIN OrderContent OC on RestaurantOrder.id = OC.restaurant_order
+                           JOIN Product P on OC.product = P.id
+                  WHERE RestaurantOrder.user = NEW.user
+                    AND P.restaurant = NEW.restaurant
+                    AND RestaurantOrder.status >= 400) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT =
+                'Una recensione può essere scritta solo su ristoranti presso cui sono stati fatti ordini consegnati';
+    END IF;
+END;
+
+CREATE TRIGGER IF NOT EXISTS menu_pubblicato_non_vuoto_insert
+    BEFORE INSERT
+    ON Menu
+    FOR EACH ROW
+BEGIN
+    IF NEW.published = 1 THEN
+        -- Rimuovi categorie vuote
+        DELETE
+        FROM MenuCategory
+        WHERE menu = NEW.id
+          AND id NOT IN (
+            -- Categorie con almeno un prodotto
+            SELECT MenuCategory.id
+            FROM MenuCategory
+                     JOIN MenuCategoryContent MCC on MenuCategory.id = MCC.category);
+    END IF;
+    
+    -- Controlla che sia rimasta una categoria
+    IF NOT EXISTS(SELECT * FROM MenuCategory WHERE menu = NEW.id) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Impossibile pubblicare un menu vuoto';
+    END IF;
+END;
+
+CREATE TRIGGER IF NOT EXISTS menu_pubblicato_non_vuoto_update
+    BEFORE UPDATE
+    ON Menu
+    FOR EACH ROW
+BEGIN
+    IF NEW.published = 1 AND OLD.published = 0 THEN
+        -- Rimuovi categorie vuote
+        DELETE
+        FROM MenuCategory
+        WHERE menu = NEW.id
+          AND id NOT IN (
+            -- Categorie con almeno un prodotto
+            SELECT MenuCategory.id
+            FROM MenuCategory
+                     JOIN MenuCategoryContent MCC on MenuCategory.id = MCC.category);
+    END IF;
+    
+    -- Controlla che sia rimasta almeno una categoria
+    IF NOT EXISTS(SELECT * FROM MenuCategory WHERE menu = NEW.id) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Impossibile pubblicare un menu vuoto';
+    END IF;
+END;
+
+CREATE TRIGGER ristorante_max_menu_pubblicato_insert
+    AFTER INSERT
+    ON Menu
+    FOR EACH ROW
+BEGIN
+    IF NEW.published = 1 THEN
+        UPDATE Menu SET published = FALSE WHERE restaurant = NEW.restaurant AND id <> NEW.id;
+    END IF;
+END;
+
+CREATE TRIGGER ristorante_max_menu_pubblicato_update
+    AFTER UPDATE
+    ON Menu
+    FOR EACH ROW
+BEGIN
+    IF NEW.published = 1 THEN
+        UPDATE Menu SET published = FALSE WHERE restaurant = NEW.restaurant AND id <> NEW.id;
+    END IF;
+END;
 
 -- Apply the haversine formula to calculate
 -- the distance between 2 points on Earth in KMs

@@ -12,13 +12,14 @@ class SqlExceptionHandler {
     private val logger = LoggerFactory.getLogger(SqlExceptionHandler::class.java)
 
     @ExceptionHandler(SQLException::class)
-    fun handleSqlException(error: SQLException): ResponseEntity<Any> {
+    fun handleSqlException(error: SQLException): ResponseEntity<String?> {
         logger.error("SQL Exception with code ${error.errorCode}, and state ${error.sqlState}", error)
         val status = when(error.errorCode) {
             1064 -> HttpStatus.INTERNAL_SERVER_ERROR
             4025 -> HttpStatus.BAD_REQUEST
+            45000 -> HttpStatus.BAD_REQUEST
             else -> HttpStatus.CONFLICT
         }
-        return ResponseEntity.status(status).build()
+        return ResponseEntity.status(status).body(error.message)
     }
 }

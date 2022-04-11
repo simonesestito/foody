@@ -10,9 +10,9 @@ interface RestaurantDao : CrudRepository<RestaurantWithMenus, Int> {
     @Query(
         """
         SELECT *
-        FROM RestaurantsWithMenus
-        WHERE name LIKE ?1
-        ORDER BY DISTANCE_KM(?2, ?3, address_latitude, address_longitude)
+        FROM RistorantiConMenu
+        WHERE nome LIKE ?1
+        ORDER BY DISTANCE_KM(?2, ?3, indirizzo_latitudine, indirizzo_longitudine)
     """, nativeQuery = true
     )
     fun getAll(namePattern: String, latitude: Double, longitude: Double): Set<RestaurantWithMenus>
@@ -20,7 +20,7 @@ interface RestaurantDao : CrudRepository<RestaurantWithMenus, Int> {
     @Query(
         """
         SELECT *
-        FROM RestaurantsWithMenus
+        FROM RistorantiConMenu
         WHERE id LIKE ?1 
         """, nativeQuery = true
     )

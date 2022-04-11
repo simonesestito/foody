@@ -5,9 +5,9 @@ import javax.persistence.*
 @Entity
 data class Menu(
     @Id var id: Int,
-    var title: String,
-    var restaurant: Int,
-    var published: Boolean,
+    @Column(name = "titolo") var title: String,
+    @Column(name = "ristorante") var restaurant: Int,
+    @Column(name = "pubblicato") var published: Boolean,
     @OneToMany(mappedBy = "menu")
     var categories: Set<MenuCategory>
 )

@@ -14,12 +14,12 @@ interface OrdersDao : CrudRepository<RestaurantOrder, Int> {
     @Query(
         """
         SELECT *
-        FROM RestaurantOrder
-        INNER JOIN User ON User.id = RestaurantOrder.user = User.id
-        LEFT JOIN RiderService AS RS on User.id = RS.user
-        LEFT JOIN OrderContent AS OC on RestaurantOrder.id = OC.restaurant_order
-        LEFT JOIN Product AS P on OC.product = P.id
-        WHERE RestaurantOrder.user = ?1 
+        FROM OrdineRistorante
+        INNER JOIN Utente ON Utente.id = OrdineRistorante.utente = Utente.id
+        LEFT JOIN ServizioRider ON Utente.id = ServizioRider.utente
+        LEFT JOIN ContenutoOrdine ON OrdineRistorante.id = ContenutoOrdine.ordine_ristorante
+        LEFT JOIN Prodotto ON ContenutoOrdine.prodotto = Prodotto.id
+        WHERE OrdineRistorante.utente = ?1 
     """, nativeQuery = true
     )
     fun getAllByUserId(userId: Int): Set<RestaurantOrder>
@@ -41,8 +41,8 @@ class OrdersService(
     ) {
         session.createNativeQuery(
             """
-        INSERT INTO RestaurantOrder
-        (notes, address_street, address_house_number, address_city, address_latitude, address_longitude, user, rider_service)
+        INSERT INTO OrdineRistorante
+        (note, indirizzo_via, indirizzo_civico, indirizzo_citta, indirizzo_latitudine, indirizzo_longitudine, utente, servizio_rider)
         VALUES
         (?1, ?2, ?3, ?4, ?5, ?6, ?7, NULL)
         """.trimIndent()
@@ -61,11 +61,11 @@ class OrdersService(
 
         session.createNativeQuery(
             """
-        INSERT INTO OrderContent (product, restaurant_order, quantity)
-        SELECT product, ?1, quantity 
-        FROM Cart, Product
-        WHERE Cart.product = Product.id
-        AND user = ?2
+        INSERT INTO ContenutoOrdine (prodotto, ordine_ristorante, quantita)
+        SELECT prodotto, ?1, quantita 
+        FROM Carrello, Prodotto
+        WHERE Carrello.prodotto = Prodotto.id
+        AND utente = ?2
         """.trimIndent()
         )
             .setParameter(1, orderId)
@@ -74,7 +74,7 @@ class OrdersService(
 
         session.createNativeQuery(
             """
-            DELETE FROM Cart WHERE user = ?1
+            DELETE FROM Carrello WHERE utente = ?1
         """.trimIndent()
         )
             .setParameter(1, customerId)

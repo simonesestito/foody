@@ -3,24 +3,24 @@ package com.simonesestito.foody.springbackend.entity
 import java.util.*
 import javax.persistence.*
 
-@Entity
+@Entity(name = "ServizioRider")
 data class RiderService(
     @Id var id: Int,
     @ManyToOne
-    @JoinColumn(name = "user")
+    @JoinColumn(name = "utente")
     var user: User,
-    @Column(name = "begin_time")
+    @Column(name = "ora_inizio")
     var start: Date,
-    @Column(name = "end_time", nullable = true)
+    @Column(name = "ora_fine", nullable = true)
     var end: Date?,
     @AttributeOverrides(
-        AttributeOverride(name = "latitude", column = Column(name = "begin_latitude")),
-        AttributeOverride(name = "longitude", column = Column(name = "begin_longitude")),
+        AttributeOverride(name = "latitude", column = Column(name = "latitudine_inizio")),
+        AttributeOverride(name = "longitude", column = Column(name = "longitudine_inizio")),
     )
     var startLocation: Location,
     @AttributeOverrides(
-        AttributeOverride(name = "latitude", column = Column(name = "end_latitude")),
-        AttributeOverride(name = "longitude", column = Column(name = "end_longitude")),
+        AttributeOverride(name = "latitude", column = Column(name = "latitudine_fine")),
+        AttributeOverride(name = "longitude", column = Column(name = "longitudine_fine")),
     )
     var lastLocation: Location
 )

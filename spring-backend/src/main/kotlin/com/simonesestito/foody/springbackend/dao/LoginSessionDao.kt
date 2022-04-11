@@ -12,21 +12,21 @@ interface LoginSessionDao : CrudRepository<LoginSession, String> {
     @Query(
         """
         SELECT *
-        FROM LoginSession
-        JOIN User U on U.id = LoginSession.user
-        WHERE user = ?1
+        FROM SessioneLogin
+        JOIN Utente on Utente.id = SessioneLogin.utente
+        WHERE utente = ?1
     """, nativeQuery = true
     )
     fun getByUserId(userId: Int): Set<LoginSession>
 
     fun getByToken(token: String): LoginSession?
 
-    @Query("DELETE FROM LoginSession WHERE token = ?1", nativeQuery = true)
+    @Query("DELETE FROM SessioneLogin WHERE token = ?1", nativeQuery = true)
     @Modifying
     @Transactional
     fun deleteByToken(token: String)
 
-    @Query("UPDATE LoginSession SET last_usage = NOW() WHERE token = ?1", nativeQuery = true)
+    @Query("UPDATE SessioneLogin SET ultimo_uso = NOW() WHERE token = ?1", nativeQuery = true)
     @Modifying
     @Transactional
     fun refreshSession(token: String)

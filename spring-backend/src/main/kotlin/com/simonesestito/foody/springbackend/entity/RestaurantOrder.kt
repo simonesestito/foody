@@ -4,36 +4,36 @@ import org.hibernate.annotations.Immutable
 import java.util.*
 import javax.persistence.*
 
-@Entity
+@Entity(name = "OrdineRistorante")
 data class RestaurantOrder(
     @Id var id: Int,
-    var status: Int,
-    var creation: Date,
-    var notes: String?,
+    @Column(name = "stato") var status: Int,
+    @Column(name = "creazione") var creation: Date,
+    @Column(name = "note") var notes: String?,
     @Embedded var address: Address,
     @ManyToOne
-    @JoinColumn(name = "user")
+    @JoinColumn(name = "utente")
     var user: User,
     @ManyToOne
-    @JoinColumn(name = "rider_service")
+    @JoinColumn(name = "servizio_rider")
     var riderService: RiderService,
     @OneToMany
-    @JoinColumn(name = "restaurant_order")
+    @JoinColumn(name = "ordine_ristorante")
     var orderContent: Set<OrderContent>,
 )
 
-@Entity
+@Entity(name = "ContenutoOrdine")
 @Immutable
 data class OrderContent(
     @EmbeddedId var id: OrderProductId,
     @ManyToOne
-    @JoinColumn(name = "product", insertable = false, updatable = false)
+    @JoinColumn(name = "prodotto", insertable = false, updatable = false)
     var product: Product,
-    var quantity: Int,
+    @Column(name = "quantita") var quantity: Int,
 )
 
 @Embeddable
 data class OrderProductId(
-    var product: Int,
-    @Column(name = "restaurant_order") var restaurantOrder: Int,
+    @Column(name = "prodotto") var product: Int,
+    @Column(name = "ordine_ristorante") var restaurantOrder: Int,
 ) : java.io.Serializable

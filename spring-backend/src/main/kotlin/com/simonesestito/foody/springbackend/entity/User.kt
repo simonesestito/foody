@@ -2,27 +2,27 @@ package com.simonesestito.foody.springbackend.entity
 
 import javax.persistence.*
 
-@Entity
+@Entity(name = "Utente")
 data class User(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY) var id: Int?,
-    var name: String,
-    var surname: String,
+    @Column(name = "nome") var name: String,
+    @Column(name = "cognome") var surname: String,
     @Column(name = "password") var hashedPassword: String,
     @ElementCollection(fetch = FetchType.EAGER) @CollectionTable(
-        name = "UserEmail",
-        joinColumns = [JoinColumn(name = "user")],
+        name = "EmailUtente",
+        joinColumns = [JoinColumn(name = "utente")],
     ) @Column(name = "email") var emailAddresses: Set<String>,
     @ElementCollection(fetch = FetchType.EAGER) @CollectionTable(
-        name = "UserPhone",
-        joinColumns = [JoinColumn(name = "user")],
-    ) @Column(name = "phone") var phoneNumbers: Set<String>,
+        name = "TelefonoUtente",
+        joinColumns = [JoinColumn(name = "utente")],
+    ) @Column(name = "telefono") var phoneNumbers: Set<String>,
     var rider: Boolean,
     var admin: Boolean,
 ) {
     fun getAuthorities() = getAllowedRoles().map { GrantedAuthorityString(it) }
 
     fun getAllowedRoles() = setOfNotNull(
-        "customer",
+        "cliente",
         if (rider) "rider" else null,
         if (admin) "admin" else null,
         // TODO: Manager role

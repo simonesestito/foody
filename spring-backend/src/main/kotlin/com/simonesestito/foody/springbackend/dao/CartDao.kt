@@ -11,24 +11,24 @@ import javax.transaction.Transactional
 interface CartDao : CrudRepository<Cart, Int> {
     @Query("""
         SELECT *
-        FROM Cart
-        INNER JOIN Product P on Cart.product = P.id
-        WHERE user = ?1
+        FROM Carrello
+        INNER JOIN Prodotto ON Prodotto.id = Carrello.prodotto
+        WHERE utente = ?1
     """, nativeQuery = true)
     fun getAllByUser(user: Int): Set<Cart>
 
     @Query("""
-        INSERT INTO Cart (user, product, quantity)
+        INSERT INTO Carrello (utente, prodotto, quantita)
         VALUES (?1, ?2, ?3)
-        ON DUPLICATE KEY UPDATE quantity = ?3
+        ON DUPLICATE KEY UPDATE quantita = ?3
     """, nativeQuery = true)
     @Modifying
     @Transactional
     fun insertProduct(user: Int, product: Int, quantity: Int)
 
     @Query("""
-        DELETE FROM Cart
-        WHERE user = ?1 AND product = ?2
+        DELETE FROM Carrello
+        WHERE utente = ?1 AND prodotto = ?2
     """, nativeQuery = true)
     @Modifying
     @Transactional

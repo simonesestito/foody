@@ -8,10 +8,11 @@ import org.springframework.stereotype.Repository
 @Repository
 interface UserDao : CrudRepository<User, Int> {
     @Query("""
-        SELECT *
-        FROM User
-        LEFT JOIN UserEmail AS UE on User.id = UE.user
-        WHERE UE.email = ?1
+        SELECT Utente.*
+        FROM Utente
+        LEFT JOIN EmailUtente ON Utente.id = EmailUtente.utente
+        LEFT JOIN TelefonoUtente ON Utente.id = TelefonoUtente.utente
+        WHERE EmailUtente.email = ?1
     """, nativeQuery = true)
     fun getUserWithEmailAddress(email: String): User?
 }

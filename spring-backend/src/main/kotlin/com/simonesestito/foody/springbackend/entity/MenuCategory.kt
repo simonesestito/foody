@@ -2,16 +2,16 @@ package com.simonesestito.foody.springbackend.entity
 
 import javax.persistence.*
 
-@Entity
+@Entity(name = "CategoriaMenu")
 data class MenuCategory(
     @Id var id: Int,
     var menu: Int,
-    var title: String,
+    @Column(name = "titolo") var title: String,
     @ManyToMany
-    @JoinTable(name = "MenuCategoryContent", joinColumns = [
-        JoinColumn(name="category")
+    @JoinTable(name = "ContenutoCategoriaMenu", joinColumns = [
+        JoinColumn(name="categoria")
     ], inverseJoinColumns = [
-        JoinColumn(name = "product")
+        JoinColumn(name = "prodotto")
     ])
     var products: Set<Product>
 )

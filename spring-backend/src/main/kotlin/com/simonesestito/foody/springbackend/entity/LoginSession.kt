@@ -8,15 +8,15 @@ import javax.persistence.Id
 import javax.persistence.JoinColumn
 import javax.persistence.ManyToOne
 
-@Entity
+@Entity(name = "SessioneLogin")
 data class LoginSession(
     @Id var token: String,
     @Column(name = "agent") var userAgent: String,
     @Column(name = "ip") var lastIpAddress: String,
-    @Column(name = "creation") var creationDate: Date,
-    @Column(name = "last_usage") var lastUsageDate: Date,
+    @Column(name = "creazione") var creationDate: Date,
+    @Column(name = "ultimo_uso") var lastUsageDate: Date,
     @ManyToOne
-    @JoinColumn(name = "user")
+    @JoinColumn(name = "utente")
     var user: User
 )
 

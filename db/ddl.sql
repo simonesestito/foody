@@ -418,6 +418,37 @@ BEGIN
     END IF;
 END;
 
+CREATE TRIGGER affidamento_consegna_max_consegne_per_servizio
+    BEFORE UPDATE
+    ON OrdineRistorante
+    FOR EACH ROW
+BEGIN
+    IF EXISTS(SELECT ServizioRider.id
+              FROM ServizioRider
+                       JOIN OrdineRistorante ON ServizioRider.id = OrdineRistorante.servizio_rider
+              WHERE OrdineRistorante.stato = 300
+                AND ServizioRider.ora_fine IS NULL
+              GROUP BY ServizioRider.id
+              HAVING COUNT(DISTINCT OrdineRistorante.id) > 1) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Più ordini in consegna presenti per lo stesso servizio del rider';
+    END IF;
+END;
+
+CREATE TRIGGER utente_rider_max_servizi_in_corso
+    BEFORE INSERT 
+    ON ServizioRider
+    FOR EACH ROW
+BEGIN
+    IF EXISTS(SELECT Utente.id
+              FROM ServizioRider
+                       JOIN Utente ON ServizioRider.utente = Utente.id
+              WHERE ServizioRider.ora_fine IS NULL -- In corso
+              GROUP BY Utente.id
+              HAVING COUNT(DISTINCT ServizioRider.id) > 1) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Esiste già un servizio in corso per il rider';
+    END IF;
+END;
+
 
 -- Apply the haversine formula to calculate
 -- the distance between 2 points on Earth in KMs

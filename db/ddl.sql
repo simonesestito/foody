@@ -1,334 +1,334 @@
-CREATE TABLE IF NOT EXISTS Restaurant
+CREATE TABLE IF NOT EXISTS Ristorante
 (
-    id                   INT PRIMARY KEY AUTO_INCREMENT,
-    name                 VARCHAR(255) NOT NULL,
-    published            BOOLEAN      NOT NULL DEFAULT TRUE,
-    address_street       VARCHAR(255) NOT NULL,
-    address_house_number VARCHAR(10) CHECK (address_house_number IS NULL OR address_house_number RLIKE '/^[1-9]\d*(?:[ -\/]?(?:[a-zA-Z]+|[1-9]\d*))?$'),
-    address_city         VARCHAR(64)  NOT NULL,
-    address_latitude     FLOAT(10, 6) NOT NULL,
-    address_longitude    FLOAT(10, 6) NOT NULL
+    id                    INT PRIMARY KEY AUTO_INCREMENT,
+    nome                  VARCHAR(255) NOT NULL,
+    pubblicato            BOOLEAN      NOT NULL DEFAULT TRUE,
+    indirizzo_via         VARCHAR(255) NOT NULL,
+    indirizzo_civico      VARCHAR(10) CHECK (indirizzo_civico IS NULL OR
+                                             indirizzo_civico RLIKE '^([1-9][0-9]*)([-/]?[a-zA-z]*)?$'),
+    indirizzo_citta       VARCHAR(64)  NOT NULL,
+    indirizzo_latitudine  FLOAT(10, 6) NOT NULL,
+    indirizzo_longitudine FLOAT(10, 6) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS RestaurantPhone
+CREATE TABLE IF NOT EXISTS TelefonoRistorante
 (
-    phone      VARCHAR(14) NOT NULL CHECK (phone RLIKE '(^[+][0-9]+\ )?([0-9]{3}\-[0-9]{3}\-[0-9]{4})(\ x[0-9]+$)?'),
-    restaurant INT         NOT NULL,
-    FOREIGN KEY (restaurant) REFERENCES Restaurant (id) ON UPDATE CASCADE ON DELETE CASCADE,
-    PRIMARY KEY (phone, restaurant)
+    telefono   VARCHAR(14) NOT NULL CHECK (telefono RLIKE '^[+]?([0-9]{6}[0-9]*)$'),
+    ristorante INT         NOT NULL,
+    FOREIGN KEY (ristorante) REFERENCES Ristorante (id) ON UPDATE CASCADE ON DELETE CASCADE,
+    PRIMARY KEY (telefono, ristorante)
 );
 
-CREATE TABLE IF NOT EXISTS OpeningHours
+CREATE TABLE IF NOT EXISTS OrariDiApertura
 (
-    weekday      INT  NOT NULL CHECK (weekday >= 0 AND weekday <= 6),
-    opening_time TIME NOT NULL,
-    closing_time TIME NOT NULL,
-    restaurant   INT  NOT NULL,
-    FOREIGN KEY (restaurant) REFERENCES Restaurant (id) ON UPDATE CASCADE ON DELETE CASCADE,
-    PRIMARY KEY (weekday, restaurant, opening_time)
+    giorno     INT  NOT NULL CHECK (giorno >= 0 AND giorno <= 6),
+    apertura   TIME NOT NULL,
+    chiusura   TIME NOT NULL,
+    ristorante INT  NOT NULL,
+    FOREIGN KEY (ristorante) REFERENCES Ristorante (id) ON UPDATE CASCADE ON DELETE CASCADE,
+    PRIMARY KEY (giorno, ristorante, apertura)
 );
 
 CREATE TABLE IF NOT EXISTS Menu
 (
     id         INT PRIMARY KEY AUTO_INCREMENT,
-    title      VARCHAR(255) NOT NULL,
-    published  BOOLEAN      NOT NULL DEFAULT FALSE,
-    restaurant INT          NOT NULL,
-    FOREIGN KEY (restaurant) REFERENCES Restaurant (id) ON UPDATE CASCADE ON DELETE CASCADE
+    titolo     VARCHAR(255) NOT NULL,
+    pubblicato BOOLEAN      NOT NULL DEFAULT FALSE,
+    ristorante INT          NOT NULL,
+    FOREIGN KEY (ristorante) REFERENCES Ristorante (id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS MenuCategory
+CREATE TABLE IF NOT EXISTS CategoriaMenu
 (
-    id         INT PRIMARY KEY AUTO_INCREMENT,
-    title      VARCHAR(255) NOT NULL,
-    menu       INT          NOT NULL,
+    id     INT PRIMARY KEY AUTO_INCREMENT,
+    titolo VARCHAR(255) NOT NULL,
+    menu   INT          NOT NULL,
     FOREIGN KEY (menu) REFERENCES Menu (id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS Product
+CREATE TABLE IF NOT EXISTS Prodotto
 (
     id          INT PRIMARY KEY AUTO_INCREMENT,
-    name        VARCHAR(255) NOT NULL,
-    description VARCHAR(255),
-    price       FLOAT(10, 2) NOT NULL CHECK (price > 0),
-    restaurant  INT,
-    FOREIGN KEY (restaurant) REFERENCES Restaurant (id) ON UPDATE CASCADE ON DELETE SET NULL
+    nome        VARCHAR(255) NOT NULL,
+    descrizione VARCHAR(255),
+    prezzo      FLOAT(10, 2) NOT NULL CHECK (prezzo > 0),
+    ristorante  INT,
+    FOREIGN KEY (ristorante) REFERENCES Ristorante (id) ON UPDATE CASCADE ON DELETE SET NULL
 );
 
-CREATE TABLE IF NOT EXISTS MenuCategoryContent
+CREATE TABLE IF NOT EXISTS ContenutoCategoriaMenu
 (
-    category INT NOT NULL,
-    product  INT NOT NULL,
-    FOREIGN KEY (category) REFERENCES MenuCategory (id) ON UPDATE CASCADE ON DELETE CASCADE,
-    FOREIGN KEY (product) REFERENCES Product (id) ON UPDATE CASCADE ON DELETE CASCADE
+    categoria INT NOT NULL,
+    prodotto  INT NOT NULL,
+    FOREIGN KEY (categoria) REFERENCES CategoriaMenu (id) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (prodotto) REFERENCES Prodotto (id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS Allergen
+CREATE TABLE IF NOT EXISTS Allergene
 (
-    name VARCHAR(100) PRIMARY KEY
+    nome VARCHAR(100) PRIMARY KEY
 );
-INSERT INTO Allergen (name)
-VALUES ('cereals'),
-       ('crustaceans'),
-       ('eggs'),
-       ('fish'),
-       ('peanuts'),
-       ('soybeans'),
-       ('milk'),
-       ('nuts'),
-       ('celery'),
-       ('mustard'),
-       ('sesame'),
-       ('sulphurDioxide'),
-       ('lupin'),
-       ('molluscs');
+INSERT INTO Allergene (nome)
+VALUES ('cereali'),
+       ('crostacei'),
+       ('uova'),
+       ('pesce'),
+       ('arachidi'),
+       ('soia'),
+       ('latte'),
+       ('noci'),
+       ('sedano'),
+       ('senape'),
+       ('sesamo'),
+       ('solfiti'),
+       ('lupini'),
+       ('molluschi');
 
-CREATE TABLE IF NOT EXISTS ProductAllergens
+CREATE TABLE IF NOT EXISTS AllergeniProdotto
 (
-    product  INT          NOT NULL,
-    allergen VARCHAR(100) NOT NULL,
-    FOREIGN KEY (product) REFERENCES Product (id) ON UPDATE CASCADE ON DELETE CASCADE,
-    FOREIGN KEY (allergen) REFERENCES Allergen (name) ON UPDATE CASCADE ON DELETE CASCADE,
-    PRIMARY KEY (product, allergen)
+    prodotto  INT          NOT NULL,
+    allergene VARCHAR(100) NOT NULL,
+    FOREIGN KEY (prodotto) REFERENCES Prodotto (id) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (allergene) REFERENCES Allergene (nome) ON UPDATE CASCADE ON DELETE CASCADE,
+    PRIMARY KEY (prodotto, allergene)
 );
 
-CREATE TABLE IF NOT EXISTS User
+CREATE TABLE IF NOT EXISTS Utente
 (
     id       INT PRIMARY KEY AUTO_INCREMENT,
-    name     VARCHAR(255) NOT NULL,
-    surname  VARCHAR(255) NOT NULL,
+    nome     VARCHAR(255) NOT NULL,
+    cognome  VARCHAR(255) NOT NULL,
     password VARCHAR(60)  NOT NULL,
     rider    BOOLEAN      NOT NULL DEFAULT FALSE,
     admin    BOOLEAN      NOT NULL DEFAULT FALSE
 );
 
-CREATE TABLE IF NOT EXISTS UserEmail
+CREATE TABLE IF NOT EXISTS EmailUtente
 (
-    user  INT NOT NULL,
-    email VARCHAR(255) PRIMARY KEY CHECK (email RLIKE '^[a-zA-Z0-9][a-zA-Z0-9._-]*@[a-zA-Z0-9][a-zA-Z0-9._-]*\\.[a-zA-Z]{2,4}$'),
-    FOREIGN KEY (user) REFERENCES User (id) ON UPDATE CASCADE ON DELETE CASCADE
+    utente INT NOT NULL,
+    email  VARCHAR(255) PRIMARY KEY CHECK (email RLIKE
+                                           '^[a-zA-Z0-9][a-zA-Z0-9._-]*@[a-zA-Z0-9][a-zA-Z0-9._-]*\\.[a-zA-Z]{2,4}$'),
+    FOREIGN KEY (utente) REFERENCES Utente (id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS UserPhone
+CREATE TABLE IF NOT EXISTS TelefonoUtente
 (
-    user  INT NOT NULL,
-    phone VARCHAR(14) PRIMARY KEY CHECK (phone RLIKE '(^[+][0-9]+\ )?([0-9]{3}\-[0-9]{3}\-[0-9]{4})(\ x[0-9]+$)?'),
-    FOREIGN KEY (user) REFERENCES User (id) ON UPDATE CASCADE ON DELETE CASCADE
+    utente   INT NOT NULL,
+    telefono VARCHAR(14) PRIMARY KEY CHECK (telefono RLIKE
+                                            '^[+]?([0-9]{6}[0-9]*)$'),
+    FOREIGN KEY (utente) REFERENCES Utente (id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS Cart
+CREATE TABLE IF NOT EXISTS Carrello
 (
-    user     INT NOT NULL,
-    product  INT NOT NULL,
-    quantity INT NOT NULL CHECK ( quantity > 0 AND quantity <= 10 ),
-    FOREIGN KEY (user) REFERENCES User (id) ON UPDATE CASCADE ON DELETE CASCADE,
-    FOREIGN KEY (product) REFERENCES Product (id) ON UPDATE CASCADE ON DELETE CASCADE,
-    PRIMARY KEY (user, product)
+    utente   INT NOT NULL,
+    prodotto INT NOT NULL,
+    quantita INT NOT NULL CHECK ( quantita > 0 AND quantita <= 10 ),
+    FOREIGN KEY (utente) REFERENCES Utente (id) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (prodotto) REFERENCES Prodotto (id) ON UPDATE CASCADE ON DELETE CASCADE,
+    PRIMARY KEY (utente, prodotto)
 );
 
-CREATE TABLE IF NOT EXISTS LoginSession
+CREATE TABLE IF NOT EXISTS SessioneLogin
 (
     token      VARCHAR(60) PRIMARY KEY,
     agent      VARCHAR(255) NOT NULL,
     ip         VARCHAR(39)  NOT NULL,
-    creation   DATETIME     NOT NULL DEFAULT NOW(),
-    last_usage DATETIME     NOT NULL DEFAULT NOW(),
-    user       INT          NOT NULL,
-    FOREIGN KEY (user) REFERENCES User (id) ON UPDATE CASCADE ON DELETE CASCADE
+    creazione  DATETIME     NOT NULL DEFAULT NOW(),
+    ultimo_uso DATETIME     NOT NULL DEFAULT NOW(),
+    utente     INT          NOT NULL,
+    FOREIGN KEY (utente) REFERENCES Utente (id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS UserRole
+CREATE TABLE IF NOT EXISTS RuoloUtente
 (
-    role VARCHAR(16) PRIMARY KEY
+    ruolo VARCHAR(16) PRIMARY KEY
 );
 
-INSERT INTO UserRole (role)
-VALUES ('customer'),
+INSERT INTO RuoloUtente (ruolo)
+VALUES ('cliente'),
        ('admin'),
        ('rider'),
        ('manager');
 
-CREATE TABLE IF NOT EXISTS UserRoles
+CREATE TABLE IF NOT EXISTS RuoliUtente
 (
-    role VARCHAR(16) NOT NULL,
-    user INT         NOT NULL,
-    PRIMARY KEY (role, user),
-    FOREIGN KEY (role) REFERENCES UserRole (role) ON UPDATE CASCADE ON DELETE NO ACTION,
-    FOREIGN KEY (user) REFERENCES User (id) ON UPDATE CASCADE ON DELETE CASCADE
+    ruolo  VARCHAR(16) NOT NULL,
+    utente INT         NOT NULL,
+    PRIMARY KEY (ruolo, utente),
+    FOREIGN KEY (ruolo) REFERENCES RuoloUtente (ruolo) ON UPDATE CASCADE ON DELETE NO ACTION,
+    FOREIGN KEY (utente) REFERENCES Utente (id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS Review
+CREATE TABLE IF NOT EXISTS Recensione
 (
-    creation   DATETIME NOT NULL,
-    mark       INT      NOT NULL CHECK (mark > 0 AND mark < 6),
-    title      VARCHAR(255),
-    text       VARCHAR(255),
-    restaurant INT,
-    user       INT,
-    FOREIGN KEY (restaurant) REFERENCES Restaurant (id) ON UPDATE CASCADE ON DELETE CASCADE,
-    FOREIGN KEY (user) REFERENCES User (id) ON UPDATE CASCADE ON DELETE CASCADE,
-    PRIMARY KEY (user, restaurant)
+    creazione  DATETIME NOT NULL,
+    voto       INT      NOT NULL CHECK (voto > 0 AND voto < 6),
+    titolo     VARCHAR(255),
+    testo      VARCHAR(255),
+    ristorante INT,
+    utente     INT,
+    FOREIGN KEY (ristorante) REFERENCES Ristorante (id) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (utente) REFERENCES Utente (id) ON UPDATE CASCADE ON DELETE CASCADE,
+    PRIMARY KEY (utente, ristorante)
 );
 
-CREATE TABLE IF NOT EXISTS OrdersManager
+CREATE TABLE IF NOT EXISTS GestioneOrdini
 (
-    begin_date DATETIME NOT NULL,
-    end_date   DATETIME,
-    user       INT      NOT NULL,
-    restaurant INT,
-    FOREIGN KEY (user) REFERENCES User (id) ON UPDATE CASCADE ON DELETE CASCADE,
-    FOREIGN KEY (restaurant) REFERENCES Restaurant (id) ON UPDATE CASCADE ON DELETE NO ACTION,
-    PRIMARY KEY (user, restaurant, begin_date)
+    data_inizio DATETIME NOT NULL,
+    data_fine   DATETIME,
+    utente      INT      NOT NULL,
+    ristorante  INT,
+    FOREIGN KEY (utente) REFERENCES Utente (id) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (ristorante) REFERENCES Ristorante (id) ON UPDATE CASCADE ON DELETE NO ACTION,
+    PRIMARY KEY (utente, ristorante, data_inizio)
 );
 
-CREATE TABLE IF NOT EXISTS RiderService
+CREATE TABLE IF NOT EXISTS ServizioRider
 (
-    id              INT PRIMARY KEY AUTO_INCREMENT,
-    user            INT          NOT NULL,
-    begin_time      DATETIME     NOT NULL,
-    begin_latitude  FLOAT(10, 6) NOT NULL,
-    begin_longitude FLOAT(10, 6) NOT NULL,
-    end_time        DATETIME,
-    end_latitude    FLOAT(10, 6),
-    end_longitude   FLOAT(10, 6),
-    FOREIGN KEY (user) REFERENCES User (id) ON UPDATE CASCADE ON DELETE CASCADE,
-    UNIQUE (user, begin_time)
+    id                 INT PRIMARY KEY AUTO_INCREMENT,
+    utente             INT          NOT NULL,
+    ora_inizio         DATETIME     NOT NULL,
+    latitudine_inizio  FLOAT(10, 6) NOT NULL,
+    longitudine_inizio FLOAT(10, 6) NOT NULL,
+    ora_fine           DATETIME,
+    latitudine_fine    FLOAT(10, 6),
+    longitudine_fine   FLOAT(10, 6),
+    FOREIGN KEY (utente) REFERENCES Utente (id) ON UPDATE CASCADE ON DELETE CASCADE,
+    UNIQUE (utente, ora_inizio)
 );
 
-CREATE TABLE IF NOT EXISTS OrderStatus
+CREATE TABLE IF NOT EXISTS StatoOrdine
 (
     id INT PRIMARY KEY
 );
-INSERT INTO OrderStatus (id)
+INSERT INTO StatoOrdine (id)
 VALUES (100),
        (200),
        (300),
        (400);
 
-CREATE TABLE IF NOT EXISTS RestaurantOrder
+CREATE TABLE IF NOT EXISTS OrdineRistorante
 (
-    id                   INT PRIMARY KEY AUTO_INCREMENT,
-    status               INT          NOT NULL DEFAULT 100,
-    creation             DATETIME     NOT NULL DEFAULT NOW(),
-    notes                VARCHAR(255),
-    address_street       VARCHAR(255) NOT NULL,
-    address_house_number VARCHAR(10) CHECK (address_house_number IS NULL OR address_house_number RLIKE '/^[1-9]\d*(?:[ -\/]?(?:[a-zA-Z]+|[1-9]\d*))?$'),
-    address_city         VARCHAR(64)  NOT NULL,
-    address_latitude     FLOAT(10, 6) NOT NULL,
-    address_longitude    FLOAT(10, 6) NOT NULL,
-    user                 INT,
-    rider_service        INT,
-    FOREIGN KEY (status) REFERENCES OrderStatus (id) ON UPDATE CASCADE ON DELETE NO ACTION,
-    FOREIGN KEY (user) REFERENCES User (id) ON UPDATE CASCADE ON DELETE SET NULL,
-    FOREIGN KEY (rider_service) REFERENCES RiderService (id) ON UPDATE CASCADE ON DELETE SET NULL
+    id                    INT PRIMARY KEY AUTO_INCREMENT,
+    stato                 INT          NOT NULL DEFAULT 100,
+    creazione             DATETIME     NOT NULL DEFAULT NOW(),
+    note                  VARCHAR(255),
+    indirizzo_via         VARCHAR(255) NOT NULL,
+    indirizzo_civico      VARCHAR(10) CHECK (indirizzo_civico IS NULL OR
+                                             indirizzo_civico RLIKE '^([1-9][0-9]*)([-/]?[a-zA-z]*)?$'),
+    indirizzo_citta       VARCHAR(64)  NOT NULL,
+    indirizzo_latitudine  FLOAT(10, 6) NOT NULL,
+    indirizzo_longitudine FLOAT(10, 6) NOT NULL,
+    utente                INT,
+    servizio_rider        INT,
+    FOREIGN KEY (stato) REFERENCES StatoOrdine (id) ON UPDATE CASCADE ON DELETE NO ACTION,
+    FOREIGN KEY (utente) REFERENCES Utente (id) ON UPDATE CASCADE ON DELETE SET NULL,
+    FOREIGN KEY (servizio_rider) REFERENCES ServizioRider (id) ON UPDATE CASCADE ON DELETE SET NULL
 );
 
-CREATE TABLE IF NOT EXISTS OrderContent
+CREATE TABLE IF NOT EXISTS ContenutoOrdine
 (
-    product          INT NOT NULL,
-    restaurant_order INT,
-    quantity         INT NOT NULL CHECK (quantity > 0 AND quantity < 10),
-    FOREIGN KEY (product) REFERENCES Product (id) ON UPDATE CASCADE ON DELETE CASCADE,
-    FOREIGN KEY (restaurant_order) REFERENCES RestaurantOrder (id) ON UPDATE CASCADE ON DELETE CASCADE,
-    PRIMARY KEY (product, restaurant_order)
+    prodotto          INT NOT NULL,
+    ordine_ristorante INT,
+    quantita          INT NOT NULL CHECK (quantita > 0 AND quantita < 10),
+    FOREIGN KEY (prodotto) REFERENCES Prodotto (id) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (ordine_ristorante) REFERENCES OrdineRistorante (id) ON UPDATE CASCADE ON DELETE CASCADE,
+    PRIMARY KEY (prodotto, ordine_ristorante)
 );
 
 -- Views
-CREATE VIEW ProductWithAllergens AS
-SELECT Product.*, PA.allergen
-FROM Product
-         LEFT JOIN ProductAllergens PA ON Product.id = PA.product;
+CREATE VIEW DettagliRistorante AS
+SELECT Ristorante.*,
+       OrariDiApertura.apertura,
+       OrariDiApertura.chiusura,
+       OrariDiApertura.giorno,
+       TelefonoRistorante.telefono,
+       R.voto_medio
+FROM Ristorante
+         RIGHT JOIN OrariDiApertura ON Ristorante.id = OrariDiApertura.ristorante
+         LEFT JOIN TelefonoRistorante ON Ristorante.id = TelefonoRistorante.ristorante
+         LEFT JOIN (SELECT Ristorante.id, AVG(Recensione.voto) as voto_medio
+                    FROM Ristorante
+                             LEFT JOIN Recensione ON Ristorante.id = Recensione.ristorante) R ON Ristorante.id = R.id;
 
-CREATE VIEW RestaurantDetails AS
-SELECT Restaurant.*,
-       OpeningHours.opening_time,
-       OpeningHours.closing_time,
-       OpeningHours.weekday,
-       RestaurantPhone.phone,
-       R.average_rating
-FROM Restaurant
-         RIGHT JOIN OpeningHours ON Restaurant.id = OpeningHours.restaurant
-         LEFT JOIN RestaurantPhone ON Restaurant.id = RestaurantPhone.restaurant
-         LEFT JOIN (SELECT Restaurant.id, AVG(Review.mark) as average_rating
-                    FROM Restaurant
-                             LEFT JOIN Review ON Restaurant.id = Review.restaurant) R ON Restaurant.id = R.id;
-
-CREATE VIEW RestaurantsWithMenus AS
-SELECT RestaurantDetails.*,
-       Menu.title     AS menu_title,
-       Menu.published AS menu_published,
-       Menu.id        AS menu_id,
-       MC.id          AS category_id,
-       MC.title       AS category_title,
-       P.id           AS product_id,
-       P.name         AS product_name,
-       P.description  AS product_description,
-       P.price        AS product_price,
-       P.allergen
-FROM RestaurantDetails
-         LEFT JOIN Menu ON Menu.restaurant = RestaurantDetails.id
-         LEFT JOIN MenuCategory MC ON Menu.id = MC.menu
-         LEFT JOIN MenuCategoryContent MCC on MC.id = MCC.category
-         LEFT JOIN ProductWithAllergens P on MCC.product = P.id;
+CREATE VIEW RistorantiConMenu AS
+SELECT DettagliRistorante.*,
+       Menu.titolo     AS titolo_menu,
+       Menu.pubblicato AS menu_pubblicato,
+       Menu.id         AS menu_id,
+       MC.id           AS categoria_id,
+       MC.titolo       AS categoria_titolo,
+       P.id            AS prodotto_id,
+       P.nome          AS prodotto_nome,
+       P.descrizione   AS prodotto_descrizione,
+       P.prezzo        AS prodotto_prezzo,
+       AP.allergene
+FROM DettagliRistorante
+         LEFT JOIN Menu ON Menu.ristorante = DettagliRistorante.id
+         LEFT JOIN CategoriaMenu MC ON Menu.id = MC.menu
+         LEFT JOIN ContenutoCategoriaMenu MCC on MC.id = MCC.categoria
+         LEFT JOIN Prodotto P on P.id = MCC.prodotto
+         LEFT JOIN AllergeniProdotto AP on P.id = AP.prodotto;
 
 
 -- Triggers
 CREATE TRIGGER IF NOT EXISTS orario_apertura_sovrapposto_insert
     BEFORE INSERT
-    ON OpeningHours
+    ON OrariDiApertura
     FOR EACH ROW
 BEGIN
     -- Check sulla sovrapposizione di orari
     IF EXISTS(SELECT *
-              FROM OpeningHours
-              WHERE restaurant = NEW.restaurant
-                AND weekday = NEW.weekday
-                AND (opening_time BETWEEN NEW.opening_time AND NEW.closing_time OR
-                     closing_time BETWEEN NEW.opening_time AND NEW.closing_time)) THEN
+              FROM OrariDiApertura
+              WHERE ristorante = NEW.ristorante
+                AND giorno = NEW.giorno
+                AND (apertura BETWEEN NEW.apertura AND NEW.chiusura OR
+                     chiusura BETWEEN NEW.apertura AND NEW.chiusura)) THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Conflitto nel nuovo orario, si presenta sovrapposizione';
     END IF;
 END;
 
 CREATE TRIGGER IF NOT EXISTS orario_apertura_sovrapposto_update
     BEFORE UPDATE
-    ON OpeningHours
+    ON OrariDiApertura
     FOR EACH ROW
 BEGIN
     -- Check sulla sovrapposizione di orari
     IF EXISTS(SELECT *
-              FROM OpeningHours
-              WHERE restaurant = NEW.restaurant
-                AND weekday = NEW.weekday
-                AND opening_time <> OLD.opening_time
-                AND (opening_time BETWEEN NEW.opening_time AND NEW.closing_time OR
-                     closing_time BETWEEN NEW.opening_time AND NEW.closing_time)) THEN
+              FROM OrariDiApertura
+              WHERE ristorante = NEW.ristorante
+                AND giorno = NEW.giorno
+                AND apertura <> OLD.apertura -- Non lo stesso orario
+                AND (apertura BETWEEN NEW.apertura AND NEW.chiusura OR
+                     chiusura BETWEEN NEW.apertura AND NEW.chiusura)) THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Conflitto nel nuovo orario, si presenta sovrapposizione';
     END IF;
 END;
 
 CREATE TRIGGER IF NOT EXISTS ordinazione_singolo_ristorante_insert
     BEFORE INSERT
-    ON OrderContent
+    ON ContenutoOrdine
     FOR EACH ROW
 BEGIN
-    IF (SELECT COUNT(DISTINCT Product.restaurant)
-        FROM OrderContent,
-             Product
-        WHERE OrderContent.product = Product.id) > 1 THEN
-           SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Un ordine non deve contenere prodotti di ristoranti diversi';
+    IF (SELECT COUNT(DISTINCT Prodotto.ristorante)
+        FROM ContenutoOrdine,
+             Prodotto
+        WHERE ContenutoOrdine.prodotto = Prodotto.id) > 1 THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Un ordine non deve contenere prodotti di ristoranti diversi';
     END IF;
 END;
 
 CREATE TRIGGER IF NOT EXISTS contenuto_categoria_stesso_ristorante
     BEFORE INSERT
-    ON MenuCategoryContent
+    ON ContenutoCategoriaMenu
     FOR EACH ROW
 BEGIN
     IF EXISTS(SELECT *
-              FROM MenuCategoryContent
-                       JOIN MenuCategory MC on MenuCategoryContent.category = MC.id
-                       JOIN Menu M on MC.menu = M.id
-              WHERE M.restaurant <> (SELECT Product.restaurant FROM Product WHERE Product.id = NEW.product)) THEN
+              FROM ContenutoCategoriaMenu
+                       JOIN CategoriaMenu on ContenutoCategoriaMenu.categoria = CategoriaMenu.id
+                       JOIN Menu on CategoriaMenu.menu = Menu.id
+              WHERE Menu.ristorante <> (SELECT Prodotto.ristorante FROM Prodotto WHERE Prodotto.id = NEW.prodotto)) THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT =
                 'Una categoria deve contenere prodotti dello stesso ristorante del menù';
     END IF;
@@ -336,16 +336,16 @@ END;
 
 CREATE TRIGGER IF NOT EXISTS recensione_da_cliente
     BEFORE INSERT
-    ON Review
+    ON Recensione
     FOR EACH ROW
 BEGIN
     IF NOT EXISTS(SELECT *
-                  FROM RestaurantOrder
-                           JOIN OrderContent OC on RestaurantOrder.id = OC.restaurant_order
-                           JOIN Product P on OC.product = P.id
-                  WHERE RestaurantOrder.user = NEW.user
-                    AND P.restaurant = NEW.restaurant
-                    AND RestaurantOrder.status >= 400) THEN
+                  FROM OrdineRistorante
+                           JOIN ContenutoOrdine on OrdineRistorante.id = ContenutoOrdine.ordine_ristorante
+                           JOIN Prodotto on ContenutoOrdine.prodotto = Prodotto.id
+                  WHERE OrdineRistorante.utente = NEW.utente
+                    AND Prodotto.ristorante = NEW.ristorante
+                    AND OrdineRistorante.stato >= 400) THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT =
                 'Una recensione può essere scritta solo su ristoranti presso cui sono stati fatti ordini consegnati';
     END IF;
@@ -356,21 +356,21 @@ CREATE TRIGGER IF NOT EXISTS menu_pubblicato_non_vuoto_insert
     ON Menu
     FOR EACH ROW
 BEGIN
-    IF NEW.published = 1 THEN
+    IF NEW.pubblicato = 1 THEN
         -- Rimuovi categorie vuote
         DELETE
-        FROM MenuCategory
+        FROM CategoriaMenu
         WHERE menu = NEW.id
           AND id NOT IN (
             -- Categorie con almeno un prodotto
-            SELECT MenuCategory.id
-            FROM MenuCategory
-                     JOIN MenuCategoryContent MCC on MenuCategory.id = MCC.category);
-    END IF;
-    
-    -- Controlla che sia rimasta una categoria
-    IF NOT EXISTS(SELECT * FROM MenuCategory WHERE menu = NEW.id) THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Impossibile pubblicare un menu vuoto';
+            SELECT CategoriaMenu.id
+            FROM CategoriaMenu
+                     JOIN ContenutoCategoriaMenu on CategoriaMenu.id = ContenutoCategoriaMenu.categoria);
+
+        -- Controlla che sia rimasta una categoria
+        IF NOT EXISTS(SELECT * FROM CategoriaMenu WHERE menu = NEW.id) THEN
+            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Impossibile pubblicare un menu vuoto';
+        END IF;
     END IF;
 END;
 
@@ -379,43 +379,45 @@ CREATE TRIGGER IF NOT EXISTS menu_pubblicato_non_vuoto_update
     ON Menu
     FOR EACH ROW
 BEGIN
-    IF NEW.published = 1 AND OLD.published = 0 THEN
+    IF NEW.pubblicato = 1 AND OLD.pubblicato = 0 THEN
         -- Rimuovi categorie vuote
         DELETE
-        FROM MenuCategory
+        FROM CategoriaMenu
         WHERE menu = NEW.id
           AND id NOT IN (
             -- Categorie con almeno un prodotto
-            SELECT MenuCategory.id
-            FROM MenuCategory
-                     JOIN MenuCategoryContent MCC on MenuCategory.id = MCC.category);
-    END IF;
-    
-    -- Controlla che sia rimasta almeno una categoria
-    IF NOT EXISTS(SELECT * FROM MenuCategory WHERE menu = NEW.id) THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Impossibile pubblicare un menu vuoto';
+            SELECT CategoriaMenu.id
+            FROM CategoriaMenu
+                     JOIN ContenutoCategoriaMenu on CategoriaMenu.id = ContenutoCategoriaMenu.categoria);
+
+        -- Controlla che sia rimasta almeno una categoria
+        IF NOT EXISTS(SELECT * FROM CategoriaMenu WHERE menu = NEW.id) THEN
+            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Impossibile pubblicare un menu vuoto';
+        END IF;
     END IF;
 END;
 
 CREATE TRIGGER ristorante_max_menu_pubblicato_insert
-    AFTER INSERT
+    BEFORE INSERT
     ON Menu
-    FOR EACH ROW
+    FOR EACH ROW FOLLOWS menu_pubblicato_non_vuoto_insert
 BEGIN
-    IF NEW.published = 1 THEN
-        UPDATE Menu SET published = FALSE WHERE restaurant = NEW.restaurant AND id <> NEW.id;
+    IF NEW.pubblicato = 1 AND EXISTS(SELECT * FROM Menu WHERE pubblicato = 1 AND ristorante = NEW.ristorante) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Esiste già un altro menu pubblicato.';
     END IF;
 END;
 
 CREATE TRIGGER ristorante_max_menu_pubblicato_update
-    AFTER UPDATE
+    BEFORE UPDATE
     ON Menu
-    FOR EACH ROW
+    FOR EACH ROW FOLLOWS menu_pubblicato_non_vuoto_update
 BEGIN
-    IF NEW.published = 1 THEN
-        UPDATE Menu SET published = FALSE WHERE restaurant = NEW.restaurant AND id <> NEW.id;
+    IF NEW.pubblicato = 1 AND OLD.pubblicato = 0 AND
+       EXISTS(SELECT * FROM Menu WHERE pubblicato = 1 AND ristorante = NEW.ristorante) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Esiste già un altro menu pubblicato.';
     END IF;
 END;
+
 
 -- Apply the haversine formula to calculate
 -- the distance between 2 points on Earth in KMs

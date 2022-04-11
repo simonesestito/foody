@@ -26,7 +26,8 @@ CREATE TABLE IF NOT EXISTS OrariDiApertura
     chiusura   TIME NOT NULL,
     ristorante INT  NOT NULL,
     FOREIGN KEY (ristorante) REFERENCES Ristorante (id) ON UPDATE CASCADE ON DELETE CASCADE,
-    PRIMARY KEY (giorno, ristorante, apertura)
+    PRIMARY KEY (giorno, ristorante, apertura),
+    CONSTRAINT apertura_chiusura CHECK (chiusura > apertura)
 );
 
 CREATE TABLE IF NOT EXISTS Menu
@@ -98,7 +99,7 @@ CREATE TABLE IF NOT EXISTS Utente
     id       INT PRIMARY KEY AUTO_INCREMENT,
     nome     VARCHAR(255) NOT NULL,
     cognome  VARCHAR(255) NOT NULL,
-    password VARCHAR(60)  NOT NULL,
+    password VARCHAR(60)  NOT NULL CHECK (LENGTH(password) = 60), -- Enforce BCrypt hash length
     rider    BOOLEAN      NOT NULL DEFAULT FALSE,
     admin    BOOLEAN      NOT NULL DEFAULT FALSE
 );
@@ -163,7 +164,7 @@ CREATE TABLE IF NOT EXISTS RuoliUtente
 CREATE TABLE IF NOT EXISTS Recensione
 (
     creazione  DATETIME NOT NULL,
-    voto       INT      NOT NULL CHECK (voto > 0 AND voto < 6),
+    voto       INT      NOT NULL CHECK (voto >= 1 AND voto <= 5),
     titolo     VARCHAR(255),
     testo      VARCHAR(255),
     ristorante INT,
@@ -181,7 +182,8 @@ CREATE TABLE IF NOT EXISTS GestioneOrdini
     ristorante  INT,
     FOREIGN KEY (utente) REFERENCES Utente (id) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (ristorante) REFERENCES Ristorante (id) ON UPDATE CASCADE ON DELETE NO ACTION,
-    PRIMARY KEY (utente, ristorante, data_inizio)
+    PRIMARY KEY (utente, ristorante, data_inizio),
+    CONSTRAINT data_inizio_fine CHECK (data_fine IS NULL OR data_fine > data_inizio)
 );
 
 CREATE TABLE IF NOT EXISTS ServizioRider
@@ -195,7 +197,8 @@ CREATE TABLE IF NOT EXISTS ServizioRider
     latitudine_fine    FLOAT(10, 6),
     longitudine_fine   FLOAT(10, 6),
     FOREIGN KEY (utente) REFERENCES Utente (id) ON UPDATE CASCADE ON DELETE CASCADE,
-    UNIQUE (utente, ora_inizio)
+    UNIQUE (utente, ora_inizio),
+    CONSTRAINT ora_inizio_fine CHECK (ora_fine IS NULL OR ora_fine > ora_inizio)
 );
 
 CREATE TABLE IF NOT EXISTS StatoOrdine

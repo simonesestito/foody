@@ -328,10 +328,13 @@ CREATE TRIGGER IF NOT EXISTS contenuto_categoria_stesso_ristorante
     FOR EACH ROW
 BEGIN
     IF EXISTS(SELECT *
-              FROM ContenutoCategoriaMenu
-                       JOIN CategoriaMenu on ContenutoCategoriaMenu.categoria = CategoriaMenu.id
-                       JOIN Menu on CategoriaMenu.menu = Menu.id
-              WHERE Menu.ristorante <> (SELECT Prodotto.ristorante FROM Prodotto WHERE Prodotto.id = NEW.prodotto)) THEN
+              FROM CategoriaMenu,
+                   Menu,
+                   Prodotto
+              WHERE CategoriaMenu.id = NEW.categoria
+                AND Menu.id = CategoriaMenu.menu
+                AND Prodotto.id = NEW.prodotto
+                AND Prodotto.ristorante <> Menu.ristorante) THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT =
                 'Una categoria deve contenere prodotti dello stesso ristorante del menù';
     END IF;

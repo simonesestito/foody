@@ -55,7 +55,7 @@ class NewUser {
 }
 
 enum UserRole {
-  customer,
+  cliente,
   manager,
   admin,
   rider,
@@ -64,7 +64,7 @@ enum UserRole {
 extension UserRoleExtension on UserRole {
   String get routePrefix {
     switch (this) {
-      case UserRole.customer:
+      case UserRole.cliente:
         return '/customer';
       case UserRole.manager:
         return '/manager';
@@ -77,7 +77,7 @@ extension UserRoleExtension on UserRole {
 
   String get displayName {
     switch (this) {
-      case UserRole.customer:
+      case UserRole.cliente:
         return 'Cliente';
       case UserRole.manager:
         return 'Manager ristorante';
@@ -90,7 +90,7 @@ extension UserRoleExtension on UserRole {
 
   IconData get icon {
     switch (this) {
-      case UserRole.customer:
+      case UserRole.cliente:
         return Icons.shopping_basket;
       case UserRole.manager:
         return Icons.storefront;

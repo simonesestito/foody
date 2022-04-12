@@ -6,7 +6,7 @@ abstract class CustomerOrdersApi {
 
   Future<Order> getOrder(int id);
 
-  Future<void> postOrder(Address shippingAddress);
+  Future<void> postOrder(Address shippingAddress, String notes);
 
   Future<void> deleteOrder(Order order);
 

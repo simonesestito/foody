@@ -16,8 +16,10 @@ class ApiClient {
     return _httpClient.get(_buildUri(uri, queryParams)).then(_handleResponse);
   }
 
-  Future<dynamic> post(String uri, Map<String, dynamic> body) {
-    return _httpClient.post(_buildUri(uri), body: json.encode(body), headers: {
+  Future<dynamic> post(String uri, Map<String, dynamic> body,
+      [Map<String, dynamic>? queryParams]) {
+    return _httpClient
+        .post(_buildUri(uri, queryParams), body: json.encode(body), headers: {
       'Content-Type': 'application/json',
     }).then(_handleResponse);
   }
@@ -36,14 +38,14 @@ class ApiClient {
       case 200:
         try {
           return json.decode(response.body);
-        } catch(e) {
+        } catch (e) {
           debugPrint(e.toString());
           return null;
         }
       case BadFormException.errorCode:
         throw BadFormException();
       case ConflictDataException.errorCode:
-        throw ConflictDataException();
+        throw ConflictDataException(response.body);
       case NotLoggedInException.errorCode:
         throw NotLoggedInException();
       case UnauthorizedException.errorCode:
@@ -51,7 +53,7 @@ class ApiClient {
       case NotFoundException.errorCode:
         throw NotFoundException();
       case BadRequestError.errorCode:
-        throw BadRequestError();
+        throw BadRequestError(response.body);
       case ServerError.errorCode:
         throw ServerError();
       default:

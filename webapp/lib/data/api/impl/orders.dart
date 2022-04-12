@@ -37,8 +37,10 @@ class CustomerOrdersApiImpl implements CustomerOrdersApi {
   }
 
   @override
-  Future<void> postOrder(Address shippingAddress) async {
-    await apiClient.post('/customer/orders/', shippingAddress.toJson());
+  Future<void> postOrder(Address shippingAddress, String notes) async {
+    await apiClient.post('/customer/orders/', shippingAddress.toJson(), {
+      'notes': notes,
+    });
   }
 
   @override

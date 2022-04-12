@@ -13,7 +13,7 @@ import 'package:foody_app/widgets/bottom_sheet.dart';
 import 'package:foody_app/widgets/snackbar.dart';
 
 class RestaurantDetailsRoute extends SingleChildBaseRoute {
-  static final routeName = UserRole.customer.routePrefix + '/restaurantDetails';
+  static final routeName = UserRole.cliente.routePrefix + '/restaurantDetails';
 
   const RestaurantDetailsRoute({Key? key}) : super(key: key);
 
@@ -29,6 +29,8 @@ class RestaurantDetailsRoute extends SingleChildBaseRoute {
       );
       return const SliverToBoxAdapter(child: SizedBox.shrink());
     }
+
+    restaurant.menus.retainWhere((m) => m.published);
 
     return SliverList(
       delegate: SliverChildListDelegate.fixed([
@@ -61,7 +63,10 @@ class RestaurantDetailsRoute extends SingleChildBaseRoute {
         ),
         for (final open in restaurant.sortedOpeningHours) Text(open.toString()),
         const Divider(),
-        ..._buildMenu(restaurant.menus.firstWhere((m) => m.published), context),
+        if (restaurant.menus.isEmpty)
+          const Text('Nessun menu pubblicato')
+        else
+          ..._buildMenu(restaurant.menus.first, context),
       ]),
     );
   }

@@ -17,10 +17,11 @@ import 'package:foody_app/widgets/loading_button.dart';
 import 'package:http/http.dart' as http;
 
 class OrderConfirm extends SingleChildBaseRoute {
-  static final routeName = UserRole.customer.routePrefix + '/order_confirm';
+  static final routeName = UserRole.cliente.routePrefix + '/order_confirm';
   final _streetField = TextEditingController();
   final _houseNumberField = TextEditingController();
   final _cityField = TextEditingController();
+  final _notesField = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
   OrderConfirm({Key? key}) : super(key: key);
@@ -64,6 +65,14 @@ class OrderConfirm extends SingleChildBaseRoute {
                     label: Text('Città'),
                   ),
                   validator: fieldValidator(),
+                ),
+                TextFormField(
+                  controller: _notesField,
+                  decoration: const InputDecoration(
+                    filled: true,
+                    label: Text('Eventuali note'),
+                    prefixIcon: Icon(Icons.notes),
+                  ),
                 ),
                 LoadingButton(
                   onTap: () => _onOrderConfirm(context),
@@ -157,7 +166,7 @@ class OrderConfirm extends SingleChildBaseRoute {
 
   Future<void> _onAddressConfirm(BuildContext context, Address address) async {
     try {
-      await getIt.get<CustomerOrdersApi>().postOrder(address);
+      await getIt.get<CustomerOrdersApi>().postOrder(address, _notesField.text);
       Navigator.pushReplacementNamed(context, CustomerOrdersRoute.routeName);
     } catch (err) {
       handleApiError(err, context);

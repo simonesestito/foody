@@ -16,7 +16,7 @@ class ProductAndController {
 }
 
 class CartRoute extends BaseRoute {
-  static final routeName = UserRole.customer.routePrefix + '/cart';
+  static final routeName = UserRole.cliente.routePrefix + '/cart';
 
   const CartRoute({Key? key}) : super(key: key);
 
@@ -60,9 +60,11 @@ class _ProductsListState extends State<_ProductsList> {
                   ))
               .toList();
 
-          final sum = snap.data!
-              .map((e) => e.product.price * e.quantity)
-              .reduce((value, element) => value + element);
+          final sum = snap.data!.isEmpty
+              ? 0
+              : snap.data!
+                  .map((e) => e.product.price * e.quantity)
+                  .reduce((value, element) => value + element);
 
           return Column(children: [
             Text(
@@ -75,15 +77,6 @@ class _ProductsListState extends State<_ProductsList> {
                   ScaffoldMessenger.of(context).showSnackBar(AppSnackbar(
                     context: context,
                     content: 'Il carrello è vuoto',
-                  ));
-                } else if (snap.data!
-                        .map((e) => e.product.restaurant)
-                        .toSet()
-                        .length >
-                    1) {
-                  ScaffoldMessenger.of(context).showSnackBar(AppSnackbar(
-                    context: context,
-                    content: 'Ci sono prodotti di ristoranti diversi',
                   ));
                 } else {
                   Navigator.pushNamed(context, OrderConfirm.routeName);

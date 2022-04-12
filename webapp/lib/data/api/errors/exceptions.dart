@@ -1,6 +1,8 @@
 import 'package:foody_app/routes/login/route.dart';
 
 abstract class ApiException implements Exception {
+  const ApiException();
+
   ///
   /// Return the user-friendly message to display.
   /// In a situation with localization, returning the string code would have been ideal.
@@ -21,10 +23,13 @@ class BadFormException extends ApiException {
 
 class ConflictDataException extends ApiException {
   static const int errorCode = 409;
+  final String? message;
+
+  const ConflictDataException(this.message) : super();
 
   @override
   String get displayMessage =>
-      'Dati da inserire in conflitto con altri già esistenti';
+      message ?? 'Dati da inserire in conflitto con altri già esistenti';
 }
 
 class NotLoggedInException extends RedirectApiException {
@@ -53,9 +58,12 @@ class NotFoundException extends ApiException {
 
 class BadRequestError extends ApiException {
   static const int errorCode = 400;
+  final String? message;
+
+  const BadRequestError(this.message) : super();
 
   @override
-  String get displayMessage => 'Errore generico lato client';
+  String get displayMessage => message ?? 'Errore generico lato client';
 }
 
 class ServerError extends ApiException {

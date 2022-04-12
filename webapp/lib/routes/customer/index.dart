@@ -22,7 +22,7 @@ final customerRoutes = {
 };
 
 class CustomerRoute extends BaseRoute {
-  static final routeName = UserRole.customer.routePrefix;
+  static final routeName = UserRole.cliente.routePrefix;
 
   const CustomerRoute({Key? key}) : super(key: key);
 

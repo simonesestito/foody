@@ -27,52 +27,52 @@ class MenuProduct {
 }
 
 enum Allergen {
-  cereals,
-  crustaceans,
-  eggs,
-  fish,
-  peanuts,
-  soybeans,
-  milk,
-  nuts,
-  celery,
-  mustard,
-  sesame,
-  sulphurDioxide,
-  lupin,
-  molluscs,
+  arachidi,
+  cereali,
+  crostacei,
+  latte,
+  lupini,
+  molluschi,
+  noci,
+  pesce,
+  sedano,
+  senape,
+  sesamo,
+  soia,
+  solfiti,
+  uova,
 }
 
 extension DisplayAllergen on Allergen {
   String get displayName {
     switch (this) {
-      case Allergen.cereals:
+      case Allergen.cereali:
         return 'Glutine';
-      case Allergen.crustaceans:
+      case Allergen.crostacei:
         return 'Crostacei';
-      case Allergen.eggs:
+      case Allergen.uova:
         return 'Uova';
-      case Allergen.fish:
+      case Allergen.pesce:
         return 'Pesce';
-      case Allergen.peanuts:
+      case Allergen.arachidi:
         return 'Arachidi';
-      case Allergen.soybeans:
+      case Allergen.soia:
         return 'Soia';
-      case Allergen.milk:
+      case Allergen.latte:
         return 'Latte';
-      case Allergen.nuts:
+      case Allergen.noci:
         return 'Frutta a guscio';
-      case Allergen.celery:
+      case Allergen.sedano:
         return 'Sedano';
-      case Allergen.mustard:
+      case Allergen.senape:
         return 'Senape';
-      case Allergen.sesame:
+      case Allergen.sesamo:
         return 'Sesamo';
-      case Allergen.sulphurDioxide:
+      case Allergen.solfiti:
         return 'Solfiti';
-      case Allergen.lupin:
+      case Allergen.lupini:
         return 'Lupini';
-      case Allergen.molluscs:
+      case Allergen.molluschi:
         return 'Molluschi';
     }
   }

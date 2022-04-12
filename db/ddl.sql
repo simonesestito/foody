@@ -310,14 +310,15 @@ BEGIN
 END;
 
 CREATE TRIGGER IF NOT EXISTS ordinazione_singolo_ristorante_insert
-    BEFORE INSERT
+    AFTER INSERT
     ON ContenutoOrdine
     FOR EACH ROW
 BEGIN
-    IF (SELECT COUNT(DISTINCT Prodotto.ristorante)
-        FROM ContenutoOrdine,
-             Prodotto
-        WHERE ContenutoOrdine.prodotto = Prodotto.id) > 1 THEN
+    IF (SELECT COUNT(DISTINCT ristorante)
+        FROM Prodotto,
+             ContenutoOrdine
+        WHERE NEW.ordine_ristorante = ContenutoOrdine.ordine_ristorante
+          AND ContenutoOrdine.prodotto = Prodotto.id) > 1 THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Un ordine non deve contenere prodotti di ristoranti diversi';
     END IF;
 END;

@@ -16,7 +16,7 @@ data class RestaurantOrder(
     var user: User,
     @ManyToOne
     @JoinColumn(name = "servizio_rider")
-    var riderService: RiderService,
+    var riderService: RiderService?,
     @OneToMany
     @JoinColumn(name = "ordine_ristorante")
     var orderContent: Set<OrderContent>,

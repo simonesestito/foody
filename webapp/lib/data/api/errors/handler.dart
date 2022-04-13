@@ -17,12 +17,15 @@ void handleApiError(dynamic err, BuildContext context) => Future.microtask(() {
         errorMessage = 'Connessione a Internet assente o non funzionante';
       } else if (err is ClientException) {
         debugPrint(err.message);
-    errorMessage = 'Errore nella richiesta HTTP al server';
-  } else {
-    errorMessage = 'Errore imprevisto: $err';
-  }
+        errorMessage = 'Errore nella richiesta HTTP al server';
+      } else if (err is Error) {
+        debugPrintStack(stackTrace: err.stackTrace!);
+        errorMessage = 'Errore imprevisto: $err';
+      } else {
+        errorMessage = err.toString();
+      }
 
-  showDialog(
+      showDialog(
           context: context,
           builder: (context) => AlertDialog(
                 title: Text(errorMessage),

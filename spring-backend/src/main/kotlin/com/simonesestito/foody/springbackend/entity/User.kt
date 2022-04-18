@@ -18,6 +18,7 @@ data class User(
     ) @Column(name = "telefono") var phoneNumbers: Set<String>,
     var rider: Boolean,
     var admin: Boolean,
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER) var managerJobs: Set<OrdersManagement>,
 ) {
     fun getAuthorities() = getAllowedRoles().map { GrantedAuthorityString(it) }
 
@@ -25,7 +26,7 @@ data class User(
         "cliente",
         if (rider) "rider" else null,
         if (admin) "admin" else null,
-        // TODO: Manager role
+        if (managerJobs.any { it.endDate == null }) "manager" else null,
     )
 }
 

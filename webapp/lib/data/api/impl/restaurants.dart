@@ -81,4 +81,10 @@ class RestaurantsApiImpl implements RestaurantsApi {
   Future<List<User>> addEmployee(int restaurantId, String userEmail) async {
     throw Exception('TODO');
   }
+
+  @override
+  Future<List<Restaurant>> getMyRestaurants() async {
+    final result = await apiClient.get('/restaurant/my') as List<dynamic>;
+    return result.map((json) => Restaurant.fromJson(json)).toList();
+  }
 }

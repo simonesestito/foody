@@ -1,0 +1,67 @@
+import 'package:flutter/material.dart';
+import 'package:foody_app/data/api/errors/handler.dart';
+import 'package:foody_app/data/api/orders.dart';
+import 'package:foody_app/data/model/order.dart';
+import 'package:foody_app/data/model/restaurant.dart';
+import 'package:foody_app/di.dart';
+import 'package:foody_app/routes/base_route.dart';
+import 'package:foody_app/routes/customer/order_details.dart';
+
+class RestaurantOrders extends SingleChildBaseRoute {
+  const RestaurantOrders({Key? key}) : super(key: key);
+
+  @override
+  Widget buildChild(BuildContext context) {
+    final restaurant = ModalRoute.of(context)!.settings.arguments as Restaurant;
+    return SliverToBoxAdapter(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            'Ordini ristorante ${restaurant.name}',
+            style: Theme.of(context).textTheme.headline4,
+          ),
+          // TODO: Manage products button
+          // TODO: Manage employees button
+          FutureBuilder<List<Order>>(
+            future: getIt
+                .get<CustomerOrdersApi>()
+                .getRestaurantOrders(restaurant.id),
+            builder: (context, snap) {
+              if (snap.hasError) {
+                handleApiError(snap.error!, context);
+                return ErrorWidget(snap.error!);
+              }
+
+              if (!snap.hasData) {
+                return const SizedBox.square(
+                  dimension: 36,
+                  child: Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                );
+              }
+
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  for (final order in snap.data!)
+                    ListTile(
+                      title: Text('#${order.id}'),
+                      subtitle: Text(order.creation.toString()),
+                      onTap: () {
+                        Navigator.of(context).pushNamed(
+                          OrderDetailsRoute.routeName,
+                          arguments: order,
+                        );
+                      },
+                    ),
+                ],
+              );
+            },
+          )
+        ],
+      ),
+    );
+  }
+}

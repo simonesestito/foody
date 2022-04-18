@@ -1,6 +1,7 @@
 package com.simonesestito.foody.springbackend.dao
 
 import com.simonesestito.foody.springbackend.entity.RestaurantOrder
+import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
@@ -23,6 +24,30 @@ interface OrdersDao : CrudRepository<RestaurantOrder, Int> {
     """, nativeQuery = true
     )
     fun getAllByUserId(userId: Int): Set<RestaurantOrder>
+
+    @Query("""
+        SELECT *
+        FROM OrdineRistorante
+        LEFT JOIN Utente ON Utente.id = OrdineRistorante.utente = Utente.id
+        LEFT JOIN ServizioRider ON Utente.id = ServizioRider.utente
+        LEFT JOIN ContenutoOrdine ON OrdineRistorante.id = ContenutoOrdine.ordine_ristorante
+        LEFT JOIN Prodotto ON ContenutoOrdine.prodotto = Prodotto.id
+        WHERE Prodotto.ristorante = ?1
+    """, nativeQuery = true)
+    fun getAllByRestaurant(restaurantId: Int): Set<RestaurantOrder>
+
+    @Query("""
+        UPDATE OrdineRistorante
+        SET stato = (
+            SELECT StatoOrdine.id
+            FROM StatoOrdine
+            WHERE StatoOrdine.nome = ?2
+        )
+        WHERE OrdineRistorante.id = ?1
+    """, nativeQuery = true)
+    @Modifying
+    @Transactional
+    fun updateOrderStatus(orderId: Int, statusName: String)
 }
 
 @Service

@@ -11,6 +11,8 @@ abstract class RestaurantsApi {
 
   Future<Restaurant> getRestaurant(int id);
 
+  Future<List<Restaurant>> getMyRestaurants();
+
   Future<void> sendReview(NewReview review, int restaurantId, int userId);
 
   Future<List<Review>> getReviews(int restaurantId);

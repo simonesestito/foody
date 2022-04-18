@@ -1,6 +1,7 @@
 import 'package:foody_app/data/model/address.dart';
 import 'package:foody_app/data/model/cart_product.dart';
 import 'package:foody_app/data/model/rider_service.dart';
+import 'package:foody_app/data/model/user.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'order.g.dart';
@@ -14,6 +15,7 @@ class Order {
   final Address address;
   final DateTime creation;
   final RiderService? riderService;
+  final User user;
 
   const Order({
     this.id,
@@ -21,6 +23,7 @@ class Order {
     required this.orderContent,
     required this.address,
     required this.creation,
+    required this.user,
     this.riderService,
   });
 

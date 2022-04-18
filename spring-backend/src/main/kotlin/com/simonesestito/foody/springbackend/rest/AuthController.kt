@@ -55,6 +55,7 @@ class AuthController(
             hashedPassword = passwordEncoder.encode(newUser.password),
             rider = false,
             admin = false,
+            managerJobs = emptySet(),
         )
 
         userDao.save(user)

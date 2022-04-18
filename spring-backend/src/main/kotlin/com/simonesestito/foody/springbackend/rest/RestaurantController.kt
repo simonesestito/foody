@@ -1,15 +1,19 @@
 package com.simonesestito.foody.springbackend.rest
 
+import com.simonesestito.foody.springbackend.dao.OrdersDao
 import com.simonesestito.foody.springbackend.dao.RestaurantDao
 import com.simonesestito.foody.springbackend.dao.ReviewDao
 import com.simonesestito.foody.springbackend.entity.NewReviewDto
+import com.simonesestito.foody.springbackend.entity.User
 import com.simonesestito.foody.springbackend.rest.errors.NotFoundException
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/restaurant")
 class RestaurantController(
     private val restaurantDao: RestaurantDao,
+    private val ordersDao: OrdersDao,
     private val reviewDao: ReviewDao,
 ) {
     @GetMapping("/")
@@ -40,4 +44,12 @@ class RestaurantController(
     fun getReviews(
         @PathVariable("id") restaurantId: Int, @PathVariable("user") userId: Int,
     ) = reviewDao.deleteReview(restaurantId, userId)
+
+    @GetMapping("/my")
+    fun getMyRestaurants(@AuthenticationPrincipal user: User) = restaurantDao.getByManager(user.id!!)
+
+    @GetMapping("/{id}/orders")
+    fun getOrders(
+        @PathVariable("id") restaurantId: Int
+    ) = ordersDao.getAllByRestaurant(restaurantId)
 }

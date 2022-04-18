@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:foody_app/data/api/orders.dart';
 import 'package:foody_app/data/model/order.dart';
 import 'package:foody_app/data/model/user.dart';
+import 'package:foody_app/di.dart';
 import 'package:foody_app/routes/base_route.dart';
 import 'package:foody_app/routes/customer/customer_orders.dart';
 import 'package:foody_app/routes/customer/leave_review.dart';
+import 'package:foody_app/state/login_status.dart';
 import 'package:foody_app/widgets/map.dart';
+import 'package:provider/provider.dart';
 
 class OrderDetailsRoute extends SingleChildBaseRoute {
   static final String routeName =
@@ -22,6 +26,8 @@ class OrderDetailsRoute extends SingleChildBaseRoute {
           ));
       return const SliverToBoxAdapter(child: SizedBox.shrink());
     }
+
+    final isMine = context.read<LoginStatus>().currentUser!.id == order.user.id;
 
     return SliverToBoxAdapter(
       child: Column(
@@ -48,7 +54,7 @@ class OrderDetailsRoute extends SingleChildBaseRoute {
               zoomLocation: order.riderService!.lastLocation,
               onMarkerTap: (_) {},
             ),
-          if (order.status == OrderState.delivered)
+          if (order.status == OrderState.delivered && isMine)
             OutlinedButton.icon(
               onPressed: () {
                 Navigator.pushNamed(
@@ -60,6 +66,31 @@ class OrderDetailsRoute extends SingleChildBaseRoute {
               icon: const Icon(Icons.star),
               label: const Text('Recensisci ristorante'),
             ),
+          if (order.status == OrderState.preparing)
+            OutlinedButton.icon(
+              onPressed: () async {
+                await getIt.get<CustomerOrdersApi>().updateOrderState(
+                      order.id!,
+                      OrderState.prepared,
+                    );
+                Navigator.pop(context);
+              },
+              icon: const Icon(Icons.next_plan_outlined),
+              label: const Text('Segna come pronto al ritiro'),
+            ),
+          if (order.status == OrderState.prepared)
+            OutlinedButton.icon(
+              onPressed: () async {
+                await getIt.get<CustomerOrdersApi>().updateOrderState(
+                      order.id!,
+                      OrderState.delivering,
+                    );
+                Navigator.pop(context);
+              },
+              icon: const Icon(Icons.next_plan_outlined),
+              label: const Text('Segna come in consegna'),
+            ),
+          // TODO: Solo rider mette consegnato
         ],
       ),
     );

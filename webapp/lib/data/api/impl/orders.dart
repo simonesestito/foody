@@ -46,6 +46,7 @@ class CustomerOrdersApiImpl implements CustomerOrdersApi {
   @override
   Future<void> updateOrderState(int orderId, OrderState state) async {
     // Only allowed by a worker for the order's restaurant
-    await apiClient.post('/orders/$orderId/state/$state', {});
+    await apiClient
+        .post('/orders/$orderId/state/${state.name.split('\\.').last}', {});
   }
 }

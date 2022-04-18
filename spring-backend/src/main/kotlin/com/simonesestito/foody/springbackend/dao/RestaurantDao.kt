@@ -14,7 +14,6 @@ interface RestaurantDao : CrudRepository<RestaurantWithMenus, Int> {
         """
         SELECT *
         FROM RistorantiConMenu
-        
         WHERE nome LIKE ?1
         ORDER BY DISTANCE_KM(?2, ?3, indirizzo_latitudine, indirizzo_longitudine)
     """, nativeQuery = true
@@ -29,4 +28,13 @@ interface RestaurantDao : CrudRepository<RestaurantWithMenus, Int> {
         """, nativeQuery = true
     )
     fun getById(id: Int): RestaurantWithMenus?
+
+    @Query("""
+        SELECT RistorantiConMenu.*
+        FROM RistorantiConMenu
+        JOIN GestioneOrdini ON GestioneOrdini.ristorante = RistorantiConMenu.id
+        WHERE GestioneOrdini.utente = ?1
+        AND GestioneOrdini.data_fine IS NULL
+    """, nativeQuery = true)
+    fun getByManager(managerId: Int): Set<RestaurantWithMenus>
 }

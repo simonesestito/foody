@@ -203,13 +203,14 @@ CREATE TABLE IF NOT EXISTS ServizioRider
 
 CREATE TABLE IF NOT EXISTS StatoOrdine
 (
-    id INT PRIMARY KEY
+    id INT PRIMARY KEY,
+    nome VARCHAR(16) NOT NULL UNIQUE
 );
 INSERT INTO StatoOrdine (id)
-VALUES (100),
-       (200),
-       (300),
-       (400);
+VALUES (100, 'preparing'),
+       (200, 'prepared'),
+       (300, 'delivering'),
+       (400, 'delivered');
 
 CREATE TABLE IF NOT EXISTS OrdineRistorante
 (

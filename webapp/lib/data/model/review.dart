@@ -1,19 +1,21 @@
+import 'package:foody_app/data/model/restaurant.dart';
+import 'package:foody_app/data/model/user.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'review.g.dart';
 
 @JsonSerializable()
 class Review {
-  final int? userId;
-  final int restaurantId;
+  final User user;
+  final Restaurant restaurant;
   final DateTime creationDate;
   final int mark;
   final String? title;
   final String? description;
 
   const Review({
-    this.userId,
-    required this.restaurantId,
+    required this.user,
+    required this.restaurant,
     required this.creationDate,
     required this.mark,
     this.title,

@@ -1,6 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:foody_app/data/api/cart.dart';
 import 'package:foody_app/data/api/errors/handler.dart';
+import 'package:foody_app/data/api/restaurants.dart';
 import 'package:foody_app/data/model/cart_product.dart';
 import 'package:foody_app/data/model/menu.dart';
 import 'package:foody_app/data/model/menu_product.dart';
@@ -10,6 +12,7 @@ import 'package:foody_app/di.dart';
 import 'package:foody_app/routes/base_route.dart';
 import 'package:foody_app/routes/customer/index.dart';
 import 'package:foody_app/widgets/bottom_sheet.dart';
+import 'package:foody_app/widgets/loading_button.dart';
 import 'package:foody_app/widgets/snackbar.dart';
 
 class RestaurantDetailsRoute extends SingleChildBaseRoute {
@@ -67,6 +70,38 @@ class RestaurantDetailsRoute extends SingleChildBaseRoute {
           const Text('Nessun menu pubblicato')
         else
           ..._buildMenu(restaurant.menus.first, context),
+        LoadingButton(
+            text: const Text('Vedi recensioni'),
+            onTap: () async {
+              final reviews = await getIt.get<RestaurantsApi>().getReviews(
+                    restaurant.id,
+                  );
+              showAppBottomSheet(context, (context) {
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    for (final review in reviews
+                        .where((r) => r.title != null || r.description != null))
+                      ListTile(
+                        leading: Text(review.mark.toString()),
+                        title: Text(review.user.fullName),
+                        subtitle: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              review.title ?? '',
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            Text(review.description ?? ''),
+                          ],
+                        ),
+                      ),
+                  ],
+                );
+              });
+            }),
       ]),
     );
   }

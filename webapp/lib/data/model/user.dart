@@ -25,11 +25,11 @@ class User {
 
   Map<String, dynamic> toJson() => _$UserToJson(this);
 
-  get fullName => '$name $surname';
+  String get fullName => '$name $surname';
 
-  get email => emailAddresses.first;
+  String get email => emailAddresses.first;
 
-  get phone => phoneNumbers.first;
+  String get phone => phoneNumbers.first;
 }
 
 @JsonSerializable()

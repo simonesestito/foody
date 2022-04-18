@@ -1,5 +1,6 @@
 package com.simonesestito.foody.springbackend.entity
 
+import java.sql.Timestamp
 import java.util.Date
 import javax.persistence.Column
 import javax.persistence.Embeddable
@@ -13,7 +14,7 @@ data class Review(
     @EmbeddedId var id: ReviewId,
     @ManyToOne @JoinColumn(name = "ristorante", insertable = false, updatable = false) var restaurant: Restaurant,
     @ManyToOne @JoinColumn(name = "utente", insertable = false, updatable = false) var user: User,
-    @Column(name = "creazione") var creationDate: Date,
+    @Column(name = "creazione") var creationDate: Timestamp,
     @Column(name = "voto") var mark: Int,
     @Column(name = "titolo") var title: String?,
     @Column(name = "testo") var description: String?,

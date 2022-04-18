@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:foody_app/data/api/errors/handler.dart';
 
 ///
 /// A Button that, when clicked, performs an async computation.
@@ -43,6 +44,7 @@ class _LoadingButtonState extends State<LoadingButton> {
             _isLoading = false;
           }),
           onError: (err) {
+            handleApiError(err, context);
             safeSetState(() {
               _isLoading = false;
             });

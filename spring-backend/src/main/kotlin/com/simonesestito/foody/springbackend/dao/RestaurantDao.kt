@@ -14,6 +14,7 @@ interface RestaurantDao : CrudRepository<RestaurantWithMenus, Int> {
         """
         SELECT *
         FROM RistorantiConMenu
+        
         WHERE nome LIKE ?1
         ORDER BY DISTANCE_KM(?2, ?3, indirizzo_latitudine, indirizzo_longitudine)
     """, nativeQuery = true
@@ -28,28 +29,4 @@ interface RestaurantDao : CrudRepository<RestaurantWithMenus, Int> {
         """, nativeQuery = true
     )
     fun getById(id: Int): RestaurantWithMenus?
-
-    @Query("""
-        INSERT INTO Recensione (creazione, voto, titolo, testo, ristorante, utente)
-        VALUES (NOW(), ?1, ?2, ?3, ?4, ?5)
-    """, nativeQuery = true)
-    @Modifying
-    @Transactional
-    fun insertReview(mark: Int, title: String?, text: String?, restaurantId: Int, userId: Int)
-
-    @Query("""
-        SELECT *
-        FROM Recensione
-        JOIN Ristorante ON Ristorante.id = Recensione.ristorante
-        JOIN Utente ON Utente.id = Recensione.utente
-        WHERE Ristorante.id = ?1
-    """, nativeQuery = true)
-    fun getReviews(restaurantId: Int): Set<Review>
-
-    @Query("""
-        DELETE FROM Recensione WHERE ristorante = ?1 AND utente = ?2
-    """, nativeQuery = true)
-    @Modifying
-    @Transactional
-    fun deleteReview(restaurantId: Int, userId: Int)
 }

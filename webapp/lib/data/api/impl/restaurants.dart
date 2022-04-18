@@ -42,14 +42,14 @@ class RestaurantsApiImpl implements RestaurantsApi {
 
   @override
   Future<List<Review>> getReviews(int restaurantId) async {
-    final result = await apiClient.get('/restaurant/review') as List<dynamic>;
+    final result = await apiClient.get('/restaurant/$restaurantId/review') as List<dynamic>;
     return result.map((json) => Review.fromJson(json)).toList();
   }
 
   @override
   Future<void> removeReview(Review review) async {
     await apiClient
-        .delete('/restaurant/${review.restaurantId}/review/${review.userId!}');
+        .delete('/restaurant/${review.restaurant.id}/review/${review.user.id}');
   }
 
   @override

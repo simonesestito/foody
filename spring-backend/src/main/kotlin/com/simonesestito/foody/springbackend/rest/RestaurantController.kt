@@ -1,6 +1,7 @@
 package com.simonesestito.foody.springbackend.rest
 
 import com.simonesestito.foody.springbackend.dao.RestaurantDao
+import com.simonesestito.foody.springbackend.dao.ReviewDao
 import com.simonesestito.foody.springbackend.entity.NewReviewDto
 import com.simonesestito.foody.springbackend.rest.errors.NotFoundException
 import org.springframework.web.bind.annotation.*
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/restaurant")
 class RestaurantController(
     private val restaurantDao: RestaurantDao,
+    private val reviewDao: ReviewDao,
 ) {
     @GetMapping("/")
     fun getNear(
@@ -26,16 +28,16 @@ class RestaurantController(
         @PathVariable("id") restaurantId: Int,
         @PathVariable("user") userId: Int,
     ) {
-        restaurantDao.insertReview(
+        reviewDao.insertReview(
             review.mark, review.title, review.description, restaurantId, userId
         )
     }
 
     @GetMapping("/{id}/review")
-    fun getReviews(@PathVariable("id") restaurantId: Int) = restaurantDao.getReviews(restaurantId)
+    fun getReviews(@PathVariable("id") restaurantId: Int) = reviewDao.getReviews(restaurantId)
 
     @DeleteMapping("/{id}/review/{user}")
     fun getReviews(
         @PathVariable("id") restaurantId: Int, @PathVariable("user") userId: Int,
-    ) = restaurantDao.deleteReview(restaurantId, userId)
+    ) = reviewDao.deleteReview(restaurantId, userId)
 }

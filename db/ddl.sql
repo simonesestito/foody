@@ -456,6 +456,14 @@ BEGIN
     END IF;
 END;
 
+CREATE TRIGGER IF NOT EXISTS stato_ordinazione_crescente
+    BEFORE UPDATE
+    ON OrdineRistorante
+    FOR EACH ROW
+BEGIN
+    IF (NEW.stato < OLD.stato) THEN SET NEW.stato = OLD.stato; END IF;
+END;
+
 
 -- Apply the haversine formula to calculate
 -- the distance between 2 points on Earth in KMs

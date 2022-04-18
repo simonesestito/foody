@@ -57,6 +57,13 @@ class FoodyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Foody App',
         debugShowCheckedModeBanner: false,
+        builder: (context, child) => child == null
+            ? const SizedBox.shrink()
+            : MediaQuery(
+                data: MediaQuery.of(context)
+                    .copyWith(alwaysUse24HourFormat: true),
+                child: child,
+              ),
         theme: ThemeData(
           brightness: Brightness.light,
           colorSchemeSeed: const Color(0xff70df4e),

@@ -1,6 +1,7 @@
 import 'package:foody_app/data/api/api_client.dart';
 import 'package:foody_app/data/api/restaurants.dart';
 import 'package:foody_app/data/model/address.dart';
+import 'package:foody_app/data/model/opening_hours.dart';
 import 'package:foody_app/data/model/restaurant.dart';
 import 'package:foody_app/data/model/review.dart';
 import 'package:foody_app/data/model/user.dart';
@@ -42,7 +43,8 @@ class RestaurantsApiImpl implements RestaurantsApi {
 
   @override
   Future<List<Review>> getReviews(int restaurantId) async {
-    final result = await apiClient.get('/restaurant/$restaurantId/review') as List<dynamic>;
+    final result = await apiClient.get('/restaurant/$restaurantId/review')
+        as List<dynamic>;
     return result.map((json) => Review.fromJson(json)).toList();
   }
 
@@ -86,5 +88,14 @@ class RestaurantsApiImpl implements RestaurantsApi {
   Future<List<Restaurant>> getMyRestaurants() async {
     final result = await apiClient.get('/restaurant/my') as List<dynamic>;
     return result.map((json) => Restaurant.fromJson(json)).toList();
+  }
+
+  @override
+  Future<void> updateTimetable(
+      int restaurantId, List<OpeningHours> timetable) async {
+    await apiClient.post(
+      '/restaurant/$restaurantId/timetable',
+      timetable.map((e) => e.toJson()).toList(),
+    );
   }
 }

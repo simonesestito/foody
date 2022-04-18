@@ -1,4 +1,5 @@
 import 'package:foody_app/data/model/address.dart';
+import 'package:foody_app/data/model/opening_hours.dart';
 import 'package:foody_app/data/model/restaurant.dart';
 import 'package:foody_app/data/model/review.dart';
 import 'package:foody_app/data/model/user.dart';
@@ -30,4 +31,6 @@ abstract class RestaurantsApi {
   Future<List<User>> removeEmployee(int restaurantId, User user);
 
   Future<List<User>> addEmployee(int restaurantId, String userEmail);
+
+  Future<void> updateTimetable(int restaurantId, List<OpeningHours> timetable);
 }

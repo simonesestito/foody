@@ -55,6 +55,6 @@ class _TimeOfDayJsonConverter implements JsonConverter<TimeOfDay, String> {
   String toJson(TimeOfDay object) {
     final hoursString = object.hour.toString().padLeft(2, '0');
     final minutesString = object.minute.toString().padLeft(2, '0');
-    return '$hoursString:$minutesString';
+    return '$hoursString:$minutesString:00';
   }
 }

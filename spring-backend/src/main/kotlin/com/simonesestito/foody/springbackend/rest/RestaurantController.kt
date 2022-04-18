@@ -2,8 +2,10 @@ package com.simonesestito.foody.springbackend.rest
 
 import com.simonesestito.foody.springbackend.dao.OrdersDao
 import com.simonesestito.foody.springbackend.dao.RestaurantDao
+import com.simonesestito.foody.springbackend.dao.RestaurantService
 import com.simonesestito.foody.springbackend.dao.ReviewDao
 import com.simonesestito.foody.springbackend.entity.NewReviewDto
+import com.simonesestito.foody.springbackend.entity.OpeningHours
 import com.simonesestito.foody.springbackend.entity.User
 import com.simonesestito.foody.springbackend.rest.errors.NotFoundException
 import org.springframework.security.core.annotation.AuthenticationPrincipal
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/restaurant")
 class RestaurantController(
     private val restaurantDao: RestaurantDao,
+    private val restaurantService: RestaurantService,
     private val ordersDao: OrdersDao,
     private val reviewDao: ReviewDao,
 ) {
@@ -52,4 +55,12 @@ class RestaurantController(
     fun getOrders(
         @PathVariable("id") restaurantId: Int
     ) = ordersDao.getAllByRestaurant(restaurantId)
+
+    @PostMapping("/{id}/timetable")
+    fun updateTimetable(
+        @PathVariable("id") restaurantId: Int,
+        @RequestBody timetable: List<OpeningHours>
+    ) {
+        restaurantService.updateTimetable(restaurantId, timetable)
+    }
 }

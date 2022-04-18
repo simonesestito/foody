@@ -32,18 +32,24 @@ class RestaurantsApiImpl implements RestaurantsApi {
   }
 
   @override
-  Future<Review> sendReview(Review review) async {
-    throw Exception('TODO');
+  Future<void> sendReview(
+      NewReview review, int restaurantId, int userId) async {
+    await apiClient.post(
+      '/restaurant/$restaurantId/review/$userId',
+      review.toJson(),
+    );
   }
 
   @override
   Future<List<Review>> getReviews(int restaurantId) async {
-    throw Exception('TODO');
+    final result = await apiClient.get('/restaurant/review') as List<dynamic>;
+    return result.map((json) => Review.fromJson(json)).toList();
   }
 
   @override
   Future<void> removeReview(Review review) async {
-    throw Exception('TODO');
+    await apiClient
+        .delete('/restaurant/${review.restaurantId}/review/${review.userId!}');
   }
 
   @override

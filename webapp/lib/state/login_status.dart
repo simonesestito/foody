@@ -11,9 +11,9 @@ class LoginStatus extends ChangeNotifier {
     _loadAuthStatus();
   }
 
-  get isLoading => _isLoading;
+  bool get isLoading => _isLoading;
 
-  get currentUser => _user;
+  User? get currentUser => _user;
 
   bool isLoggedIn() => _user != null;
 

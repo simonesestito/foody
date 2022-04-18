@@ -24,3 +24,21 @@ class Review {
 
   Map<String, dynamic> toJson() => _$ReviewToJson(this);
 }
+
+@JsonSerializable()
+class NewReview {
+  final int mark;
+  final String? title;
+  final String? description;
+
+  const NewReview({
+    required this.mark,
+    this.title,
+    this.description,
+  });
+
+  factory NewReview.fromJson(Map<String, dynamic> json) =>
+      _$NewReviewFromJson(json);
+
+  Map<String, dynamic> toJson() => _$NewReviewToJson(this);
+}

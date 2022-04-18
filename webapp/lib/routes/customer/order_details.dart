@@ -51,7 +51,11 @@ class OrderDetailsRoute extends SingleChildBaseRoute {
           if (order.status == OrderState.delivered)
             OutlinedButton.icon(
               onPressed: () {
-                Navigator.pushNamed(context, LeaveReviewRoute.routeName);
+                Navigator.pushNamed(
+                  context,
+                  LeaveReviewRoute.routeName,
+                  arguments: order.orderContent.first.product.restaurant,
+                );
               },
               icon: const Icon(Icons.star),
               label: const Text('Recensisci ristorante'),

@@ -29,7 +29,9 @@ class _LoadingButtonState extends State<LoadingButton> {
     if (_isLoading) {
       return const SizedBox.square(
         dimension: 36,
-        child: CircularProgressIndicator(),
+        child: Center(
+          child: CircularProgressIndicator(),
+        ),
       );
     }
 

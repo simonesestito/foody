@@ -7,6 +7,7 @@ import 'package:foody_app/di.dart';
 import 'package:foody_app/routes/base_route.dart';
 import 'package:foody_app/routes/customer/cart.dart';
 import 'package:foody_app/routes/customer/customer_orders.dart';
+import 'package:foody_app/routes/customer/leave_review.dart';
 import 'package:foody_app/routes/customer/order_confirm.dart';
 import 'package:foody_app/routes/customer/order_details.dart';
 import 'package:foody_app/routes/customer/restaurant_details.dart';
@@ -21,6 +22,7 @@ final customerRoutes = {
   CartRoute.routeName: (_) => const CartRoute(),
   OrderConfirm.routeName: (_) => OrderConfirm(),
   OrderDetailsRoute.routeName: (_) => const OrderDetailsRoute(),
+  LeaveReviewRoute.routeName: (_) => LeaveReviewRoute(),
 };
 
 class CustomerRoute extends BaseRoute {

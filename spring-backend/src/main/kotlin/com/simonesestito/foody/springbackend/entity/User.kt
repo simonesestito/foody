@@ -1,8 +1,11 @@
 package com.simonesestito.foody.springbackend.entity
 
+import org.hibernate.annotations.Immutable
+import java.math.BigInteger
 import javax.persistence.*
 
-@Entity(name = "Utente")
+@Entity(name = "DettagliUtente")
+@Immutable
 data class User(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY) var id: Int?,
     @Column(name = "nome") var name: String,
@@ -18,7 +21,7 @@ data class User(
     ) @Column(name = "telefono") var phoneNumbers: Set<String>,
     var rider: Boolean,
     var admin: Boolean,
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER) var managerJobs: Set<OrdersManagement>,
+    @Column(name = "numero_ristoranti") var restaurantsNumber: Long,
 ) {
     fun getAuthorities() = getAllowedRoles().map { GrantedAuthorityString(it) }
 
@@ -26,7 +29,7 @@ data class User(
         "cliente",
         if (rider) "rider" else null,
         if (admin) "admin" else null,
-        if (managerJobs.any { it.endDate == null }) "manager" else null,
+        if (restaurantsNumber > 0) "manager" else null,
     )
 }
 

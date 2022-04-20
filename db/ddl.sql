@@ -115,8 +115,7 @@ CREATE TABLE IF NOT EXISTS EmailUtente
 CREATE TABLE IF NOT EXISTS TelefonoUtente
 (
     utente   INT NOT NULL,
-    telefono VARCHAR(14) PRIMARY KEY CHECK (telefono RLIKE
-                                            '^[+]?([0-9]{6}[0-9]*)$'),
+    telefono VARCHAR(14) PRIMARY KEY CHECK (telefono RLIKE '^[+]?([0-9]{6}[0-9]*)$'),
     FOREIGN KEY (utente) REFERENCES Utente (id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
@@ -203,7 +202,7 @@ CREATE TABLE IF NOT EXISTS ServizioRider
 
 CREATE TABLE IF NOT EXISTS StatoOrdine
 (
-    id INT PRIMARY KEY,
+    id   INT PRIMARY KEY,
     nome VARCHAR(16) NOT NULL UNIQUE
 );
 INSERT INTO StatoOrdine (id, nome)
@@ -275,6 +274,16 @@ FROM DettagliRistorante
          LEFT JOIN Prodotto P on P.id = MCC.prodotto
          LEFT JOIN AllergeniProdotto AP on P.id = AP.prodotto;
 
+CREATE VIEW DettagliUtente AS
+SELECT Utente.*,
+       EU.email,
+       TU.telefono,
+       COUNT(DISTINCT GO.ristorante) AS numero_ristoranti
+FROM Utente
+         LEFT JOIN EmailUtente EU on Utente.id = EU.utente
+         LEFT JOIN TelefonoUtente TU on Utente.id = TU.utente
+         LEFT JOIN GestioneOrdini GO on Utente.id = GO.utente AND GO.data_fine IS NULL
+GROUP BY Utente.id;
 
 -- Triggers
 CREATE TRIGGER IF NOT EXISTS orario_apertura_sovrapposto_insert
@@ -461,6 +470,20 @@ BEGIN
     IF (NEW.stato < OLD.stato) THEN SET NEW.stato = OLD.stato; END IF;
 END;
 
+CREATE TRIGGER IF NOT EXISTS singola_assunzione_gestione_ordini
+    BEFORE INSERT
+    ON GestioneOrdini
+    FOR EACH ROW
+BEGIN
+    IF (NEW.data_fine IS NULL AND EXISTS(SELECT *
+                                         FROM GestioneOrdini
+                                         WHERE utente = NEW.utente
+                                           AND ristorante = NEW.ristorante
+                                           AND data_fine IS NULL)) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Il dipendente risulta già assunto al momento';
+    END IF;
+END;
+
 -- Stored Procedures
 CREATE PROCEDURE aggiorna_orari_ristorante(IN _ristorante INT, IN _orario TEXT)
     MODIFIES SQL DATA
@@ -471,11 +494,10 @@ BEGIN
     DECLARE _apertura TIME DEFAULT NULL;
     DECLARE _chisura TIME DEFAULT NULL;
 
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-        BEGIN
-            ROLLBACK;
-            RESIGNAL;
-        END;
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION BEGIN
+        ROLLBACK;
+        RESIGNAL;
+    END;
 
     START TRANSACTION;
 
@@ -495,8 +517,7 @@ BEGIN
         VALUES (_giorno, _apertura, _chisura, _ristorante);
 
         SET _orario = SUBSTR(_orario, CHAR_LENGTH(_line) + 2);
-    END LOOP;
-    COMMIT;
+    END LOOP; COMMIT;
 END;
 
 
@@ -564,13 +585,30 @@ BEGIN
 
     INSERT INTO ContenutoOrdine (prodotto, ordine_ristorante, quantita)
     SELECT prodotto, _orderId, quantita
-    FROM Carrello, Prodotto
+    FROM Carrello,
+         Prodotto
     WHERE Carrello.prodotto = Prodotto.id
       AND utente = _cliente;
 
-    DELETE FROM Carrello WHERE utente = _cliente;
+    DELETE FROM Carrello WHERE utente = _cliente; COMMIT;
+END;
 
-    COMMIT;
+CREATE PROCEDURE registra_utente(IN _nome TEXT, IN _cognome TEXT, IN _password VARCHAR(60), IN _email TEXT,
+                                 IN _telefono TEXT)
+    MODIFIES SQL DATA
+BEGIN
+    DECLARE _userId INT DEFAULT NULL;
+
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION BEGIN
+        ROLLBACK;
+        RESIGNAL;
+    END;
+
+    START TRANSACTION;
+    INSERT INTO Utente (nome, cognome, password) VALUES (_nome, _cognome, _password);
+    SELECT LAST_INSERT_ID() INTO _userId;
+    INSERT INTO EmailUtente (utente, email) VALUES (_userId, _email);
+    INSERT INTO TelefonoUtente (utente, telefono) VALUES (_userId, _telefono); COMMIT;
 END;
 
 

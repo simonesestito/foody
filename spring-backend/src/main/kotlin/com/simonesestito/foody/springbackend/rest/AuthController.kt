@@ -46,19 +46,13 @@ class AuthController(
 
     @PostMapping("/signup")
     fun signUp(@RequestBody newUser: NewUserDto) {
-        val user = User(
-            id = null,
-            name = newUser.name,
-            surname = newUser.surname,
-            emailAddresses = setOf(newUser.emailAddress),
-            phoneNumbers = setOf(newUser.phoneNumber),
-            hashedPassword = passwordEncoder.encode(newUser.password),
-            rider = false,
-            admin = false,
-            managerJobs = emptySet(),
+        userDao.insertUser(
+            newUser.name,
+            newUser.surname,
+            passwordEncoder.encode(newUser.password),
+            newUser.emailAddress,
+            newUser.phoneNumber
         )
-
-        userDao.save(user)
     }
 
     @GetMapping("/logout")

@@ -431,28 +431,24 @@ CREATE TRIGGER affidamento_consegna_max_consegne_per_servizio
     ON OrdineRistorante
     FOR EACH ROW
 BEGIN
-    IF EXISTS(SELECT ServizioRider.id
-              FROM ServizioRider
-                       JOIN OrdineRistorante ON ServizioRider.id = OrdineRistorante.servizio_rider
-              WHERE OrdineRistorante.stato = 300
-                AND ServizioRider.ora_fine IS NULL
-              GROUP BY ServizioRider.id
-              HAVING COUNT(DISTINCT OrdineRistorante.id) > 1) THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Più ordini in consegna presenti per lo stesso servizio del rider';
+    IF NEW.servizio_rider IS NOT NULL AND OLD.servizio_rider <> NEW.servizio_rider THEN
+        IF (SELECT COUNT(DISTINCT OrdineRistorante.id)
+            FROM OrdineRistorante
+                     JOIN ServizioRider SR on OrdineRistorante.servizio_rider = SR.id
+            WHERE servizio_rider = NEW.servizio_rider
+              AND SR.ora_fine IS NULL) > 0 THEN
+            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT =
+                    'Più ordini in consegna presenti per lo stesso servizio del rider';
+        END IF;
     END IF;
 END;
 
 CREATE TRIGGER utente_rider_max_servizi_in_corso
-    BEFORE INSERT 
+    BEFORE INSERT
     ON ServizioRider
     FOR EACH ROW
 BEGIN
-    IF EXISTS(SELECT Utente.id
-              FROM ServizioRider
-                       JOIN Utente ON ServizioRider.utente = Utente.id
-              WHERE ServizioRider.ora_fine IS NULL -- In corso
-              GROUP BY Utente.id
-              HAVING COUNT(DISTINCT ServizioRider.id) > 1) THEN
+    IF EXISTS(SELECT ServizioRider.id FROM ServizioRider WHERE utente = NEW.utente AND ora_fine IS NULL) THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Esiste già un servizio in corso per il rider';
     END IF;
 END;
@@ -466,7 +462,6 @@ BEGIN
 END;
 
 -- Stored Procedures
-DROP PROCEDURE IF EXISTS aggiorna_orari_ristorante;
 CREATE PROCEDURE aggiorna_orari_ristorante(IN _ristorante INT, IN _orario TEXT)
     MODIFIES SQL DATA
 BEGIN
@@ -505,7 +500,6 @@ BEGIN
 END;
 
 
-DROP PROCEDURE IF EXISTS inserisci_aggiorna_prodotto;
 CREATE PROCEDURE inserisci_aggiorna_prodotto(IN _id INT, IN _nome TEXT, IN _descrizione TEXT, IN _prezzo FLOAT(10, 2),
                                              IN _ristorante INT, IN _allergeni TEXT)
     MODIFIES SQL DATA
@@ -543,7 +537,6 @@ BEGIN
 END;
 
 
-DROP PROCEDURE IF EXISTS inserisci_ordine_utente;
 CREATE PROCEDURE inserisci_ordine_utente(
     IN _note TEXT,
     IN _via TEXT,

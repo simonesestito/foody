@@ -18,9 +18,6 @@ class ApiClient {
 
   Future<dynamic> post(String uri, dynamic body,
       [Map<String, dynamic>? queryParams]) {
-    print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
-    print(json.encode(body));
-    print('<<<<<<<<<<<<<<<<<<<<<<<<<<<<');
     return _httpClient
         .post(_buildUri(uri, queryParams), body: json.encode(body), headers: {
       'Content-Type': 'application/json',

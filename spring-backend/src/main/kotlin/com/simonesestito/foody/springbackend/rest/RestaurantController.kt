@@ -1,9 +1,6 @@
 package com.simonesestito.foody.springbackend.rest
 
-import com.simonesestito.foody.springbackend.dao.OrdersDao
-import com.simonesestito.foody.springbackend.dao.RestaurantDao
-import com.simonesestito.foody.springbackend.dao.RestaurantService
-import com.simonesestito.foody.springbackend.dao.ReviewDao
+import com.simonesestito.foody.springbackend.dao.*
 import com.simonesestito.foody.springbackend.entity.NewReviewDto
 import com.simonesestito.foody.springbackend.entity.OpeningHours
 import com.simonesestito.foody.springbackend.entity.User
@@ -18,6 +15,7 @@ class RestaurantController(
     private val restaurantService: RestaurantService,
     private val ordersDao: OrdersDao,
     private val reviewDao: ReviewDao,
+    private val productsDao: ProductsDao,
 ) {
     @GetMapping("/")
     fun getNear(
@@ -63,4 +61,9 @@ class RestaurantController(
     ) {
         restaurantService.updateTimetable(restaurantId, timetable)
     }
+
+    @GetMapping("/{id}/products")
+    fun getProducts(
+        @PathVariable("id") restaurantId: Int
+    ) = productsDao.getAllByRestaurant(restaurantId)
 }

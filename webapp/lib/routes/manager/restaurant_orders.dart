@@ -6,6 +6,7 @@ import 'package:foody_app/data/model/restaurant.dart';
 import 'package:foody_app/di.dart';
 import 'package:foody_app/routes/base_route.dart';
 import 'package:foody_app/routes/customer/order_details.dart';
+import 'package:foody_app/routes/manager/list_products.dart';
 import 'package:foody_app/routes/manager/timetable.dart';
 
 class RestaurantOrders extends SingleChildBaseRoute {
@@ -24,15 +25,28 @@ class RestaurantOrders extends SingleChildBaseRoute {
           ),
           OutlinedButton.icon(
             onPressed: () {
-              Navigator.push(context, MaterialPageRoute(
-                builder: (_) => const RestaurantTimetable(),
-                settings: RouteSettings(arguments: restaurant),
-              ));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const RestaurantTimetable(),
+                    settings: RouteSettings(arguments: restaurant),
+                  ));
             },
             icon: const Icon(Icons.access_time),
             label: const Text('Gestisci orari di apertura'),
           ),
-          // TODO: Manage products button
+          OutlinedButton.icon(
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const ListProductsRoute(),
+                    settings: RouteSettings(arguments: restaurant),
+                  ));
+            },
+            icon: const Icon(Icons.restaurant),
+            label: const Text('Gestisci prodotti'),
+          ),
           // TODO: Manage employees button
           FutureBuilder<List<Order>>(
             future: getIt

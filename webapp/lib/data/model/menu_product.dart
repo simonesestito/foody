@@ -4,7 +4,7 @@ part 'menu_product.g.dart';
 
 @JsonSerializable()
 class MenuProduct {
-  final int? id;
+  final int id;
   final String name;
   final String? description;
   final double price;
@@ -12,7 +12,7 @@ class MenuProduct {
   final int restaurant;
 
   const MenuProduct({
-    this.id,
+    this.id = -1,
     required this.name,
     required this.description,
     required this.price,

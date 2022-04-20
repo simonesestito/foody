@@ -5,9 +5,7 @@ abstract class ProductsApi {
 
   Future<MenuProduct> getProduct(int productId);
 
-  Future<MenuProduct> addProduct(MenuProduct menuProduct);
-
-  Future<MenuProduct> updateProduct(MenuProduct menuProduct);
+  Future<void> addProduct(MenuProduct menuProduct);
 
   Future<void> deleteProduct(MenuProduct menuProduct);
 }

@@ -1,29 +1,21 @@
 package com.simonesestito.foody.springbackend.rest
 
 import com.simonesestito.foody.springbackend.dao.ProductsDao
-import com.simonesestito.foody.springbackend.dao.ProductsService
 import com.simonesestito.foody.springbackend.entity.Product
-import org.springframework.web.bind.annotation.DeleteMapping
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/products")
-class ProductsController(
-    private val productsDao: ProductsDao,
-    private val productsService: ProductsService,
-) {
+class ProductsController(private val productsDao: ProductsDao) {
     @PostMapping("/")
-    fun addProduct(@RequestBody product: Product) {
-        if (product.id < 0)
-            productsService.insertProduct(product)
-        else
-            productsService.updateProduct(product)
-    }
+    fun addProduct(@RequestBody product: Product) = productsDao.insertUpdateProduct(
+        product.id,
+        product.name,
+        product.description,
+        product.price,
+        product.restaurant,
+        product.allergens.joinToString("\n"),
+    )
 
     @DeleteMapping("/{id}")
     fun deleteProduct(@PathVariable("id") id: Int) = productsDao.deleteById(id)

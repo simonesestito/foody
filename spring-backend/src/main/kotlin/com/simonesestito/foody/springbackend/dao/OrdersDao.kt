@@ -5,9 +5,6 @@ import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
-import org.springframework.stereotype.Service
-import java.math.BigInteger
-import javax.persistence.EntityManager
 import javax.transaction.Transactional
 
 @Repository
@@ -25,7 +22,8 @@ interface OrdersDao : CrudRepository<RestaurantOrder, Int> {
     )
     fun getAllByUserId(userId: Int): Set<RestaurantOrder>
 
-    @Query("""
+    @Query(
+        """
         SELECT *
         FROM OrdineRistorante
         LEFT JOIN Utente ON Utente.id = OrdineRistorante.utente = Utente.id
@@ -33,10 +31,12 @@ interface OrdersDao : CrudRepository<RestaurantOrder, Int> {
         LEFT JOIN ContenutoOrdine ON OrdineRistorante.id = ContenutoOrdine.ordine_ristorante
         LEFT JOIN Prodotto ON ContenutoOrdine.prodotto = Prodotto.id
         WHERE Prodotto.ristorante = ?1
-    """, nativeQuery = true)
+    """, nativeQuery = true
+    )
     fun getAllByRestaurant(restaurantId: Int): Set<RestaurantOrder>
 
-    @Query("""
+    @Query(
+        """
         UPDATE OrdineRistorante
         SET stato = (
             SELECT StatoOrdine.id
@@ -44,16 +44,14 @@ interface OrdersDao : CrudRepository<RestaurantOrder, Int> {
             WHERE StatoOrdine.nome = ?2
         )
         WHERE OrdineRistorante.id = ?1
-    """, nativeQuery = true)
+    """, nativeQuery = true
+    )
     @Modifying
     @Transactional
     fun updateOrderStatus(orderId: Int, statusName: String)
-}
 
-@Service
-class OrdersService(
-    private val session: EntityManager,
-) {
+    @Query("CALL inserisci_ordine_utente(?1, ?2, ?3, ?4, ?5, ?6, ?7)", nativeQuery = true)
+    @Modifying
     @Transactional
     fun postOrderFromCart(
         notes: String?,
@@ -63,46 +61,5 @@ class OrdersService(
         latitude: Double,
         longitude: Double,
         customerId: Int,
-    ) {
-        session.createNativeQuery(
-            """
-        INSERT INTO OrdineRistorante
-        (note, indirizzo_via, indirizzo_civico, indirizzo_citta, indirizzo_latitudine, indirizzo_longitudine, utente, servizio_rider)
-        VALUES
-        (?1, ?2, ?3, ?4, ?5, ?6, ?7, NULL)
-        """.trimIndent()
-        )
-            .setParameter(1, notes)
-            .setParameter(2, street)
-            .setParameter(3, houseNumber)
-            .setParameter(4, city)
-            .setParameter(5, latitude)
-            .setParameter(6, longitude)
-            .setParameter(7, customerId)
-            .executeUpdate()
-
-        val orderId = session.createNativeQuery("SELECT LAST_INSERT_ID()").singleResult as BigInteger
-        println("ORDER >>>>>>>>>>>>> $orderId")
-
-        session.createNativeQuery(
-            """
-        INSERT INTO ContenutoOrdine (prodotto, ordine_ristorante, quantita)
-        SELECT prodotto, ?1, quantita 
-        FROM Carrello, Prodotto
-        WHERE Carrello.prodotto = Prodotto.id
-        AND utente = ?2
-        """.trimIndent()
-        )
-            .setParameter(1, orderId)
-            .setParameter(2, customerId)
-            .executeUpdate()
-
-        session.createNativeQuery(
-            """
-            DELETE FROM Carrello WHERE utente = ?1
-        """.trimIndent()
-        )
-            .setParameter(1, customerId)
-            .executeUpdate()
-    }
+    )
 }

@@ -206,7 +206,7 @@ CREATE TABLE IF NOT EXISTS StatoOrdine
     id INT PRIMARY KEY,
     nome VARCHAR(16) NOT NULL UNIQUE
 );
-INSERT INTO StatoOrdine (id)
+INSERT INTO StatoOrdine (id, nome)
 VALUES (100, 'preparing'),
        (200, 'prepared'),
        (300, 'delivering'),
@@ -463,6 +463,121 @@ CREATE TRIGGER IF NOT EXISTS stato_ordinazione_crescente
     FOR EACH ROW
 BEGIN
     IF (NEW.stato < OLD.stato) THEN SET NEW.stato = OLD.stato; END IF;
+END;
+
+-- Stored Procedures
+DROP PROCEDURE IF EXISTS aggiorna_orari_ristorante;
+CREATE PROCEDURE aggiorna_orari_ristorante(IN _ristorante INT, IN _orario TEXT)
+    MODIFIES SQL DATA
+BEGIN
+    DECLARE _line TEXT DEFAULT NULL;
+    DECLARE _lineSize INT DEFAULT NULL;
+    DECLARE _giorno INT DEFAULT NULL;
+    DECLARE _apertura TIME DEFAULT NULL;
+    DECLARE _chisura TIME DEFAULT NULL;
+
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+        BEGIN
+            ROLLBACK;
+            RESIGNAL;
+        END;
+
+    START TRANSACTION;
+
+    DELETE FROM OrariDiApertura WHERE OrariDiApertura.ristorante = _ristorante;
+
+    orario_linee:
+    LOOP
+        IF CHAR_LENGTH(_orario) = 0 THEN LEAVE orario_linee; END IF;
+        SET _line = SUBSTRING_INDEX(_orario, '\n', 1);
+        SET _lineSize = CHAR_LENGTH(_line);
+
+        SET _giorno = SUBSTRING_INDEX(_line, ',', 1);
+        SET _apertura = SUBSTRING_INDEX(SUBSTR(_line, CHAR_LENGTH(_giorno) + 2), ',', 1);
+        SET _chisura = SUBSTRING_INDEX(SUBSTR(_line, CHAR_LENGTH(_giorno) + CHAR_LENGTH(_apertura) + 3), ',', 1);
+
+        INSERT INTO OrariDiApertura (giorno, apertura, chiusura, ristorante)
+        VALUES (_giorno, _apertura, _chisura, _ristorante);
+
+        SET _orario = SUBSTR(_orario, CHAR_LENGTH(_line) + 2);
+    END LOOP;
+    COMMIT;
+END;
+
+
+DROP PROCEDURE IF EXISTS inserisci_aggiorna_prodotto;
+CREATE PROCEDURE inserisci_aggiorna_prodotto(IN _id INT, IN _nome TEXT, IN _descrizione TEXT, IN _prezzo FLOAT(10, 2),
+                                             IN _ristorante INT, IN _allergeni TEXT)
+    MODIFIES SQL DATA
+BEGIN
+    DECLARE _line TEXT DEFAULT NULL;
+    DECLARE _lineSize INT DEFAULT NULL;
+
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION BEGIN
+        ROLLBACK;
+        RESIGNAL;
+    END;
+
+    START TRANSACTION;
+
+    IF _id IS NULL OR _id < 0 THEN
+        INSERT INTO Prodotto (nome, descrizione, prezzo, ristorante) VALUES (_nome, _descrizione, _prezzo, _ristorante);
+        SELECT LAST_INSERT_ID() INTO _id;
+    ELSE
+        DELETE FROM AllergeniProdotto WHERE prodotto = _id;
+        UPDATE Prodotto
+        SET nome = _nome, descrizione = _descrizione, prezzo = _prezzo, ristorante = _ristorante
+        WHERE id = _id;
+    END IF;
+
+    allergeni_linee:
+    LOOP
+        IF CHAR_LENGTH(_allergeni) = 0 THEN LEAVE allergeni_linee; END IF;
+        SET _line = SUBSTRING_INDEX(_allergeni, '\n', 1);
+        SET _lineSize = CHAR_LENGTH(_line);
+
+        INSERT INTO AllergeniProdotto (prodotto, allergene) VALUES (_id, TRIM(_line));
+
+        SET _allergeni = SUBSTR(_allergeni, CHAR_LENGTH(_line) + 2);
+    END LOOP; COMMIT;
+END;
+
+
+DROP PROCEDURE IF EXISTS inserisci_ordine_utente;
+CREATE PROCEDURE inserisci_ordine_utente(
+    IN _note TEXT,
+    IN _via TEXT,
+    IN _civico TEXT,
+    IN _citta TEXT,
+    IN _latitudine FLOAT(10, 6),
+    IN _longitudine FLOAT(10, 6),
+    IN _cliente INT)
+    MODIFIES SQL DATA
+BEGIN
+    DECLARE _orderId INT DEFAULT NULL;
+
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION BEGIN
+        ROLLBACK;
+        RESIGNAL;
+    END;
+
+    START TRANSACTION;
+
+    INSERT INTO OrdineRistorante (note, indirizzo_via, indirizzo_civico, indirizzo_citta, indirizzo_latitudine,
+                                  indirizzo_longitudine, utente, servizio_rider)
+    VALUES (_note, _via, _civico, _citta, _latitudine, _longitudine, _cliente, NULL);
+
+    SELECT LAST_INSERT_ID() INTO _orderId;
+
+    INSERT INTO ContenutoOrdine (prodotto, ordine_ristorante, quantita)
+    SELECT prodotto, _orderId, quantita
+    FROM Carrello, Prodotto
+    WHERE Carrello.prodotto = Prodotto.id
+      AND utente = _cliente;
+
+    DELETE FROM Carrello WHERE utente = _cliente;
+
+    COMMIT;
 END;
 
 

@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:foody_app/data/api/errors/handler.dart';
 import 'package:foody_app/data/api/manager.dart';
@@ -66,6 +67,7 @@ class _EmployeesContentState extends State<_EmployeesContent> {
               onPressed: () => showAppBottomSheet(
                 context,
                 (context) => _buildHiringLayout(widget.restaurant, context),
+                isScrollControlled: true,
               ),
               icon: const Icon(Icons.add),
               label: const Text('Assumi'),
@@ -78,12 +80,12 @@ class _EmployeesContentState extends State<_EmployeesContent> {
                         ? ''
                         : '\nLicenziato il ${employee.endDate}')),
                 trailing: employee.endDate == null &&
-                        employee.user.id !=
-                            context.read<LoginStatus>().currentUser!.id
+                    employee.user.id !=
+                        context.read<LoginStatus>().currentUser!.id
                     ? IconButton(
-                        onPressed: () => _onFireEmployee(employee),
-                        icon: const Icon(Icons.delete),
-                      )
+                  onPressed: () => _onFireEmployee(employee),
+                  icon: const Icon(Icons.delete),
+                )
                     : null,
                 leading: employee.endDate == null
                     ? const Icon(Icons.badge)
@@ -122,6 +124,9 @@ class _EmployeesContentState extends State<_EmployeesContent> {
             });
           },
         ),
+        Padding(
+          padding: MediaQuery.of(context).viewInsets,
+        ),
       ],
     );
   }
@@ -129,9 +134,9 @@ class _EmployeesContentState extends State<_EmployeesContent> {
   void _onFireEmployee(OrdersManagement management) async {
     try {
       await getIt.get<ManagerApi>().fireEmployee(
-            management.restaurant,
-            management.user.id,
-          );
+        management.restaurant,
+        management.user.id,
+      );
       setState(() {
         _listKey = UniqueKey();
       });

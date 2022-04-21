@@ -2,8 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:foody_app/globals.dart';
 
 Future<void> showAppBottomSheet(
-    BuildContext context, WidgetBuilder builder) async {
+  BuildContext context,
+  WidgetBuilder builder, {
+  bool isScrollControlled = false,
+}) async {
   return showModalBottomSheet(
+    isScrollControlled: isScrollControlled,
     context: context,
     constraints: const BoxConstraints(
       minHeight: Globals.minBottomSheetHeight,

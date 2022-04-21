@@ -414,6 +414,18 @@ BEGIN
     END IF;
 END;
 
+CREATE TRIGGER IF NOT EXISTS menu_pubblicato_non_vuoto_categorie_delete
+    BEFORE DELETE
+    ON CategoriaMenu
+    FOR EACH ROW
+BEGIN
+    IF (SELECT Menu.pubblicato FROM Menu WHERE Menu.id = OLD.menu) = 1 AND
+       (SELECT COUNT(*) FROM CategoriaMenu WHERE menu = OLD.menu) = 1 THEN
+        -- Il menu è pubblicato e questa era l'ultima categoria rimasta
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Impossibile rimuovere l\'ultima categoria di un menu pubblicato';
+    END IF;
+END;
+
 CREATE TRIGGER ristorante_max_menu_pubblicato_insert
     BEFORE INSERT
     ON Menu

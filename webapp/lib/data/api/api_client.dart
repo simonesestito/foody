@@ -31,13 +31,13 @@ class ApiClient {
   dynamic _handleResponse(Response response) {
     if (kDebugMode) {
       print('HTTP Response with status: ${response.statusCode}');
-      print('Body: ${response.body}');
+      print('Body: ${utf8.decode(response.bodyBytes)}');
     }
 
     switch (response.statusCode) {
       case 200:
         try {
-          return json.decode(response.body);
+          return json.decode(utf8.decode(response.bodyBytes));
         } catch (e) {
           debugPrint(e.toString());
           return null;
@@ -45,7 +45,7 @@ class ApiClient {
       case BadFormException.errorCode:
         throw BadFormException();
       case ConflictDataException.errorCode:
-        throw ConflictDataException(response.body);
+        throw ConflictDataException(utf8.decode(response.bodyBytes));
       case NotLoggedInException.errorCode:
         throw NotLoggedInException();
       case UnauthorizedException.errorCode:
@@ -53,7 +53,7 @@ class ApiClient {
       case NotFoundException.errorCode:
         throw NotFoundException();
       case BadRequestError.errorCode:
-        throw BadRequestError(response.body);
+        throw BadRequestError(utf8.decode(response.bodyBytes));
       case ServerError.errorCode:
         throw ServerError();
       default:

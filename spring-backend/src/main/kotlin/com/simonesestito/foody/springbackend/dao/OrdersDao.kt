@@ -18,6 +18,7 @@ interface OrdersDao : CrudRepository<RestaurantOrder, Int> {
         LEFT JOIN ContenutoOrdine ON OrdineRistorante.id = ContenutoOrdine.ordine_ristorante
         LEFT JOIN Prodotto ON ContenutoOrdine.prodotto = Prodotto.id
         WHERE OrdineRistorante.utente = ?1 
+        ORDER BY OrdineRistorante.id DESC
     """, nativeQuery = true
     )
     fun getAllByUserId(userId: Int): Set<RestaurantOrder>
@@ -31,6 +32,7 @@ interface OrdersDao : CrudRepository<RestaurantOrder, Int> {
         LEFT JOIN ContenutoOrdine ON OrdineRistorante.id = ContenutoOrdine.ordine_ristorante
         LEFT JOIN Prodotto ON ContenutoOrdine.prodotto = Prodotto.id
         WHERE Prodotto.ristorante = ?1
+        ORDER BY OrdineRistorante.id DESC
     """, nativeQuery = true
     )
     fun getAllByRestaurant(restaurantId: Int): Set<RestaurantOrder>

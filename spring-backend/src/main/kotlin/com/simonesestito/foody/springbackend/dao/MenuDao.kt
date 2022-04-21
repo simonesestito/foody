@@ -36,4 +36,32 @@ interface MenuDao : CrudRepository<Menu, Int> {
     @Modifying
     @Transactional
     fun deleteCategory(category: Int)
+
+    @Query("""
+        INSERT INTO CategoriaMenu (titolo, menu) VALUES (?1, ?2)
+    """, nativeQuery = true)
+    @Modifying
+    @Transactional
+    fun addCategory(title: String, menu: Int)
+
+    @Query("""
+        UPDATE CategoriaMenu SET titolo = ?2 WHERE id = ?1
+    """, nativeQuery = true)
+    @Modifying
+    @Transactional
+    fun updateCategory(category: Int, title: String)
+
+    @Query("""
+        INSERT INTO ContenutoCategoriaMenu (prodotto, categoria) VALUES (?1, ?2)
+    """, nativeQuery = true)
+    @Modifying
+    @Transactional
+    fun addProductToCategory(product: Int, category: Int)
+
+    @Query("""
+        DELETE FROM ContenutoCategoriaMenu WHERE prodotto = ?1 AND categoria = ?2
+    """, nativeQuery = true)
+    @Modifying
+    @Transactional
+    fun removeProductFromCategory(product: Int, category: Int)
 }

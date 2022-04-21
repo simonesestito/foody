@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:foody_app/data/api/errors/handler.dart';
 import 'package:foody_app/data/api/menu.dart';
-import 'package:foody_app/data/api/products.dart';
 import 'package:foody_app/data/model/menu.dart';
 import 'package:foody_app/data/model/menu_product.dart';
 import 'package:foody_app/di.dart';
 import 'package:foody_app/routes/base_route.dart';
+import 'package:foody_app/routes/manager/pick_product.dart';
 import 'package:foody_app/utils.dart';
 import 'package:foody_app/widgets/loading_button.dart';
 
@@ -95,9 +95,20 @@ class _EditCategoryContentState extends State<_EditCategoryContent> {
   }
 
   void _onAddProduct(BuildContext context) async {
-    // TODO Add product to category, show bottom sheet
-    final products =
-        await getIt.get<ProductsApi>().getProducts(widget.menu.restaurant);
+    final product = await Navigator.push<MenuProduct>(
+        context,
+        MaterialPageRoute(
+          builder: (_) =>
+              PickProductRoute(restaurantId: widget.menu.restaurant),
+        ));
+
+    if (product != null) {
+      await getIt.get<MenuApi>().addProductToCategory(
+            product.id,
+            widget.category!.id!,
+          );
+      Navigator.pop(context);
+    }
   }
 
   void _removeProduct(BuildContext context, MenuProduct product) async {

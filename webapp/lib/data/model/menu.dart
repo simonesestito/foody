@@ -10,12 +10,14 @@ class RestaurantMenu {
   final String title;
   final bool published;
   final List<MenuCategory> categories;
+  final int restaurant;
 
   const RestaurantMenu({
     this.id,
     required this.title,
     required this.published,
     required this.categories,
+    required this.restaurant,
   });
 
   factory RestaurantMenu.fromJson(Map<String, dynamic> json) =>
@@ -29,11 +31,13 @@ class MenuCategory {
   final int? id;
   final String title;
   final List<MenuProduct> products;
+  final int menu;
 
   const MenuCategory({
     this.id,
     required this.title,
     required this.products,
+    required this.menu,
   });
 
   factory MenuCategory.fromJson(Map<String, dynamic> json) =>

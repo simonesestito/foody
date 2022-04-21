@@ -10,7 +10,7 @@ class MenuApiImpl implements MenuApi {
   const MenuApiImpl(this.apiClient);
 
   @override
-  Future<void> addMenu(int restaurantId, RestaurantMenu menu) async {
+  Future<void> addMenu(RestaurantMenu menu) async {
     await apiClient.post('/menu/', menu.toJson());
   }
 
@@ -20,7 +20,22 @@ class MenuApiImpl implements MenuApi {
   }
 
   @override
+  Future<void> addCategory(MenuCategory category) async {
+    await apiClient.post('/menu/category', category.toJson());
+  }
+
+  @override
   Future<void> removeCategory(int id) async {
     await apiClient.delete('/menu/category/$id');
+  }
+
+  @override
+  Future<void> addProductToCategory(int productId, int categoryId) async {
+    await apiClient.post('/menu/category/$categoryId/product/$productId', {});
+  }
+
+  @override
+  Future<void> removeProductFromCategory(int productId, int categoryId) async {
+    await apiClient.delete('/menu/category/$categoryId/product/$productId');
   }
 }

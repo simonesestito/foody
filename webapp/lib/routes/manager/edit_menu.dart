@@ -4,6 +4,7 @@ import 'package:foody_app/data/api/menu.dart';
 import 'package:foody_app/data/model/menu.dart';
 import 'package:foody_app/di.dart';
 import 'package:foody_app/routes/base_route.dart';
+import 'package:foody_app/routes/manager/edit_category.dart';
 import 'package:foody_app/utils.dart';
 import 'package:foody_app/widgets/loading_button.dart';
 
@@ -80,41 +81,58 @@ class _EditMenuContentState extends State<_EditMenuContent> {
             icon: const Icon(Icons.save),
             text: const Text('Salva'),
           ),
-          Text('Categorie', style: Theme.of(context).textTheme.headline6),
-          OutlinedButton.icon(
-            onPressed: () => _onCreateCategory(context),
-            icon: const Icon(Icons.add),
-            label: const Text('Crea nuova'),
-          ),
-          for (final category in widget.menu?.categories ?? [])
-            ListTile(
-              title: Text(category.title),
-              subtitle: Text('${category.products.length} prodotti'),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                    onPressed: () => _editCategory(context, category),
-                    icon: const Icon(Icons.edit),
-                  ),
-                  IconButton(
-                    onPressed: () => _deleteCategory(category),
-                    icon: const Icon(Icons.delete),
-                  ),
-                ],
-              ),
+          if (widget.menu != null) ...[
+            Text('Categorie', style: Theme.of(context).textTheme.headline6),
+            OutlinedButton.icon(
+              onPressed: () => _onCreateCategory(context),
+              icon: const Icon(Icons.add),
+              label: const Text('Crea nuova'),
             ),
+            for (final category in widget.menu?.categories ?? [])
+              ListTile(
+                title: Text(category.title),
+                subtitle: Text('${category.products.length} prodotti'),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      onPressed: () => _editCategory(context, category),
+                      icon: const Icon(Icons.edit),
+                    ),
+                    IconButton(
+                      onPressed: () => _deleteCategory(category),
+                      icon: const Icon(Icons.delete),
+                    ),
+                  ],
+                ),
+              ),
+          ],
         ],
       ),
     );
   }
 
-  void _onCreateCategory(BuildContext context) {
-    throw Exception('TODO');
+  void _onCreateCategory(BuildContext context) async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => EditCategoryRoute(menu: widget.menu!),
+      ),
+    );
+    Navigator.pop(context);
   }
 
-  void _editCategory(BuildContext context, MenuCategory category) {
-    throw Exception('TODO');
+  void _editCategory(BuildContext context, MenuCategory category) async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => EditCategoryRoute(
+          category: category,
+          menu: widget.menu!,
+        ),
+      ),
+    );
+    Navigator.pop(context);
   }
 
   Future<void> _deleteCategory(MenuCategory category) async {
@@ -131,15 +149,15 @@ class _EditMenuContentState extends State<_EditMenuContent> {
 
     final name = _nameController.text;
 
-    final product = RestaurantMenu(
-      id: widget.menu?.id ?? -1,
-      title: name,
-      categories: widget.menu?.categories ?? [],
-      published: _publishedCheck,
-    );
+    final menu = RestaurantMenu(
+        id: widget.menu?.id ?? -1,
+        title: name,
+        categories: widget.menu?.categories ?? [],
+        published: _publishedCheck,
+        restaurant: widget.restaurantId);
 
     try {
-      await getIt.get<MenuApi>().addMenu(widget.restaurantId, product);
+      await getIt.get<MenuApi>().addMenu(menu);
       Navigator.pop(context);
     } catch (err) {
       handleApiError(err, context);

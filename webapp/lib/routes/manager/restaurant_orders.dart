@@ -7,6 +7,7 @@ import 'package:foody_app/di.dart';
 import 'package:foody_app/routes/base_route.dart';
 import 'package:foody_app/routes/customer/order_details.dart';
 import 'package:foody_app/routes/manager/list_employees.dart';
+import 'package:foody_app/routes/manager/list_menus.dart';
 import 'package:foody_app/routes/manager/list_products.dart';
 import 'package:foody_app/routes/manager/timetable.dart';
 
@@ -60,7 +61,18 @@ class RestaurantOrders extends SingleChildBaseRoute {
             icon: const Icon(Icons.badge),
             label: const Text('Gestisci dipendenti'),
           ),
-          // TODO: Manage menu and categories button
+          OutlinedButton.icon(
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const ListMenusRoute(),
+                    settings: RouteSettings(arguments: restaurant),
+                  ));
+            },
+            icon: const Icon(Icons.menu_book),
+            label: const Text('Gestisci menu e categorie'),
+          ),
           FutureBuilder<List<Order>>(
             future: getIt
                 .get<CustomerOrdersApi>()

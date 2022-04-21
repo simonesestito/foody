@@ -275,15 +275,19 @@ FROM DettagliRistorante
          LEFT JOIN AllergeniProdotto AP on P.id = AP.prodotto;
 
 CREATE VIEW DettagliUtente AS
-SELECT Utente.*,
-       EU.email,
-       TU.telefono,
-       COUNT(DISTINCT GO.ristorante) AS numero_ristoranti
+SELECT Utente.*, EU.email, TU.telefono, COUNT(DISTINCT GO.ristorante) AS numero_ristoranti
 FROM Utente
          LEFT JOIN EmailUtente EU on Utente.id = EU.utente
          LEFT JOIN TelefonoUtente TU on Utente.id = TU.utente
          LEFT JOIN GestioneOrdini GO on Utente.id = GO.utente AND GO.data_fine IS NULL
 GROUP BY Utente.id;
+
+CREATE VIEW DettagliCategoria AS
+SELECT CategoriaMenu.*, COUNT(DISTINCT Prodotto.id) AS numero_prodotti
+FROM CategoriaMenu
+         LEFT JOIN ContenutoCategoriaMenu ON CategoriaMenu.id = ContenutoCategoriaMenu.categoria
+         LEFT JOIN Prodotto ON ContenutoCategoriaMenu.prodotto = Prodotto.id
+GROUP BY CategoriaMenu.id;
 
 -- Triggers
 CREATE TRIGGER IF NOT EXISTS orario_apertura_sovrapposto_insert
@@ -380,9 +384,8 @@ BEGIN
         WHERE menu = NEW.id
           AND id NOT IN (
             -- Categorie con almeno un prodotto
-            SELECT CategoriaMenu.id
-            FROM CategoriaMenu
-                     JOIN ContenutoCategoriaMenu on CategoriaMenu.id = ContenutoCategoriaMenu.categoria);
+            SELECT categoria
+            FROM ContenutoCategoriaMenu);
 
         -- Controlla che sia rimasta una categoria
         IF NOT EXISTS(SELECT * FROM CategoriaMenu WHERE menu = NEW.id) THEN
@@ -403,9 +406,8 @@ BEGIN
         WHERE menu = NEW.id
           AND id NOT IN (
             -- Categorie con almeno un prodotto
-            SELECT CategoriaMenu.id
-            FROM CategoriaMenu
-                     JOIN ContenutoCategoriaMenu on CategoriaMenu.id = ContenutoCategoriaMenu.categoria);
+            SELECT categoria
+            FROM ContenutoCategoriaMenu);
 
         -- Controlla che sia rimasta almeno una categoria
         IF NOT EXISTS(SELECT * FROM CategoriaMenu WHERE menu = NEW.id) THEN

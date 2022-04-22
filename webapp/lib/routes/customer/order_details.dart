@@ -7,6 +7,7 @@ import 'package:foody_app/routes/base_route.dart';
 import 'package:foody_app/routes/customer/customer_orders.dart';
 import 'package:foody_app/routes/customer/leave_review.dart';
 import 'package:foody_app/state/login_status.dart';
+import 'package:foody_app/widgets/loading_button.dart';
 import 'package:foody_app/widgets/map.dart';
 import 'package:provider/provider.dart';
 
@@ -49,14 +50,22 @@ class OrderDetailsRoute extends SingleChildBaseRoute {
               ),
               subtitle: Text(product.product.description ?? ''),
             ),
-          if (order.riderService != null)
-            AppMapboxMap(
-              zoomLocation: order.riderService!.lastLocation,
-              onMarkerTap: (_) {},
+          if (order.riderService != null &&
+              order.status == OrderState.delivering) ...[
+            const Text('Posizione del rider'),
+            SizedBox(
+              width: double.infinity,
+              height: 350,
+              child: AppMapboxMap(
+                zoomLocation: order.riderService!.lastLocation,
+                userLocation: order.riderService!.lastLocation,
+                onMarkerTap: (_) {},
+              ),
             ),
+          ],
           if (order.status == OrderState.delivered && isMine)
-            OutlinedButton.icon(
-              onPressed: () {
+            LoadingButton(
+              onPressed: () async {
                 Navigator.pushNamed(
                   context,
                   LeaveReviewRoute.routeName,
@@ -65,9 +74,9 @@ class OrderDetailsRoute extends SingleChildBaseRoute {
               },
               icon: const Icon(Icons.star),
               label: const Text('Recensisci ristorante'),
-            ),
-          if (order.status == OrderState.preparing)
-            OutlinedButton.icon(
+            )
+          else if (order.status == OrderState.preparing)
+            LoadingButton(
               onPressed: () async {
                 await getIt.get<CustomerOrdersApi>().updateOrderState(
                       order.id!,
@@ -77,9 +86,9 @@ class OrderDetailsRoute extends SingleChildBaseRoute {
               },
               icon: const Icon(Icons.next_plan_outlined),
               label: const Text('Segna come pronto al ritiro'),
-            ),
-          if (order.status == OrderState.prepared)
-            OutlinedButton.icon(
+            )
+          else if (order.status == OrderState.prepared)
+            LoadingButton(
               onPressed: () async {
                 await getIt.get<CustomerOrdersApi>().updateOrderState(
                       order.id!,
@@ -87,10 +96,23 @@ class OrderDetailsRoute extends SingleChildBaseRoute {
                     );
                 Navigator.pop(context);
               },
-              icon: const Icon(Icons.next_plan_outlined),
-              label: const Text('Segna come in consegna'),
+              icon: const Icon(Icons.bike_scooter),
+              label: const Text('Prendi in carico la consegna'),
+            )
+          else if (order.status == OrderState.delivering &&
+              order.riderService?.user.id ==
+                  context.read<LoginStatus>().currentUser?.id)
+            LoadingButton(
+              onPressed: () async {
+                await getIt.get<CustomerOrdersApi>().updateOrderState(
+                      order.id!,
+                      OrderState.delivered,
+                    );
+                Navigator.pop(context);
+              },
+              icon: const Icon(Icons.shopping_bag),
+              label: const Text('Segna come consegnato'),
             ),
-          // TODO: Solo rider mette consegnato
         ],
       ),
     );

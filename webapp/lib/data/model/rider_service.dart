@@ -1,5 +1,5 @@
 import 'package:foody_app/data/model/address.dart';
-import 'package:foody_app/data/model/order.dart';
+import 'package:foody_app/data/model/user.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'rider_service.g.dart';
@@ -11,13 +11,15 @@ class RiderService {
   final GpsLocation lastLocation;
   final DateTime start;
   final DateTime? end;
+  final User user;
 
   const RiderService({
     this.id,
     required this.startLocation,
     required this.lastLocation,
     required this.start,
-    this.end,
+    required this.end,
+    required this.user,
   });
 
   get isActive => end == null;

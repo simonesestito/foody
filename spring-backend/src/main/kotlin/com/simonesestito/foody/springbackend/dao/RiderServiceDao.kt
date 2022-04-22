@@ -50,10 +50,10 @@ interface RiderServiceDao : CrudRepository<RiderService, Int> {
     @Query(
         """
         UPDATE OrdineRistorante
-        SET servizio_rider = ?1, stato = 300
-        WHERE id = (
+        SET servizio_rider = (
             SELECT id FROM ServizioRider WHERE ServizioRider.utente = ?1 AND ServizioRider.ora_fine IS NULL
-        )
+        ), stato = 300
+        WHERE id = ?2
     """, nativeQuery = true
     )
     @Modifying

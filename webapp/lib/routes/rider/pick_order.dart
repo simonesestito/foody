@@ -130,7 +130,6 @@ class _OrdersContentState extends State<_OrdersContent> {
       arguments: order,
     );
 
-    // FIXME Refresh after await push
     setState(() {
       _refreshKey = UniqueKey();
     });

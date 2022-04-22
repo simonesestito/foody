@@ -498,6 +498,31 @@ BEGIN
     END IF;
 END;
 
+CREATE TRIGGER IF NOT EXISTS stato_ordinazione_con_rider
+    BEFORE UPDATE
+    ON OrdineRistorante
+    FOR EACH ROW
+BEGIN
+    IF (NEW.stato >= 300 AND NEW.servizio_rider IS NULL) OR
+       (SELECT ora_fine FROM ServizioRider WHERE id = NEW.servizio_rider) IS NOT NULL THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT =
+                'Non puoi eseguire la consegna di quest\'ordine, nessun servizio attivo.';
+    END IF;
+
+    IF (NEW.stato < 300) THEN SET NEW.servizio_rider = NULL; END IF;
+END;
+
+CREATE TRIGGER IF NOT EXISTS chisura_servizio_rider_incompleto
+    BEFORE UPDATE
+    ON ServizioRider
+    FOR EACH ROW
+BEGIN
+    IF (NEW.ora_fine IS NOT NULL AND OLD.ora_fine IS NULL) THEN
+        -- Consegna gli ordini, attualmente rimasti in consegna
+        UPDATE OrdineRistorante SET stato = 400 WHERE stato < 400 AND servizio_rider = NEW.id;
+    END IF;
+END;
+
 -- Stored Procedures
 CREATE PROCEDURE aggiorna_orari_ristorante(IN _ristorante INT, IN _orario TEXT)
     MODIFIES SQL DATA

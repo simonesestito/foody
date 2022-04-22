@@ -40,6 +40,18 @@ class _OrdersContentState extends State<_OrdersContent> {
   Key _refreshKey = UniqueKey();
 
   @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      while (mounted) {
+        await Future.delayed(const Duration(seconds: 10));
+        final location = await getUserGpsLocation();
+        await getIt.get<RiderServiceApi>().updateLocation(location);
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Column(
       key: _refreshKey,

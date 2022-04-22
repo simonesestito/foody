@@ -53,14 +53,14 @@ class _RiderConditionalRouteState extends State<_RiderConditionalRoute> {
             Future.microtask(() async {
               if (mounted) {
                 if (replacement) {
-                  await Navigator.pushReplacementNamed(context, nextRoute);
+                  Navigator.pushReplacementNamed(context, nextRoute);
                 } else {
                   await Navigator.pushNamed(context, nextRoute);
-                }
 
-                setState(() {
-                  _refreshKey = UniqueKey();
-                });
+                  setState(() {
+                    _refreshKey = UniqueKey();
+                  });
+                }
               }
             });
           }

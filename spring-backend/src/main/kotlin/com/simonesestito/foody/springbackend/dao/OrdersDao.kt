@@ -64,4 +64,29 @@ interface OrdersDao : CrudRepository<RestaurantOrder, Int> {
         longitude: Double,
         customerId: Int,
     )
+
+    @Query(
+        """
+        SELECT OrdineRistorante.*
+        FROM OrdineRistorante
+        JOIN ServizioRider SR on SR.id = OrdineRistorante.servizio_rider
+        WHERE SR.id = ?1
+    """, nativeQuery = true
+    )
+    fun getOrdersForService(riderService: Int): Set<RestaurantOrder>
+
+    @Query(
+        """
+        SELECT DISTINCT OrdineRistorante.*
+        FROM OrdineRistorante
+        JOIN ContenutoOrdine CO on OrdineRistorante.id = CO.ordine_ristorante
+        JOIN Prodotto P on CO.prodotto = P.id
+        JOIN Ristorante R on P.ristorante = R.id
+        WHERE servizio_rider IS NULL
+        AND stato = 200
+        ORDER BY DISTANCE_KM(R.indirizzo_latitudine, R.indirizzo_longitudine, ?1, ?2),
+        OrdineRistorante.creazione
+    """, nativeQuery = true
+    )
+    fun getNearPreparedOrders(latitude: Double, longitude: Double): Set<RestaurantOrder>
 }

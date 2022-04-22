@@ -1,10 +1,7 @@
 package com.simonesestito.foody.springbackend.rest
 
 import com.simonesestito.foody.springbackend.dao.OrdersDao
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/orders")
@@ -20,4 +17,10 @@ class RestaurantOrdersController(
         println(stateName)
         ordersDao.updateOrderStatus(orderId, stateName)
     }
+
+    @GetMapping("/prepared")
+    fun getPreparedOrders(
+        @RequestParam("latitude") latitude: Double,
+        @RequestParam("longitude") longitude: Double,
+    ) = ordersDao.getNearPreparedOrders(latitude, longitude)
 }

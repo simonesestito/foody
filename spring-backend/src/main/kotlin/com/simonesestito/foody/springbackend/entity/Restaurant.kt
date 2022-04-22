@@ -11,7 +11,6 @@ data class Restaurant(
     @Column(name = "pubblicato") var published: Boolean,
     var address: Address,
     @OneToMany(mappedBy = "restaurant") var openingHours: Set<OpeningHours>,
-    @OneToMany(mappedBy = "restaurant") var menus: Set<Menu>,
     @ElementCollection @CollectionTable(
         name = "TelefonoRistorante",
         joinColumns = [JoinColumn(name = "ristorante")],

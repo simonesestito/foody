@@ -12,7 +12,8 @@ class ListProductsRoute extends BaseRoute {
 
   @override
   List<Widget> buildChildren(BuildContext context) {
-    final restaurant = ModalRoute.of(context)!.settings.arguments as Restaurant;
+    final restaurant =
+        ModalRoute.of(context)!.settings.arguments as RestaurantWithMenu;
     return [
       Text(
         'Prodotti',
@@ -24,7 +25,7 @@ class ListProductsRoute extends BaseRoute {
 }
 
 class _ListProductsContent extends StatefulWidget {
-  final Restaurant restaurant;
+  final RestaurantWithMenu restaurant;
 
   const _ListProductsContent({
     required this.restaurant,

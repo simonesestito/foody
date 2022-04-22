@@ -1,5 +1,6 @@
 import 'package:foody_app/data/model/address.dart';
 import 'package:foody_app/data/model/cart_product.dart';
+import 'package:foody_app/data/model/restaurant.dart';
 import 'package:foody_app/data/model/rider_service.dart';
 import 'package:foody_app/data/model/user.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -30,6 +31,8 @@ class Order {
   factory Order.fromJson(Map<String, dynamic> json) => _$OrderFromJson(json);
 
   Map<String, dynamic> toJson() => _$OrderToJson(this);
+
+  Restaurant get restaurant => orderContent.first.product.restaurant;
 }
 
 enum OrderState {

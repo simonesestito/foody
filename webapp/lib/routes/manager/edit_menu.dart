@@ -77,9 +77,9 @@ class _EditMenuContentState extends State<_EditMenuContent> {
             ],
           ),
           LoadingButton(
-            onTap: () => _onSave(context),
+            onPressed: () => _onSave(context),
             icon: const Icon(Icons.save),
-            text: const Text('Salva'),
+            label: const Text('Salva'),
           ),
           if (widget.menu != null) ...[
             Text('Categorie', style: Theme.of(context).textTheme.headline6),

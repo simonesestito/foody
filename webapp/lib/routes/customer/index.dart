@@ -88,7 +88,7 @@ class _RestaurantsMapState extends State<_RestaurantsMap> {
         ),
         SizedBox(
           height: 500,
-          child: FutureBuilder<List<Restaurant>>(
+          child: FutureBuilder<List<RestaurantWithMenu>>(
             key: ValueKey(_query),
             future: _loadNearRestaurants(),
             builder: (context, snap) {
@@ -111,7 +111,7 @@ class _RestaurantsMapState extends State<_RestaurantsMap> {
                 location = snap.data!.first.address.location;
               }
 
-              return AppMapboxMap<Restaurant>(
+              return AppMapboxMap<RestaurantWithMenu>(
                 zoomLocation: location,
                 markers: snap.data!
                     .map((e) => e.address.location.toLatLng())
@@ -136,7 +136,7 @@ class _RestaurantsMapState extends State<_RestaurantsMap> {
     });
   }
 
-  Future<List<Restaurant>> _loadNearRestaurants() async {
+  Future<List<RestaurantWithMenu>> _loadNearRestaurants() async {
     _currentLocation = await getUserGpsLocation();
     return getIt.get<RestaurantsApi>().getNearRestaurants(
           GpsLocation(

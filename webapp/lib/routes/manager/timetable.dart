@@ -11,7 +11,8 @@ class RestaurantTimetable extends SingleChildBaseRoute {
 
   @override
   Widget buildChild(BuildContext context) {
-    final restaurant = ModalRoute.of(context)!.settings.arguments as Restaurant;
+    final restaurant =
+        ModalRoute.of(context)!.settings.arguments as RestaurantWithMenu;
     return SliverToBoxAdapter(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -153,9 +154,9 @@ class _TimetableEditorState extends State<TimetableEditor> {
           ],
         ),
         LoadingButton(
-          text: const Text('SALVA'),
+          label: const Text('SALVA'),
           icon: const Icon(Icons.save),
-          onTap: () async {
+          onPressed: () async {
             await getIt.get<RestaurantsApi>().updateTimetable(
                   widget.restaurantId,
                   _timetable,

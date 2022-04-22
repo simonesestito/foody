@@ -73,8 +73,8 @@ class SignUpForm extends StatelessWidget {
           Align(
             alignment: Alignment.centerRight,
             child: LoadingButton(
-              text: const Text('REGISTRATI'),
-              onTap: () => _submitForm(context),
+              label: const Text('REGISTRATI'),
+              onPressed: () => _submitForm(context),
             ),
           ),
         ],

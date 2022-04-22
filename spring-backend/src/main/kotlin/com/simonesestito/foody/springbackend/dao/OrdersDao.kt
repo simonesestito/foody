@@ -89,4 +89,14 @@ interface OrdersDao : CrudRepository<RestaurantOrder, Int> {
     """, nativeQuery = true
     )
     fun getNearPreparedOrders(latitude: Double, longitude: Double): Set<RestaurantOrder>
+
+    @Query(
+        """
+        SELECT OrdineRistorante.*
+        FROM OrdineRistorante
+        JOIN ServizioRider SR on OrdineRistorante.servizio_rider = SR.id
+        WHERE SR.utente = ?1 AND SR.ora_fine IS NULL AND OrdineRistorante.stato = 300
+    """, nativeQuery = true
+    )
+    fun getCurrentDeliveringOrder(id: Int): RestaurantOrder?
 }

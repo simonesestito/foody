@@ -16,7 +16,8 @@ class EditProductRoute extends SingleChildBaseRoute {
 
   @override
   Widget buildChild(BuildContext context) {
-    final restaurant = ModalRoute.of(context)!.settings.arguments as Restaurant;
+    final restaurant =
+        ModalRoute.of(context)!.settings.arguments as RestaurantWithMenu;
     return SliverToBoxAdapter(
       child: _EditProductContent(product: product, restaurant: restaurant),
     );
@@ -25,7 +26,7 @@ class EditProductRoute extends SingleChildBaseRoute {
 
 class _EditProductContent extends StatefulWidget {
   final MenuProduct? product;
-  final Restaurant? restaurant;
+  final RestaurantWithMenu? restaurant;
 
   const _EditProductContent({
     required this.product,
@@ -108,9 +109,9 @@ class _EditProductContentState extends State<_EditProductContent> {
               }),
             ),
           LoadingButton(
-            onTap: () => _onSave(context),
+            onPressed: () => _onSave(context),
             icon: const Icon(Icons.save),
-            text: const Text('Salva'),
+            label: const Text('Salva'),
           ),
         ],
       ),
@@ -136,7 +137,7 @@ class _EditProductContentState extends State<_EditProductContent> {
       description: description,
       price: price,
       allergens: allergens,
-      restaurant: widget.restaurant!.id,
+      restaurant: widget.restaurant!,
     );
 
     try {

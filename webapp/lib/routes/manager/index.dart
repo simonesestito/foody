@@ -19,7 +19,7 @@ class ManagerRoute extends SingleChildBaseRoute {
   @override
   Widget buildChild(BuildContext context) {
     return SliverToBoxAdapter(
-        child: FutureBuilder<List<Restaurant>>(
+        child: FutureBuilder<List<RestaurantWithMenu>>(
       future: getIt.get<RestaurantsApi>().getMyRestaurants(),
       builder: (context, snap) {
         if (snap.hasError) {

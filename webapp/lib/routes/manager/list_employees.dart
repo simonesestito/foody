@@ -16,7 +16,8 @@ class EmployeesRoute extends BaseRoute {
 
   @override
   List<Widget> buildChildren(BuildContext context) {
-    final restaurant = ModalRoute.of(context)!.settings.arguments as Restaurant;
+    final restaurant =
+        ModalRoute.of(context)!.settings.arguments as RestaurantWithMenu;
     return [
       Text(
         'Impiegati di ${restaurant.name}',
@@ -28,7 +29,7 @@ class EmployeesRoute extends BaseRoute {
 }
 
 class _EmployeesContent extends StatefulWidget {
-  final Restaurant restaurant;
+  final RestaurantWithMenu restaurant;
 
   const _EmployeesContent({
     required this.restaurant,
@@ -97,7 +98,8 @@ class _EmployeesContentState extends State<_EmployeesContent> {
     );
   }
 
-  Widget _buildHiringLayout(Restaurant restaurant, BuildContext context) {
+  Widget _buildHiringLayout(
+      RestaurantWithMenu restaurant, BuildContext context) {
     final emailController = TextEditingController();
 
     return Column(
@@ -111,9 +113,9 @@ class _EmployeesContentState extends State<_EmployeesContent> {
           ),
         ),
         LoadingButton(
-          text: const Text('Assumi'),
+          label: const Text('Assumi'),
           icon: const Icon(Icons.badge),
-          onTap: () async {
+          onPressed: () async {
             await getIt.get<ManagerApi>().hireEmployeeByEmail(
                   restaurant.id,
                   emailController.text,

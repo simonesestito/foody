@@ -40,8 +40,8 @@ class LoginMailForm extends StatelessWidget {
           Align(
             alignment: Alignment.centerRight,
             child: LoadingButton(
-              text: const Text('CONTINUA'),
-              onTap: () => _submitForm(context),
+              label: const Text('CONTINUA'),
+              onPressed: () => _submitForm(context),
             ),
           ),
         ],

@@ -1,3 +1,4 @@
+import 'package:foody_app/data/model/restaurant.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'menu_product.g.dart';
@@ -9,7 +10,7 @@ class MenuProduct {
   final String? description;
   final double price;
   final List<Allergen> allergens;
-  final int restaurant;
+  final Restaurant restaurant;
 
   const MenuProduct({
     this.id = -1,

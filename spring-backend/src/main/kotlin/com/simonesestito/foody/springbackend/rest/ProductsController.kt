@@ -13,7 +13,7 @@ class ProductsController(private val productsDao: ProductsDao) {
         product.name,
         product.description,
         product.price,
-        product.restaurant,
+        product.restaurant.id,
         product.allergens.joinToString("\n"),
     )
 

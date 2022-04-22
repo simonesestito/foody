@@ -16,7 +16,8 @@ class RestaurantOrders extends SingleChildBaseRoute {
 
   @override
   Widget buildChild(BuildContext context) {
-    final restaurant = ModalRoute.of(context)!.settings.arguments as Restaurant;
+    final restaurant =
+        ModalRoute.of(context)!.settings.arguments as RestaurantWithMenu;
     return SliverToBoxAdapter(
       child: Column(
         mainAxisSize: MainAxisSize.min,

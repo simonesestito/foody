@@ -23,7 +23,7 @@ class RestaurantDetailsRoute extends SingleChildBaseRoute {
   @override
   Widget buildChild(BuildContext context) {
     final restaurant =
-        ModalRoute.of(context)?.settings.arguments as Restaurant?;
+        ModalRoute.of(context)?.settings.arguments as RestaurantWithMenu?;
 
     if (restaurant == null) {
       Future.microtask(
@@ -71,8 +71,8 @@ class RestaurantDetailsRoute extends SingleChildBaseRoute {
         else
           ..._buildMenu(restaurant.menus.first, context),
         LoadingButton(
-            text: const Text('Vedi recensioni'),
-            onTap: () async {
+            label: const Text('Vedi recensioni'),
+            onPressed: () async {
               final reviews = await getIt.get<RestaurantsApi>().getReviews(
                     restaurant.id,
                   );

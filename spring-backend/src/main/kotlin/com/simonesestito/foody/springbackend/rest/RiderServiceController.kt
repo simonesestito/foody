@@ -8,7 +8,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/service")
+@RequestMapping("/api/service")
 class RiderServiceController(
     private val riderServiceDao: RiderServiceDao,
     private val ordersDao: OrdersDao,
@@ -29,7 +29,7 @@ class RiderServiceController(
         )
 
     @DeleteMapping("/")
-    fun endService() = riderServiceDao.endCurrentService()
+    fun endService(@AuthenticationPrincipal user: User) = riderServiceDao.endCurrentService(user.id!!)
 
     @PostMapping("/location")
     fun updateLocation(@AuthenticationPrincipal user: User, @RequestBody location: Location) =
@@ -44,4 +44,7 @@ class RiderServiceController(
     @DeleteMapping("/deliver/{order}")
     fun endOrderDelivery(@AuthenticationPrincipal user: User, @PathVariable("order") orderId: Int) =
         riderServiceDao.endOrderDelivery(user.id!!, orderId)
+
+    @GetMapping("/deliver")
+    fun getCurrentDeliveringOrder(@AuthenticationPrincipal user: User) = ordersDao.getCurrentDeliveringOrder(user.id!!)
 }

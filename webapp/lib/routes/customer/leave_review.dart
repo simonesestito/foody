@@ -58,8 +58,8 @@ class LeaveReviewRoute extends BaseRoute {
         maxLines: 10,
       ),
       LoadingButton(
-        text: const Text('Invia'),
-        onTap: () => _onSendReview(context),
+        label: const Text('Invia'),
+        onPressed: () => _onSendReview(context),
       ),
     ].map((e) => SliverToBoxAdapter(child: e)).toList();
   }

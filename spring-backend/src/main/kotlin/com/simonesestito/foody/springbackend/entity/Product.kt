@@ -5,7 +5,7 @@ import javax.persistence.*
 @Entity(name = "Prodotto")
 data class Product(
     @Id var id: Int,
-    @Column(name = "ristorante") var restaurant: Int,
+    @ManyToOne @JoinColumn(name = "ristorante") var restaurant: Restaurant,
     @Column(name = "nome") var name: String,
     @Column(name = "descrizione") var description: String?,
     @Column(name = "prezzo") var price: Double,

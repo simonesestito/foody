@@ -14,7 +14,6 @@ class Restaurant {
   final List<String> phoneNumbers;
   final List<OpeningHours> openingHours;
   final double? averageRating;
-  final List<RestaurantMenu> menus;
 
   const Restaurant({
     required this.id,
@@ -23,7 +22,6 @@ class Restaurant {
     required this.phoneNumbers,
     required this.openingHours,
     required this.averageRating,
-    required this.menus,
   });
 
   factory Restaurant.fromJson(Map<String, dynamic> json) =>
@@ -43,4 +41,32 @@ class Restaurant {
     });
     return openingHours;
   }
+}
+
+@JsonSerializable()
+class RestaurantWithMenu extends Restaurant {
+  final List<RestaurantMenu> menus;
+
+  const RestaurantWithMenu({
+    required int id,
+    required String name,
+    required Address address,
+    required List<String> phoneNumbers,
+    required List<OpeningHours> openingHours,
+    required double? averageRating,
+    required this.menus,
+  }) : super(
+          id: id,
+          name: name,
+          address: address,
+          phoneNumbers: phoneNumbers,
+          openingHours: openingHours,
+          averageRating: averageRating,
+        );
+
+  factory RestaurantWithMenu.fromJson(Map<String, dynamic> json) =>
+      _$RestaurantWithMenuFromJson(json);
+
+  @override
+  Map<String, dynamic> toJson() => _$RestaurantWithMenuToJson(this);
 }

@@ -7,13 +7,13 @@ import 'package:foody_app/data/api/errors/handler.dart';
 /// After that, it returns to the default button state.
 ///
 class LoadingButton extends StatefulWidget {
-  final Widget text;
+  final Widget label;
   final Widget? icon;
-  final Future<void> Function() onTap;
+  final Future<void> Function() onPressed;
 
   const LoadingButton({
-    required this.text,
-    required this.onTap,
+    required this.label,
+    required this.onPressed,
     this.icon,
     Key? key,
   }) : super(key: key);
@@ -39,7 +39,7 @@ class _LoadingButtonState extends State<LoadingButton> {
     void buttonCallback() {
       setState(() {
         _isLoading = true;
-        widget.onTap().then(
+        widget.onPressed().then(
           (value) => safeSetState(() {
             _isLoading = false;
           }),
@@ -57,13 +57,13 @@ class _LoadingButtonState extends State<LoadingButton> {
     if (widget.icon == null) {
       return ElevatedButton(
         onPressed: buttonCallback,
-        child: widget.text,
+        child: widget.label,
       );
     } else {
       return ElevatedButton.icon(
         onPressed: buttonCallback,
         icon: widget.icon!,
-        label: widget.text,
+        label: widget.label,
       );
     }
   }

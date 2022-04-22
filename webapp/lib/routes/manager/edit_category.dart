@@ -68,9 +68,9 @@ class _EditCategoryContentState extends State<_EditCategoryContent> {
             validator: fieldValidator(),
           ),
           LoadingButton(
-            onTap: () => _onSave(context),
+            onPressed: () => _onSave(context),
             icon: const Icon(Icons.save),
-            text: const Text('Salva'),
+            label: const Text('Salva'),
           ),
           if (widget.category != null) ...[
             Text('Prodotti', style: Theme.of(context).textTheme.headline6),

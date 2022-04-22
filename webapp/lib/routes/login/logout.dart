@@ -28,11 +28,11 @@ class LogoutBottomSheet extends StatelessWidget {
                 child: const Text('ANNULLA'),
               ),
               LoadingButton(
-                onTap: () async {
+                onPressed: () async {
                   await context.read<LoginStatus>().logout();
                   Navigator.pop(context);
                 },
-                text: const Text('ESCI'),
+                label: const Text('ESCI'),
               ),
             ].withMargin(),
           ),

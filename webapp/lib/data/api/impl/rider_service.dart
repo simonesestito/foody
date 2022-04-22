@@ -1,4 +1,5 @@
 
+import 'package:foody_app/data/api/api_client.dart';
 import 'package:foody_app/data/api/rider_service.dart';
 import 'package:foody_app/data/model/address.dart';
 import 'package:foody_app/data/model/order.dart';
@@ -7,52 +8,57 @@ import 'package:injectable/injectable.dart';
 
 @Injectable(as: RiderServiceApi)
 class RiderServiceApiImpl implements RiderServiceApi {
+  final ApiClient apiClient;
+
+  const RiderServiceApiImpl(this.apiClient);
+
   @override
   Future<void> beginOrderDelivery(int order) async {
-    // TODO: implement beginOrderDelivery
-    throw UnimplementedError();
+    await apiClient.post('/service/deliver/$order', {});
   }
 
   @override
   Future<void> endOrderDelivery(int order) async {
-    // TODO: implement endOrderDelivery
-    throw UnimplementedError();
+    await apiClient.delete('/service/deliver/$order');
   }
 
   @override
   Future<void> endService() async {
-    // TODO: implement endService
-    throw UnimplementedError();
+    await apiClient.delete('/service/');
   }
 
   @override
   Future<RiderService?> getActiveService() async {
-    // TODO: implement getActiveService
-    throw UnimplementedError();
+    final result = await apiClient.get('/service/active');
+    return RiderService.fromJson(result);
   }
 
   @override
-  Future<List<RiderService>> getAll() async {
-    // TODO: implement getAll
-    throw UnimplementedError();
+  Future<List<RiderService>> getAllPast() async {
+    final result = await apiClient.get('/service/') as List<dynamic>;
+    return result.map((e) => RiderService.fromJson(e)).toList();
   }
 
   @override
   Future<List<Order>> getOrdersForService(int service) async {
-    // TODO: implement getOrdersForService
-    throw UnimplementedError();
+    final result =
+        await apiClient.get('/service/$service/orders') as List<dynamic>;
+    return result.map((e) => Order.fromJson(e)).toList();
   }
 
   @override
   Future<void> startService(GpsLocation location) async {
-    // TODO: implement startService
-    throw UnimplementedError();
+    await apiClient.post('/service/', location);
   }
 
   @override
   Future<void> updateLocation(GpsLocation location) async {
-    // TODO: implement updateLocation
-    throw UnimplementedError();
+    await apiClient.post('/service/location', location);
   }
-  
+
+  @override
+  Future<Order?> getDeliveringOrder() async {
+    final result = await apiClient.get('/service/deliver');
+    return result == null ? null : Order.fromJson(result);
+  }
 }

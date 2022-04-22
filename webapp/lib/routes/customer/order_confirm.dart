@@ -75,9 +75,9 @@ class OrderConfirm extends SingleChildBaseRoute {
                   ),
                 ),
                 LoadingButton(
-                  onTap: () => _onOrderConfirm(context),
+                  onPressed: () => _onOrderConfirm(context),
                   icon: const Icon(Icons.check),
-                  text: const Text('Conferma ordine'),
+                  label: const Text('Conferma ordine'),
                 ),
               ]),
             );
@@ -150,9 +150,9 @@ class OrderConfirm extends SingleChildBaseRoute {
             ),
             actions: [
               LoadingButton(
-                onTap: () => _onAddressConfirm(context, address),
+                onPressed: () => _onAddressConfirm(context, address),
                 icon: const Icon(Icons.check),
-                text: const Text('Conferma ordine'),
+                label: const Text('Conferma ordine'),
               ),
               TextButton.icon(
                 onPressed: () => Navigator.pop(context),

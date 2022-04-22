@@ -18,7 +18,10 @@ interface RiderServiceDao : CrudRepository<RiderService, Int> {
 
     @Query(
         """
-        SELECT * FROM ServizioRider WHERE utente = ?1 AND ora_fine IS NOT NULL
+        SELECT *
+        FROM ServizioRider
+        WHERE utente = ?1 AND ora_fine IS NOT NULL
+        ORDER BY ora_fine DESC
     """, nativeQuery = true
     )
     fun getUserServices(user: Int): Set<RiderService>
@@ -79,5 +82,5 @@ interface RiderServiceDao : CrudRepository<RiderService, Int> {
     )
     @Modifying
     @Transactional
-    fun endCurrentService()
+    fun endCurrentService(user: Int)
 }

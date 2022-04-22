@@ -13,7 +13,8 @@ class ListMenusRoute extends BaseRoute {
 
   @override
   List<Widget> buildChildren(BuildContext context) {
-    final restaurant = ModalRoute.of(context)!.settings.arguments as Restaurant;
+    final restaurant =
+        ModalRoute.of(context)!.settings.arguments as RestaurantWithMenu;
     return [
       Text(
         'Menu di ${restaurant.name}',
@@ -25,7 +26,7 @@ class ListMenusRoute extends BaseRoute {
 }
 
 class _ListMenusContent extends StatefulWidget {
-  final Restaurant restaurant;
+  final RestaurantWithMenu restaurant;
 
   const _ListMenusContent({
     required this.restaurant,
@@ -41,7 +42,7 @@ class _ListMenusContentState extends State<_ListMenusContent> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<Restaurant>(
+    return FutureBuilder<RestaurantWithMenu>(
       key: _listKey,
       future: getIt.get<RestaurantsApi>().getRestaurant(widget.restaurant.id),
       builder: (context, snap) {

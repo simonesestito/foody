@@ -4,7 +4,6 @@ import 'package:foody_app/data/model/address.dart';
 import 'package:foody_app/data/model/opening_hours.dart';
 import 'package:foody_app/data/model/restaurant.dart';
 import 'package:foody_app/data/model/review.dart';
-import 'package:foody_app/data/model/user.dart';
 import 'package:injectable/injectable.dart';
 
 @Injectable(as: RestaurantsApi)
@@ -14,7 +13,7 @@ class RestaurantsApiImpl implements RestaurantsApi {
   RestaurantsApiImpl(this.apiClient);
 
   @override
-  Future<List<Restaurant>> getNearRestaurants(
+  Future<List<RestaurantWithMenu>> getNearRestaurants(
     GpsLocation location,
     String? query,
   ) async {
@@ -23,13 +22,13 @@ class RestaurantsApiImpl implements RestaurantsApi {
       'longitude': location.longitude,
       'query': query ?? '',
     }) as List<dynamic>;
-    return result.map((json) => Restaurant.fromJson(json)).toList();
+    return result.map((json) => RestaurantWithMenu.fromJson(json)).toList();
   }
 
   @override
-  Future<Restaurant> getRestaurant(int id) async {
+  Future<RestaurantWithMenu> getRestaurant(int id) async {
     final result = await apiClient.get('/restaurant/$id');
-    return Restaurant.fromJson(result);
+    return RestaurantWithMenu.fromJson(result);
   }
 
   @override
@@ -55,39 +54,9 @@ class RestaurantsApiImpl implements RestaurantsApi {
   }
 
   @override
-  Future<void> deleteRestaurant(int restaurantId) async {
-    throw Exception('TODO');
-  }
-
-  @override
-  Future<Restaurant> addRestaurant(Restaurant restaurant) async {
-    throw Exception('TODO');
-  }
-
-  @override
-  Future<Restaurant> updateRestaurant(Restaurant restaurant) async {
-    throw Exception('TODO');
-  }
-
-  @override
-  Future<List<User>> getEmployees(int restaurantId) async {
-    throw Exception('TODO');
-  }
-
-  @override
-  Future<List<User>> removeEmployee(int restaurantId, User user) async {
-    throw Exception('TODO');
-  }
-
-  @override
-  Future<List<User>> addEmployee(int restaurantId, String userEmail) async {
-    throw Exception('TODO');
-  }
-
-  @override
-  Future<List<Restaurant>> getMyRestaurants() async {
+  Future<List<RestaurantWithMenu>> getMyRestaurants() async {
     final result = await apiClient.get('/restaurant/my') as List<dynamic>;
-    return result.map((json) => Restaurant.fromJson(json)).toList();
+    return result.map((json) => RestaurantWithMenu.fromJson(json)).toList();
   }
 
   @override

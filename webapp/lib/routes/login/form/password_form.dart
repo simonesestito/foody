@@ -47,8 +47,8 @@ class _LoginPasswordFormState extends State<LoginPasswordForm> {
           Align(
             alignment: Alignment.centerRight,
             child: LoadingButton(
-              text: const Text('ACCEDI'),
-              onTap: () => _submitForm(context),
+              label: const Text('ACCEDI'),
+              onPressed: () => _submitForm(context),
             ),
           ),
         ],

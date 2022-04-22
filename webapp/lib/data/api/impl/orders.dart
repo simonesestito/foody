@@ -49,4 +49,11 @@ class CustomerOrdersApiImpl implements CustomerOrdersApi {
     await apiClient
         .post('/orders/$orderId/state/${state.name.split('\\.').last}', {});
   }
+
+  @override
+  Future<List<Order>> getNearPreparedOrders(GpsLocation location) async {
+    final result = await apiClient.get('/orders/prepared', location.toJson())
+        as List<dynamic>;
+    return result.map((e) => Order.fromJson(e)).toList();
+  }
 }

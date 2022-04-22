@@ -37,43 +37,47 @@ interface RiderServiceDao : CrudRepository<RiderService, Int> {
         """
         UPDATE ServizioRider
         SET latitudine_fine = ?2, longitudine_fine = ?3
-        WHERE id = ?1
+        WHERE ora_fine IS NULL AND utente = ?1
     """, nativeQuery = true
     )
     @Modifying
     @Transactional
-    fun updateLocation(service: Int, latitude: Double, longitude: Double)
+    fun updateCurrentServiceLocation(user: Int, latitude: Double, longitude: Double)
 
     @Query(
         """
         UPDATE OrdineRistorante
         SET servizio_rider = ?1, stato = 300
-        WHERE id = ?2
+        WHERE id = (
+            SELECT id FROM ServizioRider WHERE ServizioRider.utente = ?1 AND ServizioRider.ora_fine IS NULL
+        )
     """, nativeQuery = true
     )
     @Modifying
     @Transactional
-    fun beginOrderDelivery(service: Int, order: Int)
+    fun beginOrderDelivery(user: Int, order: Int)
 
     @Query(
         """
         UPDATE OrdineRistorante
         SET stato = 400
-        WHERE servizio_rider = ?1 AND id = ?2
+        WHERE servizio_rider = (
+            SELECT id FROM ServizioRider WHERE ServizioRider.utente = ?1 AND ServizioRider.ora_fine IS NULL
+        ) AND id = ?2
     """, nativeQuery = true
     )
     @Modifying
     @Transactional
-    fun endOrderDelivery(service: Int, order: Int)
+    fun endOrderDelivery(user: Int, order: Int)
 
     @Query(
         """
         UPDATE ServizioRider
         SET ora_fine = NOW()
-        WHERE id = ?1 AND ora_fine IS NULL
+        WHERE id = (SELECT id FROM ServizioRider WHERE ServizioRider.utente = ?1 AND ServizioRider.ora_fine IS NULL)
     """, nativeQuery = true
     )
     @Modifying
     @Transactional
-    fun endService(service: Int)
+    fun endCurrentService()
 }

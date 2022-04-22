@@ -28,20 +28,20 @@ class RiderServiceController(
             user.id!!, location.latitude, location.longitude,
         )
 
-    @DeleteMapping("/{id}")
-    fun endService(@PathVariable("id") serviceId: Int) = riderServiceDao.endService(serviceId)
+    @DeleteMapping("/")
+    fun endService() = riderServiceDao.endCurrentService()
 
-    @PostMapping("/{id}/location")
-    fun updateLocation(@PathVariable("id") serviceId: Int, @RequestBody location: Location) =
-        riderServiceDao.updateLocation(
-            serviceId, location.latitude, location.longitude,
+    @PostMapping("/location")
+    fun updateLocation(@AuthenticationPrincipal user: User, @RequestBody location: Location) =
+        riderServiceDao.updateCurrentServiceLocation(
+            user.id!!, location.latitude, location.longitude,
         )
 
-    @PostMapping("/{id}/deliver/{order}")
-    fun beginOrderDelivery(@PathVariable("id") serviceId: Int, @PathVariable("order") orderId: Int) =
-        riderServiceDao.beginOrderDelivery(serviceId, orderId)
+    @PostMapping("/deliver/{order}")
+    fun beginOrderDelivery(@AuthenticationPrincipal user: User, @PathVariable("order") orderId: Int) =
+        riderServiceDao.beginOrderDelivery(user.id!!, orderId)
 
-    @DeleteMapping("/{id}/deliver/{order}")
-    fun endOrderDelivery(@PathVariable("id") serviceId: Int, @PathVariable("order") orderId: Int) =
-        riderServiceDao.endOrderDelivery(serviceId, orderId)
+    @DeleteMapping("/deliver/{order}")
+    fun endOrderDelivery(@AuthenticationPrincipal user: User, @PathVariable("order") orderId: Int) =
+        riderServiceDao.endOrderDelivery(user.id!!, orderId)
 }

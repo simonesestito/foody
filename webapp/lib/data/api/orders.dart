@@ -13,4 +13,6 @@ abstract class CustomerOrdersApi {
   Future<List<Order>> getRestaurantOrders(int restaurantId);
 
   Future<void> updateOrderState(int orderId, OrderState state);
+
+  Future<List<Order>> getNearPreparedOrders(GpsLocation location);
 }

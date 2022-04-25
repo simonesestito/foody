@@ -12,8 +12,21 @@ interface UserDao : CrudRepository<User, Int> {
     @Query("SELECT * FROM DettagliUtente WHERE email = ?1", nativeQuery = true)
     fun getUserWithEmailAddress(email: String): User?
 
+    @Query("SELECT * FROM DettagliUtente", nativeQuery = true)
+    fun getAll(): Set<User>
+
     @Query("CALL registra_utente(?1, ?2, ?3, ?4, ?5)", nativeQuery = true)
     @Modifying
     @Transactional
     fun insertUser(name: String, surname: String, password: String, email: String, phone: String)
+
+    @Query("DELETE FROM Utente WHERE id = ?1", nativeQuery = true)
+    @Modifying
+    @Transactional
+    fun deleteUser(id: Int)
+
+    @Query("CALL aggiorna_utente(?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)", nativeQuery = true)
+    @Modifying
+    @Transactional
+    fun updateUser(id: Int, name: String, surname: String, hashedPassword: String?, rider: Boolean, admin: Boolean, emails: String, phones: String)
 }

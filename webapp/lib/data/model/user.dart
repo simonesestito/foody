@@ -8,9 +8,12 @@ class User {
   final int id;
   final String name;
   final String surname;
+  final String? password;
   final List<String> emailAddresses;
   final List<String> phoneNumbers;
-  final List<UserRole> allowedRoles;
+  final int restaurantsNumber;
+  final bool rider;
+  final bool admin;
 
   const User({
     required this.id,
@@ -18,7 +21,10 @@ class User {
     required this.surname,
     required this.emailAddresses,
     required this.phoneNumbers,
-    required this.allowedRoles,
+    required this.rider,
+    required this.admin,
+    required this.restaurantsNumber,
+    this.password,
   });
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
@@ -30,6 +36,13 @@ class User {
   String get email => emailAddresses.first;
 
   String get phone => phoneNumbers.first;
+
+  Set<UserRole> get allowedRoles => {
+        UserRole.cliente,
+        if (admin) UserRole.admin,
+        if (rider) UserRole.rider,
+        if (restaurantsNumber > 0) UserRole.manager,
+      };
 }
 
 @JsonSerializable()

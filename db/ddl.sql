@@ -650,6 +650,67 @@ BEGIN
     INSERT INTO TelefonoUtente (utente, telefono) VALUES (_userId, _telefono); COMMIT;
 END;
 
+CREATE PROCEDURE aggiorna_utente(IN _id INT, IN _name TEXT, IN _surname TEXT, IN _password TEXT, IN _rider TINYINT,
+                                 IN _admin TINYINT, IN _emails TEXT, IN _phones TEXT)
+    MODIFIES SQL DATA
+BEGIN
+    DECLARE _line TEXT DEFAULT NULL;
+    DECLARE _lineSize INT DEFAULT NULL;
+    DECLARE _hasLine TINYINT DEFAULT 0;
+
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION BEGIN
+        ROLLBACK;
+        RESIGNAL;
+    END;
+
+    START TRANSACTION;
+
+    UPDATE Utente
+    SET nome = _name,
+        cognome = _surname,
+        password = COALESCE(_password, password),
+        rider = _rider,
+        admin = _admin
+    WHERE id = _id;
+
+    DELETE FROM EmailUtente WHERE utente = _id;
+    email_linee:
+    LOOP
+        IF CHAR_LENGTH(_emails) = 0 THEN LEAVE email_linee; END IF;
+        SET _hasLine = 1;
+        SET _line = SUBSTRING_INDEX(_emails, '\n', 1);
+        SET _lineSize = CHAR_LENGTH(_line);
+
+        INSERT INTO EmailUtente (utente, email) VALUES (_id, TRIM(_line));
+
+        SET _emails = SUBSTR(_emails, CHAR_LENGTH(_line) + 2);
+    END LOOP;
+
+    IF _hasLine = 0 THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Un utente deve avere almeno un indirizzo email';
+    END IF;
+
+    DELETE FROM TelefonoUtente WHERE utente = _id;
+    SET _hasLine = 0;
+    telefono_linee:
+    LOOP
+        IF CHAR_LENGTH(_phones) = 0 THEN LEAVE telefono_linee; END IF;
+        SET _hasLine = 1;
+        SET _line = SUBSTRING_INDEX(_phones, '\n', 1);
+        SET _lineSize = CHAR_LENGTH(_line);
+
+        INSERT INTO TelefonoUtente (utente, telefono) VALUES (_id, TRIM(_line));
+
+        SET _phones = SUBSTR(_phones, CHAR_LENGTH(_line) + 2);
+    END LOOP;
+
+    IF _hasLine = 0 THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Un utente deve avere almeno un numero di telefono';
+    END IF;
+
+    COMMIT;
+END;
+
 
 -- Apply the haversine formula to calculate
 -- the distance between 2 points on Earth in KMs

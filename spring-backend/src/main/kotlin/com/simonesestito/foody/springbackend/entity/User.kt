@@ -10,7 +10,7 @@ data class User(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY) var id: Int?,
     @Column(name = "nome") var name: String,
     @Column(name = "cognome") var surname: String,
-    @Column(name = "password") var hashedPassword: String,
+    var password: String?,
     @ElementCollection(fetch = FetchType.EAGER) @CollectionTable(
         name = "EmailUtente",
         joinColumns = [JoinColumn(name = "utente")],
@@ -25,7 +25,7 @@ data class User(
 ) {
     fun getAuthorities() = getAllowedRoles().map { GrantedAuthorityString(it) }
 
-    fun getAllowedRoles() = setOfNotNull(
+    private fun getAllowedRoles() = setOfNotNull(
         "cliente",
         if (rider) "rider" else null,
         if (admin) "admin" else null,

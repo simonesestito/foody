@@ -8,7 +8,6 @@ import 'package:foody_app/di.dart';
 import 'package:foody_app/routes/base_route.dart';
 import 'package:foody_app/state/login_status.dart';
 import 'package:foody_app/widgets/bottom_sheet.dart';
-import 'package:foody_app/widgets/loading_button.dart';
 import 'package:provider/provider.dart';
 
 class EmployeesRoute extends BaseRoute {
@@ -65,10 +64,9 @@ class _EmployeesContentState extends State<_EmployeesContent> {
           mainAxisSize: MainAxisSize.min,
           children: [
             ElevatedButton.icon(
-              onPressed: () => showAppBottomSheet(
+              onPressed: () => showInputBottomSheet(
                 context,
-                (context) => _buildHiringLayout(widget.restaurant, context),
-                isScrollControlled: true,
+                (context) => _buildHiringLayout(widget.restaurant),
               ),
               icon: const Icon(Icons.add),
               label: const Text('Assumi'),
@@ -81,12 +79,12 @@ class _EmployeesContentState extends State<_EmployeesContent> {
                         ? ''
                         : '\nLicenziato il ${employee.endDate}')),
                 trailing: employee.endDate == null &&
-                    employee.user.id !=
-                        context.read<LoginStatus>().currentUser!.id
+                        employee.user.id !=
+                            context.read<LoginStatus>().currentUser!.id
                     ? IconButton(
-                  onPressed: () => _onFireEmployee(employee),
-                  icon: const Icon(Icons.delete),
-                )
+                        onPressed: () => _onFireEmployee(employee),
+                        icon: const Icon(Icons.delete),
+                      )
                     : null,
                 leading: employee.endDate == null
                     ? const Icon(Icons.badge)
@@ -98,47 +96,27 @@ class _EmployeesContentState extends State<_EmployeesContent> {
     );
   }
 
-  Widget _buildHiringLayout(
-      RestaurantWithMenu restaurant, BuildContext context) {
-    final emailController = TextEditingController();
-
-    return Column(
-      children: [
-        Text('Assumi dipendente', style: Theme.of(context).textTheme.headline5),
-        TextFormField(
-          controller: emailController,
-          decoration: const InputDecoration(
-            labelText: 'Email del nuovo assunto',
-            filled: true,
-          ),
-        ),
-        LoadingButton(
-          label: const Text('Assumi'),
-          icon: const Icon(Icons.badge),
-          onPressed: () async {
-            await getIt.get<ManagerApi>().hireEmployeeByEmail(
-                  restaurant.id,
-                  emailController.text,
-                );
-            Navigator.pop(context);
-            setState(() {
-              _listKey = UniqueKey();
-            });
-          },
-        ),
-        Padding(
-          padding: MediaQuery.of(context).viewInsets,
-        ),
-      ],
+  InputBottomSheet _buildHiringLayout(RestaurantWithMenu restaurant) {
+    return InputBottomSheet(
+      title: 'Assumi dipendente',
+      label: 'Email del nuovo assunto',
+      saveText: 'Assumi',
+      saveIcon: const Icon(Icons.badge),
+      onSave: (email) async {
+        await getIt.get<ManagerApi>().hireEmployeeByEmail(restaurant.id, email);
+        setState(() {
+          _listKey = UniqueKey();
+        });
+      },
     );
   }
 
   void _onFireEmployee(OrdersManagement management) async {
     try {
       await getIt.get<ManagerApi>().fireEmployee(
-        management.restaurant,
-        management.user.id,
-      );
+            management.restaurant,
+            management.user.id,
+          );
       setState(() {
         _listKey = UniqueKey();
       });

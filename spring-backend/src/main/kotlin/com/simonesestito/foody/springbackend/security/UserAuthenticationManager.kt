@@ -27,7 +27,7 @@ class UserAuthenticationManager(
         val user =
             userDao.getUserWithEmailAddress(email) ?: throw BadCredentialsException("User not found with email $email")
 
-        if (!passwordEncoder.matches(password, user.hashedPassword)) throw BadCredentialsException("Wrong password")
+        if (!passwordEncoder.matches(password, user.password!!)) throw BadCredentialsException("Wrong password")
 
         return UsernamePasswordAuthenticationToken(
             user,

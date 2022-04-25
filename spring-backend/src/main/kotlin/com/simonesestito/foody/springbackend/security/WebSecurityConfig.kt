@@ -9,9 +9,6 @@ import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.web.access.channel.ChannelProcessingFilter
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
-import org.springframework.web.cors.CorsConfiguration
-import org.springframework.web.cors.CorsConfigurationSource
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 
 
 @Configuration
@@ -33,6 +30,9 @@ class WebSecurityConfig(
                 it.antMatchers(
                     "/api/auth/login", "/api/auth/signup", "/api/auth/mail"
                 ).permitAll()
+                it.antMatchers("/api/users").hasRole("admin")
+                it.antMatchers("/api/service").hasRole("rider")
+                it.antMatchers("/api/orders").hasAnyRole("manager", "rider")
                 it.antMatchers("/api/**").authenticated()
                 it.anyRequest().permitAll()
             }.formLogin {

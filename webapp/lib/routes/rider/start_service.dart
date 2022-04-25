@@ -23,7 +23,8 @@ class StartServiceRoute extends SingleChildBaseRoute {
               await getIt.get<RiderServiceApi>().startService(
                     await getUserGpsLocation(),
                   );
-              Navigator.pop(context);
+              Navigator.pop(context,
+                  true /* Signal _RiderConditionalRoute to refresh rider service status */);
             } catch (err) {
               handleApiError(err, context);
             }

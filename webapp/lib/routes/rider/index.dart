@@ -52,11 +52,11 @@ class _RiderConditionalRouteState extends State<_RiderConditionalRoute> {
 
             Future.microtask(() async {
               if (mounted) {
-                if (replacement) {
-                  Navigator.pushReplacementNamed(context, nextRoute);
-                } else {
-                  await Navigator.pushNamed(context, nextRoute);
+                final mustKeep = await Navigator.pushNamed(context, nextRoute);
 
+                if (replacement || mustKeep != true) {
+                  Navigator.pop(context);
+                } else {
                   setState(() {
                     _refreshKey = UniqueKey();
                   });

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:foody_app/data/api/orders.dart';
+import 'package:foody_app/data/api/rider_service.dart';
 import 'package:foody_app/data/model/order.dart';
 import 'package:foody_app/data/model/user.dart';
 import 'package:foody_app/di.dart';
@@ -10,6 +11,7 @@ import 'package:foody_app/state/login_status.dart';
 import 'package:foody_app/widgets/loading_button.dart';
 import 'package:foody_app/widgets/map.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class OrderDetailsRoute extends SingleChildBaseRoute {
   static final String routeName =
@@ -87,13 +89,13 @@ class OrderDetailsRoute extends SingleChildBaseRoute {
               icon: const Icon(Icons.next_plan_outlined),
               label: const Text('Segna come pronto al ritiro'),
             )
-          else if (order.status == OrderState.prepared)
+          else if (order.status == OrderState.prepared &&
+              context.read<LoginStatus>().currentUser?.rider == true)
             LoadingButton(
               onPressed: () async {
-                await getIt.get<CustomerOrdersApi>().updateOrderState(
-                      order.id!,
-                      OrderState.delivering,
-                    );
+                await getIt
+                    .get<RiderServiceApi>()
+                    .beginOrderDelivery(order.id!);
                 Navigator.pop(context);
               },
               icon: const Icon(Icons.bike_scooter),
@@ -101,7 +103,7 @@ class OrderDetailsRoute extends SingleChildBaseRoute {
             )
           else if (order.status == OrderState.delivering &&
               order.riderService?.user.id ==
-                  context.read<LoginStatus>().currentUser?.id)
+                  context.read<LoginStatus>().currentUser?.id) ...[
             LoadingButton(
               onPressed: () async {
                 await getIt.get<CustomerOrdersApi>().updateOrderState(
@@ -113,6 +115,20 @@ class OrderDetailsRoute extends SingleChildBaseRoute {
               icon: const Icon(Icons.shopping_bag),
               label: const Text('Segna come consegnato'),
             ),
+            OutlinedButton.icon(
+              onPressed: () => launch('https://www.google.com/maps/dir/'
+                  '?api=1'
+                  '&dir_action=navigate'
+                  '&destination=${order.restaurant.address.location.latitude}'
+                  '%2C${order.restaurant.address.location.longitude}'
+                  '&destination_place_id=Casa%20cliente'
+                  '&waypoints=${order.address.location.latitude}'
+                  '%2C${order.address.location.longitude}'
+                  '&waypoint_place_ids=Ristorante'),
+              icon: const Icon(Icons.directions),
+              label: const Text('Mostra percorso su Maps'),
+            ),
+          ]
         ],
       ),
     );

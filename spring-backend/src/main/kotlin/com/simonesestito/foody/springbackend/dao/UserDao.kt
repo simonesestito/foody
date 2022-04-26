@@ -9,10 +9,10 @@ import javax.transaction.Transactional
 
 @Repository
 interface UserDao : CrudRepository<User, Int> {
-    @Query("SELECT * FROM DettagliUtente WHERE email = ?1", nativeQuery = true)
+    @Query("SELECT * FROM EmailUtente WHERE email = ?1", nativeQuery = true)
     fun getUserWithEmailAddress(email: String): User?
 
-    @Query("SELECT * FROM DettagliUtente", nativeQuery = true)
+    @Query("SELECT * FROM DettagliUtente ORDER BY nome, cognome", nativeQuery = true)
     fun getAll(): Set<User>
 
     @Query("CALL registra_utente(?1, ?2, ?3, ?4, ?5)", nativeQuery = true)

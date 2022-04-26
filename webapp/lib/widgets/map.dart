@@ -1,7 +1,13 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:foody_app/data/api/errors/exceptions.dart';
+import 'package:foody_app/data/api/errors/handler.dart';
 import 'package:foody_app/data/model/address.dart';
 import 'package:foody_app/globals.dart';
+import 'package:http/http.dart' as http;
 import 'package:mapbox_gl/mapbox_gl.dart';
 
 class AppMapboxMap<T> extends StatefulWidget {
@@ -96,4 +102,75 @@ class _AppMapboxMapState<T> extends State<AppMapboxMap> {
     _controller.dispose();
     super.dispose();
   }
+}
+
+Future<Address?> validateInputAddress(
+  BuildContext context,
+  String street,
+  String houseNumber,
+  String city,
+) async {
+  final fullAddress = '$street, $houseNumber, $city';
+  final GpsLocation location;
+
+  try {
+    final locationResponse = await http.get(Uri.https(
+        'api.mapbox.com', '/geocoding/v5/mapbox.places/$fullAddress.json', {
+      'country': 'it',
+      'limit': '1',
+      'proximity': 'ip',
+      'types': 'address',
+      'access_token': Globals.mapboxAccessToken,
+    }));
+
+    if (locationResponse.statusCode != 200) {
+      throw ServerError();
+    }
+
+    final jsonBody = json.decode(locationResponse.body) as Map<String, dynamic>;
+    final coordinates = jsonBody['features'][0]['center'];
+    location = GpsLocation(
+      latitude: coordinates[1],
+      longitude: coordinates[0],
+    );
+  } catch (err) {
+    handleApiError(err, context);
+    return null;
+  }
+
+  final address = Address(
+    address: street,
+    houseNumber: houseNumber,
+    city: city,
+    location: location,
+  );
+
+  return _showAddressConfirmationDialog(context, address);
+}
+
+Future<Address?> _showAddressConfirmationDialog(
+    BuildContext context, Address address) {
+  return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(
+              'Confermi l\'indirizzo e la posizione sulla mappa?\n$address'),
+          content: Image.network(
+            'https://api.mapbox.com/styles/v1/mapbox/${Theme.of(context).brightness == Brightness.dark ? 'dark-v10' : 'streets-v11'}/static/pin-s+555555(${address.location.longitude},${address.location.latitude})/${address.location.longitude},${address.location.latitude},16.5/600x300?access_token=pk.eyJ1Ijoic2ltb25lLXNlc3RpdG8iLCJhIjoiY2s5b251NzQwMDJoNzNlbnhkOXRtMGRyZSJ9.JPvm9gLEdOvsFgROr36-NQ',
+          ),
+          actions: [
+            TextButton.icon(
+              onPressed: () => Navigator.pop(context),
+              icon: const Icon(Icons.cancel),
+              label: const Text('Annulla'),
+            ),
+            ElevatedButton.icon(
+              onPressed: () => Navigator.pop(context, address),
+              icon: const Icon(Icons.check),
+              label: const Text('Conferma indirizzo'),
+            ),
+          ],
+        );
+      });
 }

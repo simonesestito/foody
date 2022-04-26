@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:foody_app/data/model/user.dart';
+import 'package:foody_app/routes/admin/edit_restaurant.dart';
 import 'package:foody_app/routes/admin/edit_user.dart';
 import 'package:foody_app/routes/admin/list_restaurants.dart';
 import 'package:foody_app/routes/admin/list_users.dart';
@@ -10,6 +11,7 @@ final adminRoutes = {
   ListUsersRoute.routeName: (_) => const ListUsersRoute(),
   EditUserRoute.routeName: (_) => const EditUserRoute(),
   ListRestaurantsRoute.routeName: (_) => const ListRestaurantsRoute(),
+  EditRestaurantRoute.routeName: (_) => const EditRestaurantRoute(),
 };
 
 class AdminRoute extends BaseRoute {

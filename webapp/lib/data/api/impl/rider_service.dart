@@ -1,4 +1,3 @@
-
 import 'package:foody_app/data/api/api_client.dart';
 import 'package:foody_app/data/api/rider_service.dart';
 import 'package:foody_app/data/model/address.dart';

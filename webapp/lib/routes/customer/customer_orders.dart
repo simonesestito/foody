@@ -13,8 +13,7 @@ class CustomerOrdersRoute extends BaseRoute {
   const CustomerOrdersRoute({Key? key}) : super(key: key);
 
   @override
-  List<Widget> buildChildren(BuildContext context) =>
-      [
+  List<Widget> buildChildren(BuildContext context) => [
         SliverToBoxAdapter(
           child: Text(
             'Cronologia ordini',

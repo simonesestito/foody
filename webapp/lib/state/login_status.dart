@@ -30,7 +30,8 @@ class LoginStatus extends ChangeNotifier {
         _user = null;
       });
 
-  Future<void> _withLoading(Future<void> Function() action, { bool skipLoadingNotification = false }) async {
+  Future<void> _withLoading(Future<void> Function() action,
+      {bool skipLoadingNotification = false}) async {
     if (_isLoading) return;
     _isLoading = true;
     if (!skipLoadingNotification) notifyListeners();

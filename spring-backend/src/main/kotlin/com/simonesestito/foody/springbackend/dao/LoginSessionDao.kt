@@ -19,6 +19,7 @@ interface LoginSessionDao : CrudRepository<LoginSession, String> {
     )
     fun getByUserId(userId: Int): Set<LoginSession>
 
+    @Query("SELECT * FROM SessioneLogin WHERE token = ?1", nativeQuery = true)
     fun getByToken(token: String): LoginSession?
 
     @Query("DELETE FROM SessioneLogin WHERE token = ?1", nativeQuery = true)

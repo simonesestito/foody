@@ -180,7 +180,7 @@ CREATE TABLE IF NOT EXISTS GestioneOrdini
     utente      INT      NOT NULL,
     ristorante  INT,
     FOREIGN KEY (utente) REFERENCES Utente (id) ON UPDATE CASCADE ON DELETE CASCADE,
-    FOREIGN KEY (ristorante) REFERENCES Ristorante (id) ON UPDATE CASCADE ON DELETE NO ACTION,
+    FOREIGN KEY (ristorante) REFERENCES Ristorante (id) ON UPDATE CASCADE ON DELETE CASCADE,
     PRIMARY KEY (utente, ristorante, data_inizio),
     CONSTRAINT data_inizio_fine CHECK (data_fine IS NULL OR data_fine > data_inizio)
 );
@@ -249,7 +249,7 @@ SELECT Ristorante.*,
        TelefonoRistorante.telefono,
        R.voto_medio
 FROM Ristorante
-         RIGHT JOIN OrariDiApertura ON Ristorante.id = OrariDiApertura.ristorante
+         LEFT JOIN OrariDiApertura ON Ristorante.id = OrariDiApertura.ristorante
          LEFT JOIN TelefonoRistorante ON Ristorante.id = TelefonoRistorante.ristorante
          LEFT JOIN (SELECT Ristorante.id, AVG(Recensione.voto) as voto_medio
                     FROM Ristorante
@@ -275,12 +275,17 @@ FROM DettagliRistorante
          LEFT JOIN AllergeniProdotto AP on P.id = AP.prodotto;
 
 CREATE VIEW DettagliUtente AS
-SELECT Utente.*, EU.email, TU.telefono, COUNT(DISTINCT GO.ristorante) AS numero_ristoranti
+SELECT Utente.*, EU.email, TU.telefono, COALESCE(NumeroRistoranti.numero_ristoranti, 0) AS numero_ristoranti
 FROM Utente
          LEFT JOIN EmailUtente EU on Utente.id = EU.utente
          LEFT JOIN TelefonoUtente TU on Utente.id = TU.utente
-         LEFT JOIN GestioneOrdini GO on Utente.id = GO.utente AND GO.data_fine IS NULL
-GROUP BY Utente.id;
+         LEFT JOIN (
+    SELECT utente, COUNT(ristorante) AS numero_ristoranti
+    FROM GestioneOrdini
+    WHERE data_fine IS NULL
+    GROUP BY utente
+) AS NumeroRistoranti ON Utente.id = NumeroRistoranti.utente
+GROUP BY Utente.id, EU.email, TU.telefono;
 
 CREATE VIEW DettagliCategoria AS
 SELECT CategoriaMenu.*, COUNT(DISTINCT Prodotto.id) AS numero_prodotti
@@ -711,6 +716,108 @@ BEGIN
     COMMIT;
 END;
 
+CREATE PROCEDURE aggiorna_dati_ristorante(
+    IN _id INT,
+    IN _name TEXT,
+    IN _published TINYINT,
+    IN _phones TEXT,
+    IN _addressStreet TEXT,
+    IN _addressHouseNumber TEXT,
+    IN _addressCity TEXT,
+    IN _latitude FLOAT(10, 6),
+    IN _longitude FLOAT(10, 6))
+    MODIFIES SQL DATA
+BEGIN
+    DECLARE _line TEXT DEFAULT NULL;
+    DECLARE _lineSize INT DEFAULT NULL;
+    DECLARE _hasLine TINYINT DEFAULT 0;
+
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION BEGIN
+        ROLLBACK;
+        RESIGNAL;
+    END;
+
+    START TRANSACTION;
+
+    UPDATE Ristorante
+    SET nome = _name,
+        pubblicato = _published,
+        indirizzo_via = _addressStreet,
+        indirizzo_civico = _addressHouseNumber,
+        indirizzo_citta = _addressCity,
+        indirizzo_longitudine = _longitude,
+        indirizzo_latitudine = _latitude
+    WHERE id = _id;
+
+    DELETE FROM TelefonoRistorante WHERE ristorante = _id;
+    SET _hasLine = 0;
+    telefono_linee:
+    LOOP
+        IF CHAR_LENGTH(_phones) = 0 THEN LEAVE telefono_linee; END IF;
+        SET _hasLine = 1;
+        SET _line = SUBSTRING_INDEX(_phones, '\n', 1);
+        SET _lineSize = CHAR_LENGTH(_line);
+
+        INSERT INTO TelefonoRistorante (ristorante, telefono) VALUES (_id, TRIM(_line));
+
+        SET _phones = SUBSTR(_phones, CHAR_LENGTH(_line) + 2);
+    END LOOP;
+
+    IF _hasLine = 0 THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Un ristorante deve avere almeno un numero di telefono';
+    END IF; COMMIT;
+END;
+
+CREATE PROCEDURE inserisci_ristorante(
+    IN _name TEXT,
+    IN _published TINYINT,
+    IN _phones TEXT,
+    IN _addressStreet TEXT,
+    IN _addressHouseNumber TEXT,
+    IN _addressCity TEXT,
+    IN _latitude FLOAT(10, 6),
+    IN _longitude FLOAT(10, 6),
+    IN _managerEmail TEXT)
+    MODIFIES SQL DATA
+BEGIN
+    DECLARE _id INT DEFAULT NULL;
+    DECLARE _line TEXT DEFAULT NULL;
+    DECLARE _lineSize INT DEFAULT NULL;
+    DECLARE _hasLine TINYINT DEFAULT 0;
+
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION BEGIN
+        ROLLBACK;
+        RESIGNAL;
+    END;
+
+    START TRANSACTION;
+
+    INSERT INTO Ristorante (nome, pubblicato, indirizzo_via, indirizzo_civico, indirizzo_citta, indirizzo_latitudine,
+                            indirizzo_longitudine)
+    VALUES (_name, _published, _addressStreet, _addressHouseNumber, _addressCity, _latitude, _longitude);
+
+    SELECT LAST_INSERT_ID() INTO _id;
+
+    INSERT INTO GestioneOrdini (data_inizio, utente, ristorante)
+    VALUES (NOW(), (SELECT utente FROM EmailUtente WHERE email = _managerEmail), _id);
+
+    SET _hasLine = 0;
+    telefono_linee:
+    LOOP
+        IF CHAR_LENGTH(_phones) = 0 THEN LEAVE telefono_linee; END IF;
+        SET _hasLine = 1;
+        SET _line = SUBSTRING_INDEX(_phones, '\n', 1);
+        SET _lineSize = CHAR_LENGTH(_line);
+
+        INSERT INTO TelefonoRistorante (ristorante, telefono) VALUES (_id, TRIM(_line));
+
+        SET _phones = SUBSTR(_phones, CHAR_LENGTH(_line) + 2);
+    END LOOP;
+
+    IF _hasLine = 0 THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Un ristorante deve avere almeno un numero di telefono';
+    END IF; COMMIT;
+END;
 
 -- Apply the haversine formula to calculate
 -- the distance between 2 points on Earth in KMs

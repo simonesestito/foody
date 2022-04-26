@@ -30,7 +30,7 @@ class WebSecurityConfig(
                 it.antMatchers(
                     "/api/auth/login", "/api/auth/signup", "/api/auth/mail"
                 ).permitAll()
-                it.antMatchers("/api/users").hasRole("admin")
+                it.antMatchers("/api/users", "/api/admin/restaurants").hasRole("admin")
                 it.antMatchers("/api/service").hasRole("rider")
                 it.antMatchers("/api/orders").hasAnyRole("manager", "rider")
                 it.antMatchers("/api/**").authenticated()

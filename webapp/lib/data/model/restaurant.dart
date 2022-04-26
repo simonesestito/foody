@@ -10,6 +10,7 @@ part 'restaurant.g.dart';
 class Restaurant {
   final int id;
   final String name;
+  final bool published;
   final Address address;
   final List<String> phoneNumbers;
   final List<OpeningHours> openingHours;
@@ -18,6 +19,7 @@ class Restaurant {
   const Restaurant({
     required this.id,
     required this.name,
+    required this.published,
     required this.address,
     required this.phoneNumbers,
     required this.openingHours,
@@ -50,6 +52,7 @@ class RestaurantWithMenu extends Restaurant {
   const RestaurantWithMenu({
     required int id,
     required String name,
+    required bool published,
     required Address address,
     required List<String> phoneNumbers,
     required List<OpeningHours> openingHours,
@@ -58,6 +61,7 @@ class RestaurantWithMenu extends Restaurant {
   }) : super(
           id: id,
           name: name,
+          published: published,
           address: address,
           phoneNumbers: phoneNumbers,
           openingHours: openingHours,

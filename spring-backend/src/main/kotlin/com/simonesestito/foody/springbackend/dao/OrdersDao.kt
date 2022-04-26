@@ -13,7 +13,7 @@ interface OrdersDao : CrudRepository<RestaurantOrder, Int> {
         """
         SELECT *
         FROM OrdineRistorante
-        INNER JOIN Utente ON Utente.id = OrdineRistorante.utente = Utente.id
+        INNER JOIN Utente ON Utente.id = OrdineRistorante.utente
         LEFT JOIN ServizioRider ON Utente.id = ServizioRider.utente
         LEFT JOIN ContenutoOrdine ON OrdineRistorante.id = ContenutoOrdine.ordine_ristorante
         LEFT JOIN Prodotto ON ContenutoOrdine.prodotto = Prodotto.id

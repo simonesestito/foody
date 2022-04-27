@@ -99,4 +99,6 @@ interface OrdersDao : CrudRepository<RestaurantOrder, Int> {
     """, nativeQuery = true
     )
     fun getCurrentDeliveringOrder(id: Int): RestaurantOrder?
+
+    fun getById(id: Int): RestaurantOrder?
 }

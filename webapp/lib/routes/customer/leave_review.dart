@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:foody_app/data/api/errors/handler.dart';
 import 'package:foody_app/data/api/restaurants.dart';
+import 'package:foody_app/data/model/restaurant.dart';
 import 'package:foody_app/data/model/review.dart';
 import 'package:foody_app/data/model/user.dart';
 import 'package:foody_app/di.dart';
@@ -65,25 +66,10 @@ class LeaveReviewRoute extends BaseRoute {
   }
 
   Future<void> _onSendReview(BuildContext context) async {
-    final restaurantId = ModalRoute.of(context)?.settings.arguments as int;
-    final mark = _ratingController._rating;
+    final restaurant = ModalRoute.of(context)?.settings.arguments as Restaurant;
+    final mark = _ratingController.getRating();
     String? title = _titleController.text;
     String? text = _textController.text;
-
-    if (mark == null) {
-      showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-                title: const Text('Voto assente'),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text('OK'),
-                  ),
-                ],
-              ));
-      return;
-    }
 
     title = title.isEmpty ? null : title;
     text = text.isEmpty ? null : text;
@@ -95,7 +81,7 @@ class LeaveReviewRoute extends BaseRoute {
             title: title,
             description: text,
           ),
-          restaurantId,
+          restaurant.id,
           context.read<LoginStatus>().currentUser!.id);
 
       Navigator.pop(context);
@@ -106,11 +92,11 @@ class LeaveReviewRoute extends BaseRoute {
 }
 
 class _RatingController {
-  int? _rating;
+  int _rating = 3;
 
   void updateRating(int rating) {
     _rating = rating;
   }
 
-  int? getRating() => _rating;
+  int getRating() => _rating;
 }

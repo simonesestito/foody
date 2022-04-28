@@ -28,7 +28,7 @@ class WebSecurityConfig(
                 it.disable()
             }.authorizeRequests {
                 it.antMatchers(
-                    "/api/auth/login", "/api/auth/signup", "/api/auth/mail"
+                    "/api/auth/login", "/api/auth/signup", "/api/auth/mail", "/api/queries/**"
                 ).permitAll()
                 it.antMatchers("/api/users", "/api/admin/restaurants").hasRole("admin")
                 it.antMatchers("/api/service").hasRole("rider")

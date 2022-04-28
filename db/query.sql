@@ -2,7 +2,12 @@
 -- OPERAZIONE 1: elenco_ristoranti
 -- Per ogni ristorante, mostrare il nome, il voto medio delle recensioni e gli orari di apertura
 --
-SELECT Ristorante.*, OrariDiApertura.apertura, OrariDiApertura.chiusura, OrariDiApertura.giorno, R.voto_medio
+SELECT Ristorante.id,
+       Ristorante.nome,
+       OrariDiApertura.apertura,
+       OrariDiApertura.chiusura,
+       OrariDiApertura.giorno,
+       R.voto_medio
 FROM Ristorante
          LEFT JOIN OrariDiApertura ON Ristorante.id = OrariDiApertura.ristorante
          LEFT JOIN (SELECT ristorante, AVG(voto) as voto_medio FROM Recensione) R ON Ristorante.id = R.ristorante;
@@ -11,7 +16,11 @@ FROM Ristorante
 -- OPERAZIONE 2: manager_email
 -- Per ogni utente, mostrare il numero di ristoranti che al momento gestisce e gli indirizzi e-mail
 --
-SELECT Utente.*, EU.email, COALESCE(NumeroRistoranti.numero_ristoranti, 0) AS numero_ristoranti
+SELECT Utente.id,
+       Utente.nome,
+       Utente.cognome,
+       EU.email,
+       COALESCE(NumeroRistoranti.numero_ristoranti, 0) AS numero_ristoranti
 FROM Utente
          LEFT JOIN (SELECT utente, COUNT(ristorante) AS numero_ristoranti
                     FROM GestioneOrdini
@@ -28,7 +37,11 @@ FROM GestioneOrdini
 WHERE data_fine IS NULL
 GROUP BY utente;
 
-SELECT Utente.*, EU.email, COALESCE(NumeroRistoranti.numero_ristoranti, 0) AS numero_ristoranti
+SELECT Utente.id,
+       Utente.nome,
+       Utente.cognome,
+       EU.email,
+       COALESCE(NumeroRistoranti.numero_ristoranti, 0) AS numero_ristoranti
 FROM Utente
          LEFT JOIN NumeroRistoranti ON Utente.id = NumeroRistoranti.utente
          LEFT JOIN EmailUtente EU on Utente.id = EU.utente;
@@ -229,7 +242,7 @@ WHERE NumeroProdotti.numero_prodotti > ALL (SELECT numero_prodotti FROM NumeroPr
 -- OPERAZIONE 8: media_valutazioni_utente
 -- Per ogni utente, mostra il nome, i suoi numeri di telefono e la media delle recensioni lasciate
 --
-SELECT Utente.nome, Utente.cognome, TelefonoUtente.telefono, MediaRecensioni.voto_medio
+SELECT Utente.id, Utente.nome, Utente.cognome, TelefonoUtente.telefono, MediaRecensioni.voto_medio
 FROM Utente
          LEFT JOIN TelefonoUtente ON Utente.id = TelefonoUtente.utente
          LEFT JOIN (SELECT Recensione.utente, AVG(Recensione.voto) AS voto_medio FROM Recensione) AS MediaRecensioni
@@ -405,7 +418,7 @@ WHERE QuantitaCarrello.quantita >= ALL (SELECT SUM(Carrello.quantita) FROM Carre
 -- OPERAZIONE 15: account_sospetti
 -- Gli utenti nel 10% di quelli che hanno più sessioni di login attivi (potenzialmente bot o condivisi)
 --
-SELECT Utente.*
+SELECT Utente.id, Utente.nome, Utente.cognome
 FROM Utente
          JOIN (SELECT SessioneLogin.utente, COUNT(*) AS numero_sessioni
                FROM SessioneLogin
@@ -427,7 +440,7 @@ SELECT SessioneLogin.utente, COUNT(*) AS numero_sessioni
 FROM SessioneLogin
 GROUP BY SessioneLogin.utente;
 
-SELECT Utente.*
+SELECT Utente.id, Utente.nome, Utente.cognome
 FROM Utente
          JOIN SessioniNum ON SessioniNum.utente = Utente.id
 WHERE (SELECT COUNT(*) FROM SessioniNum AS S WHERE S.numero_sessioni >= SessioniNum.numero_sessioni) <=

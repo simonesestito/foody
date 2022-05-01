@@ -63,7 +63,8 @@ class StatQueriesRoute extends SingleChildBaseRoute {
   List<Widget> _buildMap(Map valuesMap) {
     final idName = valuesMap['-1']?.first['_key'].toString();
     return [
-      for (final row in valuesMap.entries.where((e) => e.key >= 0)) ...[
+      for (final row
+          in valuesMap.entries.where((e) => int.parse(e.key) >= 0)) ...[
         Text('Elemento con $idName = ${row.key}'),
         ..._buildList(row.value),
       ]

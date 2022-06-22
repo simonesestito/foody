@@ -3,7 +3,7 @@ Final project for "Databases" course of Sapienza University of Rome, Spring 2022
 
 # 🚀 [Open the live site](https://foody.simonesestito.com)
 
-# 📚 [Database Documentation (Italian)](https://drive.google.com/drive/folders/135rB56D_wniunaJxY9SCFpWHcEuFZqNz?usp=sharing)
+# 📚 [Database Documentation (Italian)](https://drive.google.com/file/d/1wL3b8IMqtLVx0o91SrFfMooiHMBsbwx_/view?usp=sharing)
 
 ## Build
 
